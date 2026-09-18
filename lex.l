@@ -1,15 +1,14 @@
 %{
     #include <stdio.h>
-    #include "bisson.tab.h"
+    #include "bison.tab.h"
     int yylex(void);
     extern int yywrap(void);
 %}
 
 %option yylineno
-
 Letra       [a-zA-Z]
 Digito      [0-9]
-Id          {Letra}({Letra}|{Digito})*
+Id          {Letra}({Letra}|{Digito}|_)*
 Int         {Digito}+
 Float	    {Digito}+\.{Digito}+
 Comentario_bloque	    "/*"(.|\n)*"*/"
@@ -19,7 +18,7 @@ Comentario_linea 	    "//".*
 "int"       { return INT; }
 "boolean"      { return BOOLEAN; }
 "void"      { return VOID; }
-"main"      { return MAIN; }
+
 "return"    { return RETURN; }
 
 "true"      { 
@@ -33,16 +32,16 @@ Comentario_linea 	    "//".*
 
 {Id} { 
     yylval.nombre = strdup(yytext);
-    return IDENTIFICADOR; 
+    return Id; 
 }
 {Int} { 
     yylval.valor = atoi(yytext);
-    return Int; 
+    return INT_LITERAL; 
 }
 
 {Float} {
     yylval.valor = atoi(yytext);
-    return Int;
+    return FLOAT_LITERAL;
 }
 
 
@@ -68,7 +67,7 @@ Comentario_linea 	    "//".*
 
 ">"	    { return MAYOR; }
 "<"	    { return MENOR; }
-"=="	    { return IGUAL; }
+"=="	    { return IGUALDAD; }
 
 "%"	    { return MOD; }
 "-"	    { return RESTA; }
