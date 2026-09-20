@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_BISON_TAB_H_INCLUDED
-# define YY_YY_BISON_TAB_H_INCLUDED
+#ifndef YY_YY_BISSON_TAB_H_INCLUDED
+# define YY_YY_BISSON_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -45,11 +45,11 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "bison.y"
+#line 1 "bisson.y"
 
   #include "enums.h"
 
-#line 53 "bison.tab.h"
+#line 53 "bisson.tab.h"
 
 /* Token kinds.  */
 #ifndef YYTOKENTYPE
@@ -100,13 +100,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 16 "bison.y"
+#line 16 "bisson.y"
 
   ASTNodo nodo;
   float valor; // Los tipo INT seran tratados como FLOAT internamente.
   char* nombre;
 
-#line 110 "bison.tab.h"
+#line 110 "bisson.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -135,4 +135,4 @@ extern YYLTYPE yylloc;
 int yyparse (void);
 
 
-#endif /* !YY_YY_BISON_TAB_H_INCLUDED  */
+#endif /* !YY_YY_BISSON_TAB_H_INCLUDED  */

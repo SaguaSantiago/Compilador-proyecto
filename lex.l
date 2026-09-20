@@ -1,6 +1,6 @@
 %{
     #include <stdio.h>
-    #include "bison.tab.h"
+    #include "bisson.tab.h"
     int yylex(void);
     extern int yywrap(void);
 %}
@@ -15,65 +15,70 @@ Comentario_bloque	    "/*"(.|\n)*"*/"
 Comentario_linea 	    "//".*
 
 %%
-"int"       { return INT; }
-"boolean"      { return BOOLEAN; }
-"void"      { return VOID; }
+"int"       { printf("INT\n"); return INT; }
+"boolean"      { printf("BOOLEAN\n"); return BOOLEAN; }
+"void"      { printf("VOID\n"); return VOID; }
 
-"return"    { return RETURN; }
+"return"    { printf("RETURN\n"); return RETURN; }
+
+"if"	    { printf("IF\n"); return IF; }
+"else"      { printf("ELSE\n"); return ELSE; }
+
+"while"     { printf("WHILE\n"); return WHILE; }
+"float"     { printf("FLOAT\n"); return FLOAT; }
 
 "true"      { 
     yylval.valor = 1;
+    printf("TRUE\n");
     return TRUE; 
 }
 "false"     { 
     yylval.valor = 0;
+    printf("FALSE\n");
     return FALSE; 
 }
 
 {Id} { 
     yylval.nombre = strdup(yytext);
+    printf("Id\n");
     return Id; 
 }
 {Int} { 
     yylval.valor = atoi(yytext);
+    printf("INT_LITERAL\n");
     return INT_LITERAL; 
 }
 
 {Float} {
     yylval.valor = atoi(yytext);
+    printf("FLOAT_LITERAL\n");
     return FLOAT_LITERAL;
 }
 
 
-"+"         { return SUMA; }
-"*"         { return MULTIPLICACION; }
-"="         { return ASIGNACION; }
+"+"         { printf("SUMA\n"); return SUMA; }
+"*"         { printf("MULTIPLICACION\n"); return MULTIPLICACION; }
+"="         { printf("ASIGNACION\n"); return ASIGNACION; }
 
-"("         { return PARENTESIS_IZQ; }
-")"         { return PARENTESIS_DER; }
-"{"         { return LLAVE_IZQ; }
-"}"         { return LLAVE_DER; }
-";"         { return PUNTO_COMA; }
+"("         { printf("PARENTESIS_IZQ\n"); return PARENTESIS_IZQ; }
+")"         { printf("PARENTESIS_DER\n"); return PARENTESIS_DER; }
+"{"         { printf("LLAVE_IZQ\n"); return LLAVE_IZQ; }
+"}"         { printf("LLAVE_DER\n"); return LLAVE_DER; }
+";"         { printf("PUNTO_COMA\n"); return PUNTO_COMA; }
 
-"if"	    { return IF; }
-"else"      { return ELSE; }
+"&&"        { printf("AND\n"); return AND; }
+"||"	    { printf("OR\n"); return OR; }
+"!"         { printf("NOT\n"); return NOT; }
 
-"while"     { return WHILE; }
-"float"     { return FLOAT; }
+">"	    { printf("MAYOR\n"); return MAYOR; }
+"<"	    { printf("MENOR\n"); return MENOR; }
+"=="	    { printf("IGUALDAD\n"); return IGUALDAD; }
 
-"&&"        { return AND; }
-"||"	    { return OR; }
-"!"         { return NOT; }
+"%"	    { printf("MOD\n"); return MOD; }
+"-"	    { printf("RESTA\n"); return RESTA; }
+"/"	    { printf("DIV\n"); return DIV; }
 
-">"	    { return MAYOR; }
-"<"	    { return MENOR; }
-"=="	    { return IGUALDAD; }
-
-"%"	    { return MOD; }
-"-"	    { return RESTA; }
-"/"	    { return DIV; }
-
-[ \t]+     {}
+[ \t\r]+   {}
 \n         {}
 
 {Comentario_bloque} {}

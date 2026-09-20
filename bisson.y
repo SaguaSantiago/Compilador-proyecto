@@ -26,31 +26,29 @@
 //%type<nodo> Program Var_declaraciones Var_declaracion Metodo_declaraciones Metodo_declaracion Tipo_Retorno Tipo_dato Params_decl Bloque Sentencias_list Sentencia Metodo_invocacion Expresiones Expr Op_binario Op_arit Op_cond Op_rel
 
 %start Program
-// TODO: resolver conflicto: si hay un metodo declarado sin variables declaradas lo trata de leer como la declaracion de un variable
-// solucion pensada: separar las declaraciones en parte izq y derecha: izq -> tipo id, der-> resto_decl_var | resto_decl_metodo
 %%
 
-Program:  Var_declaraciones Metodo_declaraciones;
+Program: Declaraciones;
+
+Declaraciones: Declaracion Declaraciones
+              |
+              ; 
+
+Declaracion: Tipo_dato Id_list PUNTO_COMA
+           | Tipo_dato Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque
+           | VOID Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque
+           ;
 
 Var_declaraciones: Var_decl Var_declaraciones
-                 | %empty
-                 ;
-
+                  |
+                  ;
+                  
 Var_decl: Tipo_dato Id_list PUNTO_COMA;
 
 Id_list: Id COMA Id_list
        | Id
        ;
 
-Metodo_declaraciones: Metodo_declaracion Metodo_declaraciones
-                    | %empty
-                    ;
-
-Metodo_declaracion: Tipo_Retorno Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque;
-
-Tipo_Retorno: VOID
-            | Tipo_dato
-            ;
 Tipo_dato: INT | FLOAT | BOOLEAN;
 
 Params_decl: Tipo_dato Id COMA Params_decl 
@@ -71,10 +69,10 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
       | WHILE Expr Bloque
       | RETURN Expr PUNTO_COMA
       | RETURN PUNTO_COMA
-      | Bloque // TODO: Porque bloque?
+      | Bloque // TODO: Porque bloque? idk
       ;
 
-Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER PUNTO_COMA;
+Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER;
 
 Expresiones: Expr Expresiones
           | Expr
