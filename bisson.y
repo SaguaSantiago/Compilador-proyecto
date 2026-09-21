@@ -5,13 +5,13 @@
 %{ 
     #include <stdio.h>
     #include "enums.h"
- 
+    extern int yylineno;
+
     int yylex(void);
     void yyerror(const char *s);
 
 %}
 %define parse.error detailed
-%locations
 
 %union {
   ASTNodo nodo;
@@ -69,7 +69,6 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
       | WHILE Expr Bloque
       | RETURN Expr PUNTO_COMA
       | RETURN PUNTO_COMA
-      | Bloque // TODO: Porque bloque? idk
       ;
 
 Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER;
@@ -103,8 +102,7 @@ Literal: INT_LITERAL | FLOAT_LITERAL | FALSE | TRUE;
 void yyerror(const char *s)
 {
     fprintf(stderr,
-            "Error sintáctico en línea %d, columna %d: %s\n",
-            yylloc.first_line,
-            yylloc.first_column,
+            "Error sintáctico en la línea %d: %s\n",
+            yylineno,
             s);
 }

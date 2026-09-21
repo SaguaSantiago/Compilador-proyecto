@@ -3,9 +3,11 @@
     #include "bisson.tab.h"
     int yylex(void);
     extern int yywrap(void);
+    extern int yylineno; 
 %}
 
 %option yylineno
+
 Letra       [a-zA-Z]
 Digito      [0-9]
 Id          {Letra}({Letra}|{Digito}|_)*

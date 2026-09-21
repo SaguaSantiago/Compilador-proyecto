@@ -1,5 +1,5 @@
 
-#line 3 "lex.yy.c"
+#line 2 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -522,6 +522,7 @@ char *yytext;
     #include "bisson.tab.h"
     int yylex(void);
     extern int yywrap(void);
+    extern int yylineno; 
 #line 526 "lex.yy.c"
 #line 527 "lex.yy.c"
 
@@ -740,7 +741,7 @@ YY_DECL
 		}
 
 	{
-#line 17 "lex.l"
+#line 19 "lex.l"
 
 #line 746 "lex.yy.c"
 
@@ -811,47 +812,47 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 18 "lex.l"
+#line 20 "lex.l"
 { printf("INT\n"); return INT; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 19 "lex.l"
+#line 21 "lex.l"
 { printf("BOOLEAN\n"); return BOOLEAN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 20 "lex.l"
+#line 22 "lex.l"
 { printf("VOID\n"); return VOID; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 22 "lex.l"
+#line 24 "lex.l"
 { printf("RETURN\n"); return RETURN; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 24 "lex.l"
+#line 26 "lex.l"
 { printf("IF\n"); return IF; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 25 "lex.l"
+#line 27 "lex.l"
 { printf("ELSE\n"); return ELSE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 27 "lex.l"
+#line 29 "lex.l"
 { printf("WHILE\n"); return WHILE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 28 "lex.l"
+#line 30 "lex.l"
 { printf("FLOAT\n"); return FLOAT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 30 "lex.l"
+#line 32 "lex.l"
 { 
     yylval.valor = 1;
     printf("TRUE\n");
@@ -860,7 +861,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "lex.l"
+#line 37 "lex.l"
 { 
     yylval.valor = 0;
     printf("FALSE\n");
@@ -869,7 +870,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 41 "lex.l"
+#line 43 "lex.l"
 { 
     yylval.nombre = strdup(yytext);
     printf("Id\n");
@@ -878,7 +879,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 46 "lex.l"
+#line 48 "lex.l"
 { 
     yylval.valor = atoi(yytext);
     printf("INT_LITERAL\n");
@@ -887,7 +888,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 52 "lex.l"
+#line 54 "lex.l"
 {
     yylval.valor = atoi(yytext);
     printf("FLOAT_LITERAL\n");
@@ -896,114 +897,114 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 59 "lex.l"
+#line 61 "lex.l"
 { printf("SUMA\n"); return SUMA; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 60 "lex.l"
+#line 62 "lex.l"
 { printf("MULTIPLICACION\n"); return MULTIPLICACION; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 61 "lex.l"
+#line 63 "lex.l"
 { printf("ASIGNACION\n"); return ASIGNACION; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 63 "lex.l"
+#line 65 "lex.l"
 { printf("PARENTESIS_IZQ\n"); return PARENTESIS_IZQ; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 64 "lex.l"
+#line 66 "lex.l"
 { printf("PARENTESIS_DER\n"); return PARENTESIS_DER; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 65 "lex.l"
+#line 67 "lex.l"
 { printf("LLAVE_IZQ\n"); return LLAVE_IZQ; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 66 "lex.l"
+#line 68 "lex.l"
 { printf("LLAVE_DER\n"); return LLAVE_DER; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 67 "lex.l"
+#line 69 "lex.l"
 { printf("PUNTO_COMA\n"); return PUNTO_COMA; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 69 "lex.l"
+#line 71 "lex.l"
 { printf("AND\n"); return AND; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 70 "lex.l"
+#line 72 "lex.l"
 { printf("OR\n"); return OR; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 71 "lex.l"
+#line 73 "lex.l"
 { printf("NOT\n"); return NOT; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 73 "lex.l"
+#line 75 "lex.l"
 { printf("MAYOR\n"); return MAYOR; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 74 "lex.l"
+#line 76 "lex.l"
 { printf("MENOR\n"); return MENOR; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 75 "lex.l"
+#line 77 "lex.l"
 { printf("IGUALDAD\n"); return IGUALDAD; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 77 "lex.l"
+#line 79 "lex.l"
 { printf("MOD\n"); return MOD; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 78 "lex.l"
+#line 80 "lex.l"
 { printf("RESTA\n"); return RESTA; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 79 "lex.l"
+#line 81 "lex.l"
 { printf("DIV\n"); return DIV; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 81 "lex.l"
+#line 83 "lex.l"
 {}
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */
 YY_RULE_SETUP
-#line 82 "lex.l"
+#line 84 "lex.l"
 {}
 	YY_BREAK
 case 33:
 /* rule 33 can match eol */
 YY_RULE_SETUP
-#line 84 "lex.l"
+#line 86 "lex.l"
 {}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 85 "lex.l"
+#line 87 "lex.l"
 {}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 87 "lex.l"
+#line 89 "lex.l"
 {
                 fprintf(stderr,
                         "Error léxico en línea %d: carácter inesperado '%s'\n",
@@ -1013,7 +1014,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 93 "lex.l"
+#line 95 "lex.l"
 ECHO;
 	YY_BREAK
 #line 1020 "lex.yy.c"
@@ -2033,6 +2034,6 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 93 "lex.l"
+#line 95 "lex.l"
 
 
