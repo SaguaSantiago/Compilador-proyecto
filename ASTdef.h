@@ -14,10 +14,20 @@ typedef enum TipoNodo {
   NODO_SUMA,
   NODO_MULTIPLICACION,
   NODO_IDENTIFICADOR,
-  NODO_NUMERO,
-  NODO_PROGRAMA,
-  NODO_BOOLEAN
-} Tipo_nodo;
+  NODO_RESTA,
+  NODO_DIVISION,
+  NODO_MOD,
+  NODO_AND,
+  NODO_OR,
+  NODO_NOT,
+  NODO_IGUALDAD,
+  NODO_MAYOR,
+  NODO_MENOR,
+  NODO_FLOAT,
+  NODO_INT,
+  NODO_BOOLEAN,
+  NODO_PROGRAMA
+} TipoNodo;
 
 typedef struct Nodo {
   Simbolo *simbolo;
@@ -34,12 +44,12 @@ typedef struct Nodo {
 typedef struct Nodo_Id {
   struct Nodo_Id *sig;
   char *Id;
-} Nodo_id;
+} NodoId;
 
 /**
  * Crea un nuevo nodo del arbol sintactico
  * (En caso de que se desee una hoja *izq,*der = NULL)
  * */
-Nodo *crearNodo(Tipo_nodo tipo, Simbolo *simbolo, ASTNodo *izq, ASTNodo *der);
+ASTNodo *crearNodo(TipoNodo tipo, Simbolo *simbolo, ASTNodo *izq, ASTNodo *der);
 
 #endif
