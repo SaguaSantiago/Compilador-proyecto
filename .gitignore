@@ -1,6 +1,21 @@
-lex.yy.c
-bisson.tab.c
-
+# Ejecutables
 compilador
+c-tds
+c-tds.exe
 *.o
 
+# Salidas del compilador
+*.out
+*.sint
+*.lex
+
+# Los archivos esperados de los tests se entregan, no se ignoran:
+!tests/expected/*.sint
+!tests/expected/*.lex
+
+# Los generados por bison/flex (bisson.tab.c, bisson.tab.h y lex.yy.c)
+# se entregan trackeados: asi el proyecto compila con solo gcc, sin
+# necesidad de tener instalados bison/flex.
+
+# Salida temporal de los tests
+tests/_out

@@ -1,0 +1,10 @@
+// comentario de una linea
+int a;
+
+/*
+  comentario de bloque
+  con varias lineas
+*/
+void main() {
+  a = 1; // comentario al final de linea
+}

@@ -1,0 +1,4 @@
+int a;
+float b;
+boolean c;
+int x, y, z;

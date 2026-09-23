@@ -4,6 +4,8 @@
     int yylex(void);
     extern int yywrap(void);
     extern int yylineno; 
+    /* Se pone en 1 ante un error lexico (caracter inesperado). */
+    int error_lexico = 0;
 %}
 
 %option yylineno
@@ -17,68 +19,70 @@ Comentario_bloque	    "/*"(.|\n)*"*/"
 Comentario_linea 	    "//".*
 
 %%
-"int"       { printf("INT\n"); return INT; }
-"float"     { printf("FLOAT\n"); return FLOAT; }
-"boolean"      { printf("BOOLEAN\n"); return BOOLEAN; }
-"void"      { printf("VOID\n"); return VOID; }
+"int"       { fprintf(yyout, "INT\n"); return INT; }
+"boolean"      { fprintf(yyout, "BOOLEAN\n"); return BOOLEAN; }
+"void"      { fprintf(yyout, "VOID\n"); return VOID; }
 
-"return"    { printf("RETURN\n"); return RETURN; }
+"return"    { fprintf(yyout, "RETURN\n"); return RETURN; }
 
-"if"	    { printf("IF\n"); return IF; }
-"else"      { printf("ELSE\n"); return ELSE; }
+"if"	    { fprintf(yyout, "IF\n"); return IF; }
+"else"      { fprintf(yyout, "ELSE\n"); return ELSE; }
 
-"while"     { printf("WHILE\n"); return WHILE; }
+"while"     { fprintf(yyout, "WHILE\n"); return WHILE; }
+"float"     { fprintf(yyout, "FLOAT\n"); return FLOAT; }
 
 "true"      { 
     yylval.valor = 1;
-    printf("TRUE\n");
+    fprintf(yyout, "TRUE\n");
     return TRUE; 
 }
 "false"     { 
     yylval.valor = 0;
-    printf("FALSE\n");
+    fprintf(yyout, "FALSE\n");
     return FALSE; 
 }
 
 {Id} { 
     yylval.nombre = strdup(yytext);
-    printf("Id\n");
+    fprintf(yyout, "Id\n");
     return Id; 
 }
 {Int} { 
     yylval.valor = atoi(yytext);
-    printf("INT_LITERAL\n");
+    fprintf(yyout, "INT_LITERAL\n");
     return INT_LITERAL; 
 }
 
 {Float} {
-    yylval.valor = atoi(yytext);
-    printf("FLOAT_LITERAL\n");
+    yylval.valor = atof(yytext);
+    fprintf(yyout, "FLOAT_LITERAL\n");
     return FLOAT_LITERAL;
 }
 
 
-"+"         { printf("SUMA\n"); return SUMA; }
-"*"         { printf("MULTIPLICACION\n"); return MULTIPLICACION; }
-"="         { printf("ASIGNACION\n"); return ASIGNACION; }
+"+"         { fprintf(yyout, "SUMA\n"); return SUMA; }
+"*"         { fprintf(yyout, "MULTIPLICACION\n"); return MULTIPLICACION; }
+"="         { fprintf(yyout, "ASIGNACION\n"); return ASIGNACION; }
 
-"("         { printf("PARENTESIS_IZQ\n"); return PARENTESIS_IZQ; }
-")"         { printf("PARENTESIS_DER\n"); return PARENTESIS_DER; }
-"{"         { printf("LLAVE_IZQ\n"); return LLAVE_IZQ; }
-"}"         { printf("LLAVE_DER\n"); return LLAVE_DER; }
-";"         { printf("PUNTO_COMA\n"); return PUNTO_COMA; }
+"("         { fprintf(yyout, "PARENTESIS_IZQ\n"); return PARENTESIS_IZQ; }
+")"         { fprintf(yyout, "PARENTESIS_DER\n"); return PARENTESIS_DER; }
+"{"         { fprintf(yyout, "LLAVE_IZQ\n"); return LLAVE_IZQ; }
+"}"         { fprintf(yyout, "LLAVE_DER\n"); return LLAVE_DER; }
+";"         { fprintf(yyout, "PUNTO_COMA\n"); return PUNTO_COMA; }
 
-"&&"        { printf("AND\n"); return AND; }
-"||"	    { printf("OR\n"); return OR; }
-"!"         { printf("NOT\n"); return NOT; }
+","	    { fprintf(yyout, "COMA\n"); return COMA; }
 
-">"	    { printf("MAYOR\n"); return MAYOR; }
-"<"	    { printf("MENOR\n"); return MENOR; }
-"=="	    { printf("IGUALDAD\n"); return IGUALDAD; }
+"&&"        { fprintf(yyout, "AND\n"); return AND; }
+"||"	    { fprintf(yyout, "OR\n"); return OR; }
+"!"         { fprintf(yyout, "NOT\n"); return NOT; }
 
-"%"	    { printf("MOD\n"); return MOD; }
-"-"	    { printf("RESTA\n"); return RESTA; }
-"/"	    { printf("DIV\n"); return DIV; }
+">"	    { fprintf(yyout, "MAYOR\n"); return MAYOR; }
+"<"	    { fprintf(yyout, "MENOR\n"); return MENOR; }
+"=="	    { fprintf(yyout, "IGUALDAD\n"); return IGUALDAD; }
+
+"%"	    { fprintf(yyout, "MOD\n"); return MOD; }
+"-"	    { fprintf(yyout, "RESTA\n"); return RESTA; }
+"/"	    { fprintf(yyout, "DIV\n"); return DIV; }
 
 [ \t\r]+   {}
 \n         {}
@@ -87,6 +91,7 @@ Comentario_linea 	    "//".*
 {Comentario_linea}  {}
 
 .           {
+                error_lexico = 1;
                 fprintf(stderr,
                         "Error léxico en línea %d: carácter inesperado '%s'\n",
                         yylineno,

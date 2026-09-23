@@ -1,0 +1,11 @@
+int inc(int x) {
+  return x;
+}
+int suma(int a, int b) {
+  return a + b;
+}
+void main() {
+  int r;
+  r = inc(r);
+  r = suma(r 1);
+}
