@@ -24,7 +24,7 @@
 }
 
 %token MAIN BOOLEAN VOID RETURN SUMA MULTIPLICACION ASIGNACION INT FLOAT PARENTESIS_IZQ PARENTESIS_DER LLAVE_IZQ LLAVE_DER PUNTO_COMA COMA IF ELSE WHILE AND OR NOT MAYOR MENOR IGUALDAD MOD RESTA DIV
-%token<valor_float> FLOAT_LITERAl
+%token<valor_float> FLOAT_LITERAL
 %token<valor_int> INT_LITERAL TRUE FALSE // Podriamos poner BOOLEAN_LITERAL pero tendriamos que comparar strings en Flex. 
 %token<nombre> Id
 
@@ -74,6 +74,11 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
             $$ = crearNodo(NODO_DECL_MET, NULL, $4, NULL);
            }
            ;
+Var_declaraciones: Var_decl Var_declaraciones
+                  |
+                  ;
+                  
+Var_decl: Tipo_dato Id_list PUNTO_COMA;
 
 Id_list: Id COMA Id_list // TODO: sacar creacion del nodo a otro file en una funcion
        {

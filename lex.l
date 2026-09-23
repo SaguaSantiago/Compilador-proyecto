@@ -18,6 +18,7 @@ Comentario_linea 	    "//".*
 
 %%
 "int"       { printf("INT\n"); return INT; }
+"float"     { printf("FLOAT\n"); return FLOAT; }
 "boolean"      { printf("BOOLEAN\n"); return BOOLEAN; }
 "void"      { printf("VOID\n"); return VOID; }
 
@@ -27,7 +28,6 @@ Comentario_linea 	    "//".*
 "else"      { printf("ELSE\n"); return ELSE; }
 
 "while"     { printf("WHILE\n"); return WHILE; }
-"float"     { printf("FLOAT\n"); return FLOAT; }
 
 "true"      { 
     yylval.valor = 1;
