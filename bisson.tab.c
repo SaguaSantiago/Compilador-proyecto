@@ -67,7 +67,7 @@
 
 
 /* First part of user prologue.  */
-#line 5 "bisson.y"
+#line 19 "bisson.y"
  
     #include <stdio.h>
     #include "enums.h"
@@ -548,12 +548,12 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int8 yyrline[] =
 {
-       0,    31,    31,    33,    34,    37,    38,    39,    42,    43,
-      46,    48,    49,    52,    52,    52,    54,    55,    56,    59,
-      61,    62,    65,    66,    67,    68,    69,    70,    71,    74,
-      76,    77,    79,    80,    81,    82,    83,    84,    85,    88,
-      89,    90,    93,    93,    93,    93,    93,    95,    95,    97,
-      97,    97,    99,    99,    99,    99
+       0,    45,    45,    47,    48,    51,    52,    53,    56,    57,
+      60,    62,    63,    66,    66,    66,    68,    69,    70,    73,
+      75,    76,    79,    80,    81,    82,    83,    84,    85,    88,
+      90,    91,    93,    94,    95,    96,    97,    98,    99,   102,
+     103,   104,   107,   107,   107,   107,   107,   109,   109,   111,
+     111,   111,   113,   113,   113,   113
 };
 #endif
 
@@ -1639,7 +1639,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 100 "bisson.y"
+#line 114 "bisson.y"
 
 
 void yyerror(const char *s)

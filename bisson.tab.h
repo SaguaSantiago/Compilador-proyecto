@@ -45,7 +45,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 1 "bisson.y"
+#line 15 "bisson.y"
 
   #include "enums.h"
 
@@ -100,7 +100,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 16 "bisson.y"
+#line 30 "bisson.y"
 
   ASTNodo nodo;
   float valor; // Los tipo INT seran tratados como FLOAT internamente.
