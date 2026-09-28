@@ -171,10 +171,10 @@ Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER
       }
       ;
 
-Expresiones: Expr Expresiones
-          | Expr
+Expresiones: Expr Expresiones {$$ = crearNodo(NODO_EXPRESIONES, NULL, $1, $2);}
+          | Expr {$$ = $1;}
           ;
-Expr: 
+Expr:
     Id
     | Metodo_invocacion {$$ = $1;}
     | Literal {$$ = $1;}
@@ -206,11 +206,17 @@ Expr:
       $$ = crearNodo(NODO_RESTA, NULL, NULL, $2);
     }
     | PARENTESIS_IZQ Expr PARENTESIS_DER
+    {
+      $$ = $2; 
+    }
     ;
 
 Op_binario: Op_arit
+          {$$ = $1;}
           | Op_rel
+          {$$ = $1;}
           | Op_cond
+          {$$ = $1;}
           ;
 
 Op_arit: SUMA
