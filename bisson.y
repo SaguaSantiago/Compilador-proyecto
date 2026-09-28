@@ -125,17 +125,17 @@ Params_decl: Tipo_dato Id COMA Params_decl
            ;
 
 Bloque: LLAVE_IZQ Var_declaraciones Sentencias_list LLAVE_DER{
-  $$ = crearASTNodo(NODO_SENTENCIAS,NULL,$2,$3);
+  $$ = crearASTNodo(NODO_BLOQUE,NULL,$2,$3);
 }
 ;
 
-Sentencias_list: Sentencia Sentencias_list
-               | %empty
+Sentencias_list: Sentencia Sentencias_list {$$ = crearASTNodo(NODO_SENTENCIAS, NULL, $1, $2);}
+               | %empty {$$ = NULL;}
                ;
 
 Sentencia: Id ASIGNACION Expr PUNTO_COMA
       {
-        Simbolo* idEncontrado = buscarSimbolo($1, tablaSimbolos); // TODO: hacer trabla de simbolos y tipo Simbolo 
+        Simbolo* idEncontrado = buscarSimbolo($1, tablaSimbolos); 
 
         if(idEncontrado == NULL) { // TODO poner linea de error
             fprintf(stderr, "Error: variable '%s' no declarada.\n", $1);
