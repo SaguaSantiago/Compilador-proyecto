@@ -186,7 +186,14 @@ Expresiones: Expr Expresiones {
           }
           ;
 Expr:
-    Id
+    Id{
+      Simbolo* simbolo = buscarSimbolo($1, tablaSimbolos);
+      if(simbolo == NULL){
+        fprintf(stderr, "Error: identificador '%s' no declarado.\n", $1);
+        exit(1);
+      }
+      $$ = crearASTNodo(NODO_IDENTIFICADOR, simbolo, NULL, NULL);
+    }
     | Metodo_invocacion {$$ = $1;}
     | Literal {$$ = $1;}
     | Expr Op_binario Expr
@@ -202,19 +209,25 @@ Expr:
         fprintf(stderr, "Error: tipo de dato '%s' incompatible con operador '-'.\n", $2);
         exit(1);
       }
-
-      $2->simbolo->valor = -$2->simbolo->valor;
-      $$ = crearASTNodo(NODO_RESTA, NULL, NULL, $2);
+      Simbolo* simbolo = malloc(sizeof(Simbolo));
+      simbolo->tipoSimbolo = SIMBOLO_RESTA;
+      agregarSimbolo(simbolo, tablaSimbolos);
+      $2->simbolo->valor = -$2->simbolo->valor; //TODO funciona?
+      $$ = crearASTNodo(NODO_RESTA, simbolo, NULL, $2);
     }
     | NOT Expr
     {
       if ($2->simbolo->tipo != TIPO_BOOLEAN){
         fprintf(stderr, "Error: tipo de dato '%s' incompatible con operador '!'.\n", $2);
-        exit(1);_D
+        exit(1);
       }
 
-      $2->simbolo->valor = abs($2->simbolo->valor - 1);
-      $$ = crearASTNodo(NODO_RESTA, NULL, NULL, $2);
+      Simbolo* simbolo = malloc(sizeof(Simbolo));
+      simbolo->tipo = TIPO_BOOLEAN;
+      simbolo->tipoSimbolo = SIMBOLO_NOT;
+      agregarSimbolo(simbolo, tablaSimbolos);
+      $2->simbolo->valor = abs($2->simbolo->valor - 1); //TODO ver si funciona
+      $$ = crearASTNodo(NODO_NOT, simbolo, NULL, $2);
     }
     | PARENTESIS_IZQ Expr PARENTESIS_DER
     {
