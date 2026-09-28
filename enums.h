@@ -31,6 +31,7 @@ typedef enum Tipo_simbolo {
   SIMBOLO_MENOR,
   SIMBOLO_IGUALDAD,
   SIMBOLO_COMA,
-
+  SIMBOLO_VAR_DECL,
+  SIMBOLO_MET_DECL
 } TipoSimbolo;
 #endif

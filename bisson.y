@@ -19,6 +19,7 @@
 
 %union {
   ASTNodo nodo;
+  TipoDato tipo_dato;
   int valor_int;
   float valor_float;
   char* nombre;
@@ -30,6 +31,7 @@
 %token<valor_int> INT_LITERAL TRUE FALSE // Podriamos poner BOOLEAN_LITERAL pero tendriamos que comparar strings en Flex. 
 %token<nombre> Id
 
+%type<tipo_dato> Tipo_dato
 %type<nodo> Program Declaraciones Declaracion Bloque Sentencias_list Sentencia Metodo_invocacion Expresiones Expr Literal
 %type<lista_nombres> Id_list
 %start Program
@@ -50,30 +52,48 @@ Declaraciones: Declaracion Declaraciones
 
 Declaracion: Tipo_dato Id_list PUNTO_COMA 
            {
-           // TODO: guardar tipo de datos en el simbolos
+            TipoDato tipo = $1;
             NodoId* nombres = $2;
             ASTNodo* decl_raiz = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
             ASTNodo* aux = decl_raiz;
 
             while(nombres.sig != NULL){
-              char* id = nombres.id;
-              // TODO: guardar id en el simbolo
+              Simbolo* simbolo = crearSimbolo();
+              simbolo->tipoSimbolo = SIMBOLO_VAR_DECL;
+              simbolo->tipoDato = tipo;
+              simbolo->nombre = strdup(nombres->id);
+              
+              agregarSimbolo(simbolo, ts);
+
               ASTNodo* nuevoNodo = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
               aux->izq = nuevoNodo;
               aux = nuevoNodo;
-              nombres = nombres.sig;
-              free(nuevoNodo);
+              nombres = nombres->sig;
             }
             free(aux);
             $$ = decl_raiz;
            }
            | Tipo_dato Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque
            {
-            $$ = crearASTNodo(NODO_DECL_MET, NULL, $4, NULL);
+            Simbolo* simbolo = crearSimbolo();
+            simbolo->tipoSimbolo = SIMBOLO_MET_DECL;
+            simbolo->tipoDato = $1;
+            simbolo->nombre = strdup($2);
+            simbolo->nodoBloque = $6;
+            
+            agregarSimbolo(simbolo, ts);
+            $$ = crearASTNodo(NODO_DECL_MET, simbolo, $4, NULL);
            }
            | VOID Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque
            {
-            $$ = crearASTNodo(NODO_DECL_MET, NULL, $4, NULL);
+            Simbolo* simbolo = crearSimbolo();
+            simbolo->tipoSimbolo = SIMBOLO_MET_DECL;
+            simbolo->tipoDato = $1;
+            simbolo->nombre = strdup($2);
+            simbolo->nodoBloque = $6;
+
+            agregarSimbolo(simbolo, ts);
+            $$ = crearASTNodo(NODO_DECL_MET, simbolo, $4, NULL);
            }
            ;
 
