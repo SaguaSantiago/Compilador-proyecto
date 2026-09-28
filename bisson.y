@@ -11,7 +11,7 @@
 
     int yylex(void);
     void yyerror(const char *s);
-    Nodo *raiz;
+    ASTNodo *raiz;
 
     NodoSimbolo *listaExpresiones = NULL;
 %}
@@ -22,7 +22,7 @@
   int valor_int;
   float valor_float;
   char* nombre;
-  NodoId lista_nombres;
+  NodoId* lista_nombres;
 }
 
 %token MAIN BOOLEAN VOID RETURN SUMA MULTIPLICACION ASIGNACION INT FLOAT PARENTESIS_IZQ PARENTESIS_DER LLAVE_IZQ LLAVE_DER PUNTO_COMA COMA IF ELSE WHILE AND OR NOT MAYOR MENOR IGUALDAD MOD RESTA DIV
