@@ -12,6 +12,8 @@
     int yylex(void);
     void yyerror(const char *s);
     Nodo *raiz;
+
+    NodoSimbolo *listaExpresiones = NULL;
 %}
 %define parse.error detailed
 
@@ -160,19 +162,21 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
 
 Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER
       {
-        Simbolo* idEncontrado = buscarSimbolo($1, tablaSimbolos);
-
-        if(idEncontrado == NULL) { // TODO poner linea de error
-            fprintf(stderr, "Error: metodo '%s' no declarado.\n", $1);
-            exit(1);
-        }
-
-        $$ = $1; //TODO: ver que hacer con la invocacion de metodos a nivel AST 
-      }
+       NodoSimbolo* expresiones = listaExpresiones;
+       free(listaExpresiones);
+       listaExpresiones = NULL;
+       
+       $$ = crearASTNodo(NODO_INVOCACION, NULL, $3, NULL);
+       }
       ;
 
-Expresiones: Expr Expresiones
-          | Expr
+Expresiones: Expr Expresiones {
+            agregarSimboloALista($1->simbolo, listaExpresiones);
+            $$ = crearASTNodo(NODO_EXPRESIONES, NULL, $1, $2);
+           }
+          | Expr {
+            $$ = $1;
+          }
           ;
 Expr: 
     Id
