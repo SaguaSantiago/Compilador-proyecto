@@ -1,7 +1,6 @@
 #ifndef AST_DEF_H
 #define AST_DEF_H
-typedef struct Simbolo {
-} Simbolo; // TODO: Sacar el tipo en un archivo dedicado a la tabla de simbolos
+#include "TSdef.h"
 
 typedef enum TipoNodo {
   NODO_ROOT,

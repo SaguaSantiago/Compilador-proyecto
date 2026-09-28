@@ -2,7 +2,8 @@
 #include "ASTdef.h"
 #include <stdlib.h>
 
-ASTNodo *crearNodo(TipoNodo tipo, Simbolo *simbolo, ASTNodo *izq, ASTNodo *der) {
+ASTNodo *crearNodo(TipoNodo tipo, Simbolo *simbolo, ASTNodo *izq,
+                   ASTNodo *der) {
   ASTNodo *nodo = (ASTNodo *)malloc(sizeof(ASTNodo));
 
   nodo->tipo = tipo;
