@@ -11,7 +11,9 @@
 
     int yylex(void);
     void yyerror(const char *s);
-    Nodo *raiz;
+    ASTNodo *raiz;
+
+    NodoSimbolo *listaExpresiones = NULL;
 %}
 %define parse.error detailed
 
@@ -20,7 +22,7 @@
   int valor_int;
   float valor_float;
   char* nombre;
-  NodoId lista_nombres;
+  NodoId* lista_nombres;
 }
 
 %token MAIN BOOLEAN VOID RETURN SUMA MULTIPLICACION ASIGNACION INT FLOAT PARENTESIS_IZQ PARENTESIS_DER LLAVE_IZQ LLAVE_DER PUNTO_COMA COMA IF ELSE WHILE AND OR NOT MAYOR MENOR IGUALDAD MOD RESTA DIV
@@ -123,17 +125,17 @@ Params_decl: Tipo_dato Id COMA Params_decl
            ;
 
 Bloque: LLAVE_IZQ Var_declaraciones Sentencias_list LLAVE_DER{
-  $$ = crearASTNodo(NODO_SENTENCIAS,NULL,$2,$3);
+  $$ = crearASTNodo(NODO_BLOQUE,NULL,$2,$3);
 }
 ;
 
-Sentencias_list: Sentencia Sentencias_list
-               | %empty
+Sentencias_list: Sentencia Sentencias_list {$$ = crearASTNodo(NODO_SENTENCIAS, NULL, $1, $2);}
+               | %empty {$$ = NULL;}
                ;
 
 Sentencia: Id ASIGNACION Expr PUNTO_COMA
       {
-        Simbolo* idEncontrado = buscarSimbolo($1, tablaSimbolos); // TODO: hacer trabla de simbolos y tipo Simbolo 
+        Simbolo* idEncontrado = buscarSimbolo($1, tablaSimbolos); 
 
         if(idEncontrado == NULL) { // TODO poner linea de error
             fprintf(stderr, "Error: variable '%s' no declarada.\n", $1);
@@ -149,30 +151,39 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
         $$ = crearASTNodo(NODO_ASIGNACION, NULL, hojaId, $3);
       }
 
-      | Metodo_invocacion PUNTO_COMA
+      | Metodo_invocacion PUNTO_COMA {$$ = $1}
       
-      | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque
-      | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque ELSE Bloque
-      | WHILE Expr Bloque
-      | RETURN Expr PUNTO_COMA
-      | RETURN PUNTO_COMA
+      | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque {
+        ASTNodo* bloques = crearASTNodo(NODO_BLOQUES_IF, NULL, $5, NULL);
+        $$ = crearASTNodo(NODO_IF, NULL, $3, bloques);
+      }
+      | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque ELSE Bloque {
+        ASTNodo* bloques = crearASTNodo(NODO_BLOQUES_IF, NULL, $5, $7);
+        
+        $$ = crearASTNodo(NODO_IF_ELSE, NULL, $3, bloques);
+      }
+      | WHILE Expr Bloque {$$ = crearASTNodo(NODO_WHILE, NULL, $1, $2);}
+      | RETURN Expr PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, $1, NULL);}
+      | RETURN PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, NULL, NULL);}
       ;
 
 Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER
       {
-        Simbolo* idEncontrado = buscarSimbolo($1, tablaSimbolos);
-
-        if(idEncontrado == NULL) { // TODO poner linea de error
-            fprintf(stderr, "Error: metodo '%s' no declarado.\n", $1);
-            exit(1);
-        }
-
-        $$ = $1; //TODO: ver que hacer con la invocacion de metodos a nivel AST 
-      }
+       NodoSimbolo* expresiones = listaExpresiones;
+       free(listaExpresiones);
+       listaExpresiones = NULL;
+       
+       $$ = crearASTNodo(NODO_INVOCACION, NULL, $3, NULL);
+       }
       ;
 
-Expresiones: Expr Expresiones {$$ = crearASTNodo(NODO_EXPRESIONES, NULL, $1, $2);}
-          | Expr {$$ = $1;}
+Expresiones: Expr Expresiones {
+            agregarSimboloALista($1->simbolo, listaExpresiones);
+            $$ = crearASTNodo(NODO_EXPRESIONES, NULL, $1, $2);
+           }
+          | Expr {
+            $$ = $1;
+          }
           ;
 Expr:
     Id {$$ = $1;}
