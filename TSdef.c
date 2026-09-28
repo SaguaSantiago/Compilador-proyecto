@@ -8,3 +8,12 @@ void agregarSimboloALista(Simbolo *simbolo, NodoSimbolo *lista) {
 
   lista = nuevoNodo;
 }
+
+Simbolo *crearSimbolo() {
+  Simbolo *nuevoSimbolo = (Simbolo *)malloc(sizeof(Simbolo));
+  nuevoSimbolo->nombre = NULL;
+  nuevoSimbolo->parametros = NULL;
+  nuevoSimbolo->valor = 0;
+
+  return nuevoSimbolo;
+}
