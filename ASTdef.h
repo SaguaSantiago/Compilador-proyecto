@@ -11,6 +11,9 @@ typedef enum TipoNodo {
   NODO_INVOCACION,
   NODO_SENTENCIAS,
   NODO_ASIGNACION,
+  NODO_IF,
+  NODO_IF_ELSE,
+  NODO_BLOQUES_IF,
   NODO_RETORNO,
   NODO_SUMA,
   NODO_MULTIPLICACION,
@@ -51,6 +54,7 @@ typedef struct Nodo_Id {
  * Crea un nuevo nodo del arbol sintactico
  * (En caso de que se desee una hoja *izq,*der = NULL)
  * */
-ASTNodo *crearASTNodo(TipoNodo tipo, Simbolo *simbolo, ASTNodo *izq, ASTNodo *der);
+ASTNodo *crearASTNodo(TipoNodo tipo, Simbolo *simbolo, ASTNodo *izq,
+                      ASTNodo *der);
 
 #endif

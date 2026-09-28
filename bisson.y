@@ -151,13 +151,20 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
         $$ = crearASTNodo(NODO_ASIGNACION, NULL, hojaId, $3);
       }
 
-      | Metodo_invocacion PUNTO_COMA
+      | Metodo_invocacion PUNTO_COMA {$$ = $1}
       
-      | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque
-      | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque ELSE Bloque
-      | WHILE Expr Bloque
-      | RETURN Expr PUNTO_COMA
-      | RETURN PUNTO_COMA
+      | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque {
+        ASTNodo* bloques = crearASTNodo(NODO_BLOQUES_IF, NULL, $5, NULL);
+        $$ = crearASTNodo(NODO_IF, NULL, $3, bloques);
+      }
+      | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque ELSE Bloque {
+        ASTNodo* bloques = crearASTNodo(NODO_BLOQUES_IF, NULL, $5, $7);
+        
+        $$ = crearASTNodo(NODO_IF_ELSE, NULL, $3, bloques);
+      }
+      | WHILE Expr Bloque {$$ = crearASTNodo(NODO_WHILE, NULL, $1, $2);}
+      | RETURN Expr PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, $1, NULL);}
+      | RETURN PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, NULL, NULL);}
       ;
 
 Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER
