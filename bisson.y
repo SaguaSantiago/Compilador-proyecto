@@ -175,7 +175,7 @@ Expresiones: Expr Expresiones {$$ = crearASTNodo(NODO_EXPRESIONES, NULL, $1, $2)
           | Expr {$$ = $1;}
           ;
 Expr:
-    Id
+    Id {$$ = $1;}
     | Metodo_invocacion {$$ = $1;}
     | Literal {$$ = $1;}
     | Expr Op_binario Expr
