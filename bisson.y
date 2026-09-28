@@ -37,13 +37,13 @@
 
 Program: Declaraciones
        {
-        root = crearNodo(NODO_ROOT, NULL, $1, NULL);
+        root = crearASTNodo(NODO_ROOT, NULL, $1, NULL);
        }
        ;
 
 Declaraciones: Declaracion Declaraciones 
               {
-                $$ = crearNodo(NODO_DECLS, NULL, $1, $2);
+                $$ = crearASTNodo(NODO_DECLS, NULL, $1, $2);
               }
               |
               ; 
@@ -52,13 +52,13 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
            {
            // TODO: guardar tipo de datos en el simbolos
             NodoId* nombres = $2;
-            ASTNodo* decl_raiz = crearNodo(NODO_DECL_VAR, NULL, NULL, NULL);
+            ASTNodo* decl_raiz = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
             ASTNodo* aux = decl_raiz;
 
             while(nombres.sig != NULL){
               char* id = nombres.id;
               // TODO: guardar id en el simbolo
-              ASTNodo* nuevoNodo = crearNodo(NODO_DECL_VAR, NULL, NULL, NULL);
+              ASTNodo* nuevoNodo = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
               aux->izq = nuevoNodo;
               aux = nuevoNodo;
               nombres = nombres.sig;
@@ -69,11 +69,11 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
            }
            | Tipo_dato Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque
            {
-            $$ = crearNodo(NODO_DECL_MET, NULL, $4, NULL);
+            $$ = crearASTNodo(NODO_DECL_MET, NULL, $4, NULL);
            }
            | VOID Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque
            {
-            $$ = crearNodo(NODO_DECL_MET, NULL, $4, NULL);
+            $$ = crearASTNodo(NODO_DECL_MET, NULL, $4, NULL);
            }
            ;
 
@@ -109,14 +109,14 @@ Tipo_dato: INT
 
 Params_decl: Tipo_dato Id COMA Params_decl 
            {
-            ASTNodo nodo = crearNodo(NODO_DECL_VAR, NULL, NULL, NULL);
+            ASTNodo nodo = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
             
-            $$ = crearNodo(NODO_PARAM_DECL, NULL, nodo, $4);
+            $$ = crearASTNodo(NODO_PARAM_DECL, NULL, nodo, $4);
            }
            | Tipo_dato Id
            {
-            ASTNodo nodo = crearNodo(NODO_DECL_VAR, NULL, NULL, NULL);
-            $$ = crearNodo(NODO_PARAM_DECL, NULL, nodo, NULL);
+            ASTNodo nodo = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
+            $$ = crearASTNodo(NODO_PARAM_DECL, NULL, nodo, NULL);
            }
            | %empty
            {
@@ -125,7 +125,7 @@ Params_decl: Tipo_dato Id COMA Params_decl
            ;
 
 Bloque: LLAVE_IZQ Var_declaraciones Sentencias_list LLAVE_DER{
-  $$ = crearNodo(NODO_SENTENCIAS,NULL,$2,$3);
+  $$ = crearASTNodo(NODO_SENTENCIAS,NULL,$2,$3);
 }
 ;
 
@@ -146,9 +146,9 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
         }
         idEncontrado->valor = $3->simbolo->valor;
 
-        Nodo* hojaId = crearNodo(NODO_IDENTIFICADOR, idEncontrado, NULL, NULL);
+        Nodo* hojaId = crearASTNodo(NODO_IDENTIFICADOR, idEncontrado, NULL, NULL);
 
-        $$ = crearNodo(NODO_ASIGNACION, NULL, hojaId, $3);
+        $$ = crearASTNodo(NODO_ASIGNACION, NULL, hojaId, $3);
       }
 
       | Metodo_invocacion PUNTO_COMA
@@ -178,7 +178,7 @@ Expresiones: Expr Expresiones {
             $$ = $1;
           }
           ;
-Expr: 
+Expr:
     Id
     | Metodo_invocacion {$$ = $1;}
     | Literal {$$ = $1;}
@@ -197,7 +197,7 @@ Expr:
       }
 
       $2->simbolo->valor = -$2->simbolo->valor;
-      $$ = crearNodo(NODO_RESTA, NULL, NULL, $2);
+      $$ = crearASTNodo(NODO_RESTA, NULL, NULL, $2);
     }
     | NOT Expr
     {
@@ -207,35 +207,41 @@ Expr:
       }
 
       $2->simbolo->valor = abs($2->simbolo->valor - 1);
-      $$ = crearNodo(NODO_RESTA, NULL, NULL, $2);
+      $$ = crearASTNodo(NODO_RESTA, NULL, NULL, $2);
     }
     | PARENTESIS_IZQ Expr PARENTESIS_DER
+    {
+      $$ = $2; 
+    }
     ;
 
 Op_binario: Op_arit
+          {$$ = $1;}
           | Op_rel
+          {$$ = $1;}
           | Op_cond
+          {$$ = $1;}
           ;
 
 Op_arit: SUMA
         { 
-          $$ = crearNodo(NODO_SUMA, NULL, NULL, NULL);
+          $$ = crearASTNodo(NODO_SUMA, NULL, NULL, NULL);
         }
         | MULTIPLICACION 
         {
-          $$ = crearNodo(NODO_MULTIPLICACION, NULL, NULL, NULL);
+          $$ = crearASTNodo(NODO_MULTIPLICACION, NULL, NULL, NULL);
         }
         | RESTA
         {
-          $$ = crearNodo(NODO_RESTA, NULL, NULL, NULL);
+          $$ = crearASTNodo(NODO_RESTA, NULL, NULL, NULL);
         }
         | DIV
         {
-          $$ = crearNodo(NODO_DIVISION, NULL, NULL, NULL);
+          $$ = crearASTNodo(NODO_DIVISION, NULL, NULL, NULL);
         }
         | MOD
         {
-          $$ = crearNodo(NODO_MOD, NULL, NULL, NULL);
+          $$ = crearASTNodo(NODO_MOD, NULL, NULL, NULL);
         }
         ;//TODO: resolver la inscripcion de simbolos para la TS en los operadores binarios 
 
@@ -247,7 +253,7 @@ AND{
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
-  $$ = crearNodo(NODO_AND,simbolo,NULL,NULL);
+  $$ = crearASTNodo(NODO_AND,simbolo,NULL,NULL);
 } 
 | OR{
   Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
@@ -256,7 +262,7 @@ AND{
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
-  $$ = crearNodo(NODO_OR,simbolo,NULL,NULL);
+  $$ = crearASTNodo(NODO_OR,simbolo,NULL,NULL);
 };
 
 Op_rel: 
@@ -267,7 +273,7 @@ IGUALDAD{
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
-  $$ = crearNodo(NODO_IGUALDAD,simbolo,NULL,NULL);
+  $$ = crearASTNodo(NODO_IGUALDAD,simbolo,NULL,NULL);
 } 
 | MENOR{
   Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
@@ -276,7 +282,7 @@ IGUALDAD{
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
-  $$ = crearNodo(NODO_MENOR,simbolo,NULL,NULL);
+  $$ = crearASTNodo(NODO_MENOR,simbolo,NULL,NULL);
 }
 | MAYOR{
   Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
@@ -285,7 +291,7 @@ IGUALDAD{
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
-  $$ = crearNodo(NODO_MAYOR,simbolo,NULL,NULL);
+  $$ = crearASTNodo(NODO_MAYOR,simbolo,NULL,NULL);
 };
 
 Literal: 
@@ -297,7 +303,7 @@ INT_LITERAL
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
-  $$ = crearNodo(NODO_INT,simbolo,NULL,NULL);
+  $$ = crearASTNodo(NODO_INT,simbolo,NULL,NULL);
 } 
 | FLOAT_LITERAL
 {
@@ -307,7 +313,7 @@ INT_LITERAL
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);// TODO: metodo necesario en la TS 
   
-  $$ = crearNodo(NODO_FLOAT,simbolo,NULL,NULL);
+  $$ = crearASTNodo(NODO_FLOAT,simbolo,NULL,NULL);
 }
 | FALSE
 {
@@ -317,7 +323,7 @@ INT_LITERAL
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
   
-  $$ = crearNodo(NODO_BOOLEAN,simbolo,NULL,NULL);
+  $$ = crearASTNodo(NODO_BOOLEAN,simbolo,NULL,NULL);
 }
 | TRUE
 {
@@ -327,7 +333,7 @@ INT_LITERAL
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
   
-  $$ = crearNodo(NODO_BOOLEAN,simbolo,NULL,NULL);
+  $$ = crearASTNodo(NODO_BOOLEAN,simbolo,NULL,NULL);
 }
 ;
 %%

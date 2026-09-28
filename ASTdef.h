@@ -51,6 +51,6 @@ typedef struct Nodo_Id {
  * Crea un nuevo nodo del arbol sintactico
  * (En caso de que se desee una hoja *izq,*der = NULL)
  * */
-ASTNodo *crearNodo(TipoNodo tipo, Simbolo *simbolo, ASTNodo *izq, ASTNodo *der);
+ASTNodo *crearASTNodo(TipoNodo tipo, Simbolo *simbolo, ASTNodo *izq, ASTNodo *der);
 
 #endif
