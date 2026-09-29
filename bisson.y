@@ -265,25 +265,45 @@ Op_binario: Op_arit
 
 Op_arit: SUMA
         { 
-          $$ = crearASTNodo(NODO_SUMA, NULL, NULL, NULL);
+          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          simbolo->tipoSimbolo = SIMBOLO_SUMA;
+          simbolo->valor = $1;
+          agregarSimbolo(simbolo, tablaSimbolos);
+          $$ = crearASTNodo(NODO_SUMA, simbolo, NULL, NULL);
         }
         | MULTIPLICACION 
         {
-          $$ = crearASTNodo(NODO_MULTIPLICACION, NULL, NULL, NULL);
+          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          simbolo->tipoSimbolo = SIMBOLO_MULTIPLICACION;
+          simbolo->valor = $1;
+          agregarSimbolo(simbolo, tablaSimbolos);
+          $$ = crearASTNodo(NODO_MULTIPLICACION, simbolo, NULL, NULL);
         }
         | RESTA
         {
-          $$ = crearASTNodo(NODO_RESTA, NULL, NULL, NULL);
+          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          simbolo->tipoSimbolo = SIMBOLO_RESTA;
+          simbolo->valor = $1;
+          agregarSimbolo(simbolo, tablaSimbolos);
+          $$ = crearASTNodo(NODO_RESTA, simbolo, NULL, NULL);
         }
         | DIV
         {
-          $$ = crearASTNodo(NODO_DIVISION, NULL, NULL, NULL);
+          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          simbolo->tipoSimbolo = SIMBOLO_DIV;
+          simbolo->valor = $1;
+          agregarSimbolo(simbolo, tablaSimbolos);
+          $$ = crearASTNodo(NODO_DIV, simbolo, NULL, NULL);
         }
         | MOD
         {
-          $$ = crearASTNodo(NODO_MOD, NULL, NULL, NULL);
+          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          simbolo->tipoSimbolo = SIMBOLO_MOD;
+          simbolo->valor = $1;
+          agregarSimbolo(simbolo, tablaSimbolos);
+          $$ = crearASTNodo(NODO_MOD, simbolo, NULL, NULL);
         }
-        ;//TODO: resolver la inscripcion de simbolos para la TS en los operadores binarios 
+        ;
 
 Op_cond: 
 AND{
