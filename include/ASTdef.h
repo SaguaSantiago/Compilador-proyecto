@@ -50,7 +50,7 @@ typedef struct ASTNodo {
  * */
 typedef struct Nodo_Id {
   struct Nodo_Id *sig;
-  char *Id;
+  char *id;
 } NodoId;
 
 /**

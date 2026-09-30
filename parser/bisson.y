@@ -130,7 +130,7 @@ Tipo_dato: INT
 
 Params_decl: Tipo_dato Id COMA Params_decl 
            {
-            ASTNodo nodo = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
+            ASTNodo *nodo = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
             
             $$ = crearASTNodo(NODO_PARAM_DECL, NULL, nodo, $4);
            }
@@ -173,7 +173,7 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
         }
         idEncontrado->valor = $3->simbolo->valor;
 
-        Nodo* hojaId = crearASTNodo(NODO_IDENTIFICADOR, idEncontrado, NULL, NULL);
+        ASTNodo* hojaId = crearASTNodo(NODO_IDENTIFICADOR, idEncontrado, NULL, NULL);
 
         $$ = crearASTNodo(NODO_ASIGNACION, NULL, hojaId, $3);
       }
