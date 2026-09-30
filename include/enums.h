@@ -4,7 +4,7 @@
 /**
  * Tipos de datos del lenguaje
  * */
-typedef enum Tipo_Dato { TIPO_INTEGER, TIPO_FLOAT, TIPO_BOOLEAN } TipoDato;
+typedef enum Tipo_Dato { TIPO_INTEGER, TIPO_FLOAT, TIPO_BOOLEAN, TIPO_VOID } TipoDato;
 
 typedef enum Tipo_simbolo {
   SIMBOLO_INTEGER_LITERAL,
