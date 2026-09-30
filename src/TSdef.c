@@ -1,7 +1,8 @@
 #include <stdlib.h>
+#include <string.h>
 #include "TSdef.h"
 
-void agregarSimbolo(Simbolo *nuevoSimbolo, TablaSimbolo *ts){
+int agregarSimbolo(Simbolo *nuevoSimbolo, TablaSimbolo *ts){
     int nivelActual = ts->nivelActual;
     NodoNivel* nodoActual = ts->niveles[nivelActual].sig;
 
@@ -33,9 +34,7 @@ void inicializarTs(TablaSimbolo *ts){
         ts->niveles[i].sig = NULL;
     }
 
-    ts->nivelActual = 0; 
-
-    return ts;
+    ts->nivelActual = 0;
 }
 
 void agregarNivel(TablaSimbolo *ts){
@@ -72,18 +71,19 @@ Simbolo* buscarSimbolo(char* nombre, TipoSimbolo tipoSimbolo, TablaSimbolo *tabl
     return NULL;
 }
 
-void agregarSimboloALista(Simbolo *simbolo, NodoSimbolo *lista) {
+void agregarSimboloALista(Simbolo *simbolo, NodoSimbolo **lista) {
   NodoSimbolo *nuevoNodo = (NodoSimbolo *)malloc(sizeof(NodoSimbolo));
   nuevoNodo->simbolo = simbolo;
-  nuevoNodo->sig = lista;
+  nuevoNodo->sig = *lista;
 
-  lista = nuevoNodo;
+  *lista = nuevoNodo;
 }
 
 Simbolo *crearSimbolo() {
   Simbolo *nuevoSimbolo = (Simbolo *)malloc(sizeof(Simbolo));
   nuevoSimbolo->nombre = NULL;
   nuevoSimbolo->parametros = NULL;
+  nuevoSimbolo->nodoBloque = NULL;
   nuevoSimbolo->valor = 0;
 
   return nuevoSimbolo;

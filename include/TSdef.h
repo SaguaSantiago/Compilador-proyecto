@@ -24,7 +24,7 @@ typedef struct TablaSimbolo {
   int nivelActual;
 } TablaSimbolo;
 
-void agregarSimbolo(Simbolo *nuevoSimbolo, TablaSimbolo *ts);
+int agregarSimbolo(Simbolo *nuevoSimbolo, TablaSimbolo *ts);
 
 void inicializarTs(TablaSimbolo *ts);
 
@@ -41,5 +41,5 @@ typedef struct nodo_simbolo {
   struct nodo_simbolo *sig;
 } NodoSimbolo;
 
-void agregarSimboloALista(Simbolo *simbolo, NodoSimbolo *lista);
+void agregarSimboloALista(Simbolo *simbolo, NodoSimbolo **lista);
 #endif

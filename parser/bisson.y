@@ -5,6 +5,7 @@
 %{ 
     #include <stdio.h>
     #include <stdlib.h>
+    #include <string.h>
     #include "compilador.h"
     extern int yylineno;
 
@@ -78,7 +79,7 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
            {
             Simbolo* simbolo = crearSimbolo();
             simbolo->tipoSimbolo = SIMBOLO_MET_DECL;
-            simbolo->tipoDato = $1;
+            simbolo->tipoDato = TIPO_VOID;
             simbolo->nombre = strdup($2);
             simbolo->nodoBloque = $6;
             
@@ -89,7 +90,7 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
            {
             Simbolo* simbolo = crearSimbolo();
             simbolo->tipoSimbolo = SIMBOLO_MET_DECL;
-            simbolo->tipoDato = $1;
+            simbolo->tipoDato = TIPO_VOID;
             simbolo->nombre = strdup($2);
             simbolo->nodoBloque = $6;
 
@@ -101,14 +102,14 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
 Id_list: Id COMA Id_list // TODO: sacar creacion del nodo a otro file en una funcion
        {
          NodoId* nodo_nombre = (NodoId*) malloc(sizeof(NodoId));
-         nodo_nombre->id = strcpy($1);
+         nodo_nombre->id = strdup($1);
          nodo_nombre->sig = $3;
          $$ = nodo_nombre;
        }
        | Id
         {
           NodoId* nodo_nombre = (NodoId*) malloc(sizeof(NodoId));
-          nodo_nombre->id = strcpy($1);
+          nodo_nombre->id = strdup($1);
           nodo_nombre->sig = NULL;
           $$ = nodo_nombre;
         }
@@ -236,7 +237,7 @@ Expr:
         fprintf(stderr, "Error: tipo de dato '%s' incompatible con operador '-'.\n", $2);
         exit(1);
       }
-      Simbolo* simbolo = malloc(sizeof(Simbolo));
+      Simbolo* simbolo = crearSimbolo();
       simbolo->tipoSimbolo = SIMBOLO_RESTA;
       agregarSimbolo(simbolo, tablaSimbolos);
       $2->simbolo->valor = -$2->simbolo->valor; //TODO funciona?
@@ -249,7 +250,7 @@ Expr:
         exit(1);
       }
 
-      Simbolo* simbolo = malloc(sizeof(Simbolo));
+      Simbolo* simbolo = crearSimbolo();
       simbolo->tipo = TIPO_BOOLEAN;
       simbolo->tipoSimbolo = SIMBOLO_NOT;
       agregarSimbolo(simbolo, tablaSimbolos);
@@ -272,35 +273,35 @@ Op_binario: Op_arit
 
 Op_arit: SUMA
         { 
-          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_SUMA;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_SUMA, simbolo, NULL, NULL);
         }
         | MULTIPLICACION 
         {
-          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_MULTIPLICACION;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_MULTIPLICACION, simbolo, NULL, NULL);
         }
         | RESTA
         {
-          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_RESTA;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_RESTA, simbolo, NULL, NULL);
         }
         | DIV
         {
-          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_DIV;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_DIV, simbolo, NULL, NULL);
         }
         | MOD
         {
-          Simbolo* simbolo = malloc(sizeof(Simbolo));
+          Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_MOD;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_MOD, simbolo, NULL, NULL);
@@ -309,7 +310,7 @@ Op_arit: SUMA
 
 Op_cond: 
 AND{
-  Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
+  Simbolo* simbolo = crearSimbolo();
   simbolo->tipo = TIPO_AND;
   simbolo->tipoSimbolo = AND_SIM;
   agregarSimbolo(simbolo, tablaSimbolos);
@@ -317,7 +318,7 @@ AND{
   $$ = crearASTNodo(NODO_AND,simbolo,NULL,NULL);
 } 
 | OR{
-  Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
+  Simbolo* simbolo = crearSimbolo();
   simbolo->tipo = TIPO_OR;
   simbolo->tipoSimbolo = OR_SIM;
   agregarSimbolo(simbolo, tablaSimbolos);
@@ -327,7 +328,7 @@ AND{
 
 Op_rel: 
 IGUALDAD{
-  Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
+  Simbolo* simbolo = crearSimbolo();
   simbolo->tipo = TIPO_IGUALDAD;
   simbolo->tipoSimbolo = IGUALDAD_SIM;
   agregarSimbolo(simbolo, tablaSimbolos);
@@ -335,7 +336,7 @@ IGUALDAD{
   $$ = crearASTNodo(NODO_IGUALDAD,simbolo,NULL,NULL);
 } 
 | MENOR{
-  Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
+  Simbolo* simbolo = crearSimbolo();
   simbolo->tipo = TIPO_MENOR;
   simbolo->tipoSimbolo = MENOR_SIM;
   agregarSimbolo(simbolo, tablaSimbolos);
@@ -343,7 +344,7 @@ IGUALDAD{
   $$ = crearASTNodo(NODO_MENOR,simbolo,NULL,NULL);
 }
 | MAYOR{
-  Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
+  Simbolo* simbolo = crearSimbolo();
   simbolo->tipo = TIPO_MAYOR;
   simbolo->tipoSimbolo = MAYOR_SIM;
   agregarSimbolo(simbolo, tablaSimbolos);
@@ -354,7 +355,7 @@ IGUALDAD{
 Literal: 
 INT_LITERAL
 {
-  Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
+  Simbolo* simbolo = crearSimbolo();
   simbolo->tipo = TIPO_INT;
   simbolo->tipoSimbolo = INT_SIM;
   simbolo->valor = $1;
@@ -364,7 +365,7 @@ INT_LITERAL
 } 
 | FLOAT_LITERAL
 {
-  Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
+  Simbolo* simbolo = crearSimbolo();
   simbolo->tipo = TIPO_FLOAT;
   simbolo->tipoSimbolo = FLOAT_SIM;
   simbolo->valor = $1;
@@ -374,7 +375,7 @@ INT_LITERAL
 }
 | FALSE
 {
-  Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
+  Simbolo* simbolo = crearSimbolo();
   simbolo->tipo = TIPO_BOOLEAN;
   simbolo->tipoSimbolo = BOOLEAN_SIM;
   simbolo->valor = $1;
@@ -384,7 +385,7 @@ INT_LITERAL
 }
 | TRUE
 {
-  Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
+  Simbolo* simbolo = crearSimbolo();
   simbolo->tipo = TIPO_BOOLEAN;
   simbolo->tipoSimbolo = BOOLEAN_SIM;
   simbolo->valor = $1;
