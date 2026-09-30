@@ -2,7 +2,7 @@ CC := gcc
 BISON := bison
 FLEX := flex
 
-CFLAGS := -Wall -Wextra -g
+CFLAGS := -Wall -Wextra -g -Iinclude -Iparser
 TARGET := c-tds
 
 ifeq ($(OS),Windows_NT)
@@ -13,26 +13,30 @@ SHELL := /bin/sh
 RM := rm -f
 endif
 
-SOURCES := main.c bisson.tab.c lex.yy.c
+SOURCES := src/main.c parser/bisson.tab.c parser/lex.yy.c
 OBJECTS := $(SOURCES:.c=.o)
 
 .PHONY: all gen run test clean rebuild
 
-all: $(TARGET)
+all: gen $(TARGET)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-# Regenera los archivos generados por bison/flex. Solo necesario si se
-# modifica bisson.y o lex.l; para compilar el proyecto alcanza con gcc
-# porque bisson.tab.c y lex.yy.c ya estan incluidos.
+# Genera bisson.tab.c, bisson.tab.h y lex.yy.c
+# dentro de la carpeta parser
 gen:
-	$(BISON) -d bisson.y
-	$(FLEX) lex.l
+	cd parser && $(BISON) -d bisson.y
+	cd parser && $(FLEX) lex.l
 
-main.o: main.c
-bisson.tab.o: bisson.tab.c enums.h bisson.tab.h
-lex.yy.o: lex.yy.c bisson.tab.h
+src/main.o: src/main.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+parser/bisson.tab.o: parser/bisson.tab.c parser/bisson.tab.h include/enums.h include/ASTdef.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+parser/lex.yy.o: parser/lex.yy.c parser/bisson.tab.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
 run: $(TARGET)
 	./$(TARGET) pruebas/ejemplo.ctds
@@ -42,5 +46,6 @@ test: $(TARGET)
 
 clean:
 	$(RM) $(TARGET) $(TARGET).exe $(OBJECTS)
+	$(RM) parser/bisson.tab.c parser/bisson.tab.h parser/lex.yy.c
 
 rebuild: clean all
