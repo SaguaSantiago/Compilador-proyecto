@@ -1,6 +1,7 @@
 #ifndef AST_DEF_H
 #define AST_DEF_H
-#include "TSdef.h"
+#include "enums.h"
+#include "tipos.h"
 
 typedef enum TipoNodo {
   NODO_ROOT,
@@ -35,12 +36,12 @@ typedef enum TipoNodo {
   NODO_PROGRAMA
 } TipoNodo;
 
-typedef struct Nodo {
+typedef struct ASTNodo {
   Simbolo *simbolo;
   TipoNodo tipo;
 
-  struct Nodo *izq;
-  struct Nodo *der;
+  struct ASTNodo *izq;
+  struct ASTNodo *der;
 } ASTNodo;
 
 /**

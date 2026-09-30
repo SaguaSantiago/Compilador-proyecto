@@ -1,7 +1,7 @@
 #ifndef TSDEF_H
 #define TSDEF_H
 #include "enums.h"
-#include "ASTdef.h"
+#include "tipos.h"
 
 #define DEFAULT_NIVELES_CANT 10
 // TODO: documentar funciones y tipos
@@ -11,7 +11,7 @@ typedef struct Simbolo {
   TipoDato tipoDato;
   int valor;
   Simbolo *parametros;
-  ASTNodo *nodoBloque; 
+  ASTNodo *nodoBloque;
 } Simbolo;
 
 typedef struct Nivel {

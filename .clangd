@@ -1,0 +1,7 @@
+Path: .
+
+CompileFlags:
+  Compiler: gcc
+  Add:
+    - -I./include
+    - -I./parser

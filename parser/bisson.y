@@ -1,12 +1,11 @@
 %code requires {
-  #include "enums.h"
+  #include "compilador.h"
 }
 
 %{ 
     #include <stdio.h>
     #include <stdlib.h>
-    #include "enums.h"
-    #include "ASTdef.h"
+    #include "compilador.h"
     extern int yylineno;
 
     int yylex(void);
