@@ -32,14 +32,14 @@
 %token<nombre> Id
 
 %type<tipo_dato> Tipo_dato
-%type<nodo> Program Declaraciones Declaracion Bloque Sentencias_list Sentencia Metodo_invocacion Expresiones Expr Literal
+%type<nodo> Program Declaraciones Declaracion Bloque Sentencias_list Sentencia Metodo_invocacion Expresiones Expr Literal Op_binario Op_arit Op_cond Op_rel
 %type<lista_nombres> Id_list
 %start Program
 %%
 
 Program: Declaraciones
        {
-        root = crearASTNodo(NODO_ROOT, NULL, $1, NULL);
+        raiz = crearASTNodo(NODO_ROOT, NULL, $1, NULL);
        }
        ;
 
@@ -57,7 +57,7 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
             ASTNodo* decl_raiz = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
             ASTNodo* aux = decl_raiz;
 
-            while(nombres.sig != NULL){
+            while(nombres != NULL){
               Simbolo* simbolo = crearSimbolo();
               simbolo->tipoSimbolo = SIMBOLO_VAR_DECL;
               simbolo->tipoDato = tipo;
