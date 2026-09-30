@@ -32,7 +32,10 @@
 %token<nombre> Id
 
 %type<tipo_dato> Tipo_dato
-%type<nodo> Program Declaraciones Declaracion Bloque Sentencias_list Sentencia Metodo_invocacion Expresiones Expr Literal Op_binario Op_arit Op_cond Op_rel
+%type<nodo> Program Declaraciones Declaracion Var_declaraciones Params_decl
+%type<nodo> Bloque Sentencias_list Sentencia 
+%type<nodo> Metodo_invocacion Expresiones Expr Literal 
+%type<nodo> Op_binario Op_arit Op_cond Op_rel 
 %type<lista_nombres> Id_list
 %start Program
 %%
@@ -47,7 +50,6 @@ Declaraciones: Declaracion Declaraciones
               {
                 $$ = crearASTNodo(NODO_DECLS, NULL, $1, $2);
               }
-              |
               ; 
 
 Declaracion: Tipo_dato Id_list PUNTO_COMA 
@@ -144,7 +146,7 @@ Params_decl: Tipo_dato Id COMA Params_decl
            }
            ;
     
-Declaracion Var_declaraciones
+Var_declaraciones: Declaracion Var_declaraciones
       {
           $$ = crearASTNodo(NODO_DECLS, NULL, $1, $2);
       }
@@ -188,7 +190,7 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
         
         $$ = crearASTNodo(NODO_IF_ELSE, NULL, $3, bloques);
       }
-      | WHILE Expr Bloque {$$ = crearASTNodo(NODO_WHILE, NULL, $1, $2);}
+      | WHILE Expr Bloque {$$ = crearASTNodo(NODO_WHILE, NULL, $2, $3);}
       | RETURN Expr PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, $2, NULL);}
       | RETURN PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, NULL, NULL);}
       ;
