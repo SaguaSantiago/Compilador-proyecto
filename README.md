@@ -13,6 +13,8 @@ Requisitos: solo `gcc` y `make`.
 * `make test`         # corre la suite de tests (tests/run_tests.sh)
 * `make gen`          # regenera bisson.tab.c/h y lex.yy.c desde bisson.y y lex.l
 * `make clean`        # elimina binarios y objetos
+* `make distclean`    # clean + borra los generados por bison/flex (estan trackeados)
+* `make rebuild`      # clean + all
 
 Uso del compilador:
 
