@@ -275,7 +275,6 @@ Op_arit: SUMA
         { 
           Simbolo* simbolo = malloc(sizeof(Simbolo));
           simbolo->tipoSimbolo = SIMBOLO_SUMA;
-          simbolo->valor = $1;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_SUMA, simbolo, NULL, NULL);
         }
@@ -283,7 +282,6 @@ Op_arit: SUMA
         {
           Simbolo* simbolo = malloc(sizeof(Simbolo));
           simbolo->tipoSimbolo = SIMBOLO_MULTIPLICACION;
-          simbolo->valor = $1;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_MULTIPLICACION, simbolo, NULL, NULL);
         }
@@ -291,7 +289,6 @@ Op_arit: SUMA
         {
           Simbolo* simbolo = malloc(sizeof(Simbolo));
           simbolo->tipoSimbolo = SIMBOLO_RESTA;
-          simbolo->valor = $1;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_RESTA, simbolo, NULL, NULL);
         }
@@ -299,7 +296,6 @@ Op_arit: SUMA
         {
           Simbolo* simbolo = malloc(sizeof(Simbolo));
           simbolo->tipoSimbolo = SIMBOLO_DIV;
-          simbolo->valor = $1;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_DIV, simbolo, NULL, NULL);
         }
@@ -307,7 +303,6 @@ Op_arit: SUMA
         {
           Simbolo* simbolo = malloc(sizeof(Simbolo));
           simbolo->tipoSimbolo = SIMBOLO_MOD;
-          simbolo->valor = $1;
           agregarSimbolo(simbolo, tablaSimbolos);
           $$ = crearASTNodo(NODO_MOD, simbolo, NULL, NULL);
         }
@@ -318,7 +313,6 @@ AND{
   Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
   simbolo->tipo = TIPO_AND;
   simbolo->tipoSimbolo = AND_SIM;
-  simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_AND,simbolo,NULL,NULL);
@@ -327,7 +321,6 @@ AND{
   Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
   simbolo->tipo = TIPO_OR;
   simbolo->tipoSimbolo = OR_SIM;
-  simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_OR,simbolo,NULL,NULL);
@@ -338,7 +331,6 @@ IGUALDAD{
   Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
   simbolo->tipo = TIPO_IGUALDAD;
   simbolo->tipoSimbolo = IGUALDAD_SIM;
-  simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_IGUALDAD,simbolo,NULL,NULL);
@@ -347,7 +339,6 @@ IGUALDAD{
   Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
   simbolo->tipo = TIPO_MENOR;
   simbolo->tipoSimbolo = MENOR_SIM;
-  simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_MENOR,simbolo,NULL,NULL);
@@ -356,7 +347,6 @@ IGUALDAD{
   Simbolo* simbolo = (Simbolo*) malloc(sizeof(Simbolo));
   simbolo->tipo = TIPO_MAYOR;
   simbolo->tipoSimbolo = MAYOR_SIM;
-  simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_MAYOR,simbolo,NULL,NULL);
