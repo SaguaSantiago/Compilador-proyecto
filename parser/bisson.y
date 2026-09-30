@@ -27,7 +27,7 @@
 }
 
 %token MAIN BOOLEAN VOID RETURN SUMA MULTIPLICACION ASIGNACION INT FLOAT PARENTESIS_IZQ PARENTESIS_DER LLAVE_IZQ LLAVE_DER PUNTO_COMA COMA IF ELSE WHILE AND OR NOT MAYOR MENOR IGUALDAD MOD RESTA DIV
-%token<valor_float> FLOAT_LITERAl
+%token<valor_float> FLOAT_LITERAL
 %token<valor_int> INT_LITERAL TRUE FALSE // Podriamos poner BOOLEAN_LITERAL pero tendriamos que comparar strings en Flex. 
 %token<nombre> Id
 
@@ -143,6 +143,12 @@ Params_decl: Tipo_dato Id COMA Params_decl
             $$ = NULL;
            }
            ;
+    
+Declaracion Var_declaraciones
+      {
+          $$ = crearASTNodo(NODO_DECLS, NULL, $1, $2);
+      }
+;
 
 Bloque: LLAVE_IZQ Var_declaraciones Sentencias_list LLAVE_DER{
   $$ = crearASTNodo(NODO_BLOQUE,NULL,$2,$3);
@@ -183,7 +189,7 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
         $$ = crearASTNodo(NODO_IF_ELSE, NULL, $3, bloques);
       }
       | WHILE Expr Bloque {$$ = crearASTNodo(NODO_WHILE, NULL, $1, $2);}
-      | RETURN Expr PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, $1, NULL);}
+      | RETURN Expr PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, $2, NULL);}
       | RETURN PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, NULL, NULL);}
       ;
 
