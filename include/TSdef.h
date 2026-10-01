@@ -19,19 +19,22 @@ typedef struct Nivel {
   struct Nivel *sig;
 } NodoNivel;
 
-typedef struct TablaSimbolo {
+typedef struct TablaSimbolos {
   NodoNivel *niveles;
   int nivelActual;
-} TablaSimbolo;
+} TablaSimbolos;
 
-int agregarSimbolo(Simbolo *nuevoSimbolo, TablaSimbolo *ts);
+int agregarSimbolo(Simbolo *nuevoSimbolo, TablaSimbolos *ts);
 
-void inicializarTs(TablaSimbolo *ts);
+void inicializarTs(TablaSimbolos **ts);
 
-void agregarNivel(TablaSimbolo *ts);
+void agregarNivel(TablaSimbolos *ts);
 
-void sacarNivel(TablaSimbolo *ts);
+void sacarNivel(TablaSimbolos *ts);
 
+Simbolo *crearSimbolo(void);
+
+Simbolo *buscarSimbolo(char* nombre, TipoSimbolo tipo, TablaSimbolos *TablaSimbolos);
 /**
  * nodo necesario para crear una lista de simbolos
  * (se usa en la creacion del nodo expresiones)

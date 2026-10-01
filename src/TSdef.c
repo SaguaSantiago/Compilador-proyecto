@@ -1,11 +1,13 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "TSdef.h"
 
-int agregarSimbolo(Simbolo *nuevoSimbolo, TablaSimbolo *ts){
+int agregarSimbolo(Simbolo *nuevoSimbolo, TablaSimbolos *ts){
     int nivelActual = ts->nivelActual;
+    // fprintf(stderr, "Llegue a agregar simbolo\n");
     NodoNivel* nodoActual = ts->niveles[nivelActual].sig;
-
+    
     while(nodoActual != NULL){
         if (nodoActual->sim != NULL && 
             nodoActual->sim->tipoSimbolo == SIMBOLO_IDENTIFICADOR &&
@@ -25,19 +27,19 @@ int agregarSimbolo(Simbolo *nuevoSimbolo, TablaSimbolo *ts){
     return 1;
 }
 
-void inicializarTs(TablaSimbolo *ts){
-    ts = (TablaSimbolo*) malloc(sizeof(TablaSimbolo));
+void inicializarTs(TablaSimbolos **ts){
+    *ts = (TablaSimbolos*) malloc(sizeof(TablaSimbolos));
 
-    ts->niveles = (NodoNivel*) malloc(sizeof(NodoNivel) * DEFAULT_NIVELES_CANT);
+    (*ts)->niveles = (NodoNivel*) malloc(sizeof(NodoNivel) * DEFAULT_NIVELES_CANT);
     for(int i = 0; i < DEFAULT_NIVELES_CANT; i++){
-        ts->niveles[i].sim = NULL;
-        ts->niveles[i].sig = NULL;
+        (*ts)->niveles[i].sim = NULL;
+        (*ts)->niveles[i].sig = NULL;
     }
 
-    ts->nivelActual = 0;
+    (*ts)->nivelActual = 0;
 }
 
-void agregarNivel(TablaSimbolo *ts){
+void agregarNivel(TablaSimbolos *ts){
     ts->nivelActual++;
 
     NodoNivel* nuevoNodo = malloc(sizeof(NodoNivel)); 
@@ -49,11 +51,11 @@ void agregarNivel(TablaSimbolo *ts){
     nivelActual->sig = nuevoNodo;   
 }
 
-void sacarNivel(TablaSimbolo *ts){
+void sacarNivel(TablaSimbolos *ts){
     ts->nivelActual--; 
 }
 
-Simbolo* buscarSimbolo(char* nombre, TipoSimbolo tipoSimbolo, TablaSimbolo *tabla){
+Simbolo* buscarSimbolo(char* nombre, TipoSimbolo tipoSimbolo, TablaSimbolos *tabla){
     int nivel = tabla->nivelActual;
     NodoNivel* nodoActual = tabla->niveles[nivel].sig;
 
@@ -67,7 +69,6 @@ Simbolo* buscarSimbolo(char* nombre, TipoSimbolo tipoSimbolo, TablaSimbolo *tabl
         nodoActual = nodoActual->sig;
     }
 
-    free(nodoActual);
     return NULL;
 }
 
@@ -79,11 +80,13 @@ void agregarSimboloALista(Simbolo *simbolo, NodoSimbolo **lista) {
   *lista = nuevoNodo;
 }
 
-Simbolo *crearSimbolo() {
+Simbolo *crearSimbolo(void) {
   Simbolo *nuevoSimbolo = (Simbolo *)malloc(sizeof(Simbolo));
   nuevoSimbolo->nombre = NULL;
   nuevoSimbolo->parametros = NULL;
   nuevoSimbolo->nodoBloque = NULL;
+  nuevoSimbolo->tipoDato = 0;
+  nuevoSimbolo->tipoSimbolo = 0;
   nuevoSimbolo->valor = 0;
 
   return nuevoSimbolo;

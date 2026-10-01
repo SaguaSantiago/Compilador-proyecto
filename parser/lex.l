@@ -32,12 +32,12 @@ Comentario_linea 	    "//".*
 "float"     { fprintf(yyout, "FLOAT\n"); return FLOAT; }
 
 "true"      { 
-    yylval.valor = 1;
+    yylval.valor_int = 1;
     fprintf(yyout, "TRUE\n");
     return TRUE; 
 }
 "false"     { 
-    yylval.valor = 0;
+    yylval.valor_int = 0;
     fprintf(yyout, "FALSE\n");
     return FALSE; 
 }
@@ -48,13 +48,13 @@ Comentario_linea 	    "//".*
     return Id; 
 }
 {Int} { 
-    yylval.valor = atoi(yytext);
+    yylval.valor_int = atoi(yytext);
     fprintf(yyout, "INT_LITERAL\n");
     return INT_LITERAL; 
 }
 
 {Float} {
-    yylval.valor = atof(yytext);
+    yylval.valor_float = atof(yytext);
     fprintf(yyout, "FLOAT_LITERAL\n");
     return FLOAT_LITERAL;
 }
@@ -87,8 +87,12 @@ Comentario_linea 	    "//".*
 [ \t\r]+   {}
 \n         {}
 
-{Comentario_bloque} {}
-{Comentario_linea}  {}
+{Comentario_bloque} {
+                // fprintf(stderr, "llegue a com bloque \n");
+                }
+{Comentario_linea}  {
+                // fprintf(stderr, "llegue a com linea \n");
+                }
 
 .           {
                 error_lexico = 1;

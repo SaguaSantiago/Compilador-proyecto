@@ -12,13 +12,14 @@
     int yylex(void);
     void yyerror(const char *s);
     ASTNodo *raiz;
+    TablaSimbolos *tablaSimbolos;
 
     NodoSimbolo *listaExpresiones = NULL;
 %}
 %define parse.error detailed
 
 %union {
-  ASTNodo nodo;
+  ASTNodo* nodo;
   TipoDato tipo_dato;
   int valor_int;
   float valor_float;
@@ -38,6 +39,11 @@
 %type<nodo> Op_binario Op_arit Op_cond Op_rel 
 %type<lista_nombres> Id_list
 %start Program
+
+%initial-action{
+  inicializarTs(&tablaSimbolos);
+}
+
 %%
 
 Program: Declaraciones
@@ -50,11 +56,12 @@ Declaraciones: Declaracion Declaraciones
               {
                 $$ = crearASTNodo(NODO_DECLS, NULL, $1, $2);
               }
+              | %empty {$$ = NULL;}
               ; 
 
 Declaracion: Tipo_dato Id_list PUNTO_COMA 
            {
-            TipoDato tipo = $1;
+             TipoDato tipo = $1;
             NodoId* nombres = $2;
             ASTNodo* decl_raiz = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
             ASTNodo* aux = decl_raiz;
@@ -65,14 +72,13 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
               simbolo->tipoDato = tipo;
               simbolo->nombre = strdup(nombres->id);
               
-              agregarSimbolo(simbolo, ts);
+              agregarSimbolo(simbolo, tablaSimbolos);
 
               ASTNodo* nuevoNodo = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
               aux->izq = nuevoNodo;
               aux = nuevoNodo;
               nombres = nombres->sig;
             }
-            free(aux);
             $$ = decl_raiz;
            }
            | Tipo_dato Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque
@@ -83,7 +89,7 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
             simbolo->nombre = strdup($2);
             simbolo->nodoBloque = $6;
             
-            agregarSimbolo(simbolo, ts);
+            agregarSimbolo(simbolo, tablaSimbolos);
             $$ = crearASTNodo(NODO_DECL_MET, simbolo, $4, NULL);
            }
            | VOID Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque
@@ -94,7 +100,7 @@ Declaracion: Tipo_dato Id_list PUNTO_COMA
             simbolo->nombre = strdup($2);
             simbolo->nodoBloque = $6;
 
-            agregarSimbolo(simbolo, ts);
+            agregarSimbolo(simbolo, tablaSimbolos);
             $$ = crearASTNodo(NODO_DECL_MET, simbolo, $4, NULL);
            }
            ;
@@ -137,19 +143,17 @@ Params_decl: Tipo_dato Id COMA Params_decl
            }
            | Tipo_dato Id
            {
-            ASTNodo nodo = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
+            ASTNodo *nodo = crearASTNodo(NODO_DECL_VAR, NULL, NULL, NULL);
             $$ = crearASTNodo(NODO_PARAM_DECL, NULL, nodo, NULL);
            }
-           | %empty
-           {
-            $$ = NULL;
-           }
+           | %empty {$$ = NULL;}
            ;
     
 Var_declaraciones: Declaracion Var_declaraciones
       {
           $$ = crearASTNodo(NODO_DECLS, NULL, $1, $2);
       }
+      | %empty {$$ = NULL;}
 ;
 
 Bloque: LLAVE_IZQ Var_declaraciones Sentencias_list LLAVE_DER{
@@ -163,23 +167,14 @@ Sentencias_list: Sentencia Sentencias_list {$$ = crearASTNodo(NODO_SENTENCIAS, N
 
 Sentencia: Id ASIGNACION Expr PUNTO_COMA
       {
-        Simbolo* idEncontrado = buscarSimbolo($1, tablaSimbolos); 
-
-        if(idEncontrado == NULL) { // TODO poner linea de error
-            fprintf(stderr, "Error: variable '%s' no declarada.\n", $1);
-            exit(1);
-        } else if(idEncontrado->tipo != $3->simbolo->tipo) {
-            fprintf(stderr, "Error: tipo de dato incompatible en la asignación a '%s'.\n", $1);
-            exit(1);
-        }
-        idEncontrado->valor = $3->simbolo->valor;
-
+        Simbolo* idEncontrado = buscarSimbolo($1, SIMBOLO_VAR_DECL, tablaSimbolos);
+        
         ASTNodo* hojaId = crearASTNodo(NODO_IDENTIFICADOR, idEncontrado, NULL, NULL);
 
         $$ = crearASTNodo(NODO_ASIGNACION, NULL, hojaId, $3);
       }
 
-      | Metodo_invocacion PUNTO_COMA {$$ = $1}
+      | Metodo_invocacion PUNTO_COMA {$$ = $1;}
       
       | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque {
         ASTNodo* bloques = crearASTNodo(NODO_BLOQUES_IF, NULL, $5, NULL);
@@ -187,12 +182,11 @@ Sentencia: Id ASIGNACION Expr PUNTO_COMA
       }
       | IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque ELSE Bloque {
         ASTNodo* bloques = crearASTNodo(NODO_BLOQUES_IF, NULL, $5, $7);
-        
         $$ = crearASTNodo(NODO_IF_ELSE, NULL, $3, bloques);
       }
       | WHILE Expr Bloque {$$ = crearASTNodo(NODO_WHILE, NULL, $2, $3);}
-      | RETURN Expr PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, $2, NULL);}
-      | RETURN PUNTO_COMA {$$ = crearASTNodo(NODO_RETURN, NULL, NULL, NULL);}
+      | RETURN Expr PUNTO_COMA {$$ = crearASTNodo(NODO_RETORNO, NULL, $2, NULL);}
+      | RETURN PUNTO_COMA {$$ = crearASTNodo(NODO_RETORNO, NULL, NULL, NULL);}
       ;
 
 Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER
@@ -206,7 +200,7 @@ Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER
       ;
 
 Expresiones: Expr Expresiones {
-            agregarSimboloALista($1->simbolo, listaExpresiones);
+            agregarSimboloALista($1->simbolo, &listaExpresiones);
             $$ = crearASTNodo(NODO_EXPRESIONES, NULL, $1, $2);
            }
           | Expr {
@@ -214,13 +208,11 @@ Expresiones: Expr Expresiones {
           }
           ;
 Expr:
-    Id{
-      Simbolo* simbolo = buscarSimbolo($1, tablaSimbolos);
-      if(simbolo == NULL){
-        fprintf(stderr, "Error: identificador '%s' no declarado.\n", $1);
-        exit(1);
-      }
-      $$ = crearASTNodo(NODO_IDENTIFICADOR, simbolo, NULL, NULL);
+    Id{// TODO: buscar simbolo declaracion en la tabla de simbolos para asignarle tipo de datos
+      Simbolo* simboloId = crearSimbolo();
+      simboloId->tipoSimbolo = SIMBOLO_IDENTIFICADOR;
+      simboloId->nombre = strdup($1);
+      $$ = crearASTNodo(NODO_IDENTIFICADOR, simboloId, NULL, NULL);
     }
     | Metodo_invocacion {$$ = $1;}
     | Literal {$$ = $1;}
@@ -233,25 +225,25 @@ Expr:
     }
     | RESTA Expr
     {
-      if ($2->simbolo->tipo != TIPO_INT && $2->simbolo->tipo != TIPO_FLOAT){
-        fprintf(stderr, "Error: tipo de dato '%s' incompatible con operador '-'.\n", $2);
+      if ($2->simbolo->tipoDato != TIPO_INTEGER && $2->simbolo->tipoDato != TIPO_FLOAT){
+        fprintf(stderr, "Error: tipo de dato incompatible con operador '-'.\n");
         exit(1);
       }
       Simbolo* simbolo = crearSimbolo();
       simbolo->tipoSimbolo = SIMBOLO_RESTA;
       agregarSimbolo(simbolo, tablaSimbolos);
-      $2->simbolo->valor = -$2->simbolo->valor; //TODO funciona?
+      simbolo->tipoDato = $2->simbolo->tipoDato;
       $$ = crearASTNodo(NODO_RESTA, simbolo, NULL, $2);
     }
     | NOT Expr
     {
-      if ($2->simbolo->tipo != TIPO_BOOLEAN){
-        fprintf(stderr, "Error: tipo de dato '%s' incompatible con operador '!'.\n", $2);
+      if ($2->simbolo->tipoDato != TIPO_BOOLEAN){
+        fprintf(stderr, "Error: tipo de dato incompatible con operador '!'.\n");
         exit(1);
       }
 
       Simbolo* simbolo = crearSimbolo();
-      simbolo->tipo = TIPO_BOOLEAN;
+      simbolo->tipoDato = TIPO_BOOLEAN;
       simbolo->tipoSimbolo = SIMBOLO_NOT;
       agregarSimbolo(simbolo, tablaSimbolos);
       $2->simbolo->valor = abs($2->simbolo->valor - 1); //TODO ver si funciona
@@ -297,7 +289,7 @@ Op_arit: SUMA
           Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_DIV;
           agregarSimbolo(simbolo, tablaSimbolos);
-          $$ = crearASTNodo(NODO_DIV, simbolo, NULL, NULL);
+          $$ = crearASTNodo(NODO_DIVISION, simbolo, NULL, NULL);
         }
         | MOD
         {
@@ -311,16 +303,16 @@ Op_arit: SUMA
 Op_cond: 
 AND{
   Simbolo* simbolo = crearSimbolo();
-  simbolo->tipo = TIPO_AND;
-  simbolo->tipoSimbolo = AND_SIM;
+  simbolo->tipoDato = TIPO_BOOLEAN;
+  simbolo->tipoSimbolo = SIMBOLO_AND;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_AND,simbolo,NULL,NULL);
 } 
 | OR{
   Simbolo* simbolo = crearSimbolo();
-  simbolo->tipo = TIPO_OR;
-  simbolo->tipoSimbolo = OR_SIM;
+  simbolo->tipoDato = TIPO_BOOLEAN;
+  simbolo->tipoSimbolo = SIMBOLO_OR;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_OR,simbolo,NULL,NULL);
@@ -329,24 +321,24 @@ AND{
 Op_rel: 
 IGUALDAD{
   Simbolo* simbolo = crearSimbolo();
-  simbolo->tipo = TIPO_IGUALDAD;
-  simbolo->tipoSimbolo = IGUALDAD_SIM;
+  simbolo->tipoDato = TIPO_BOOLEAN;
+  simbolo->tipoSimbolo = SIMBOLO_IGUALDAD;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_IGUALDAD,simbolo,NULL,NULL);
 } 
 | MENOR{
   Simbolo* simbolo = crearSimbolo();
-  simbolo->tipo = TIPO_MENOR;
-  simbolo->tipoSimbolo = MENOR_SIM;
+  simbolo->tipoDato = TIPO_BOOLEAN;
+  simbolo->tipoSimbolo = SIMBOLO_MENOR;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_MENOR,simbolo,NULL,NULL);
 }
 | MAYOR{
   Simbolo* simbolo = crearSimbolo();
-  simbolo->tipo = TIPO_MAYOR;
-  simbolo->tipoSimbolo = MAYOR_SIM;
+  simbolo->tipoDato = TIPO_BOOLEAN;
+  simbolo->tipoSimbolo = SIMBOLO_MAYOR;
   agregarSimbolo(simbolo, tablaSimbolos);
 
   $$ = crearASTNodo(NODO_MAYOR,simbolo,NULL,NULL);
@@ -356,8 +348,8 @@ Literal:
 INT_LITERAL
 {
   Simbolo* simbolo = crearSimbolo();
-  simbolo->tipo = TIPO_INT;
-  simbolo->tipoSimbolo = INT_SIM;
+  simbolo->tipoDato = TIPO_INTEGER;
+  simbolo->tipoSimbolo = SIMBOLO_INTEGER_LITERAL;
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
 
@@ -366,18 +358,18 @@ INT_LITERAL
 | FLOAT_LITERAL
 {
   Simbolo* simbolo = crearSimbolo();
-  simbolo->tipo = TIPO_FLOAT;
-  simbolo->tipoSimbolo = FLOAT_SIM;
+  simbolo->tipoDato = TIPO_FLOAT;
+  simbolo->tipoSimbolo = SIMBOLO_FLOAT_LITERAL;
   simbolo->valor = $1;
-  agregarSimbolo(simbolo, tablaSimbolos);// TODO: metodo necesario en la TS 
+  agregarSimbolo(simbolo, tablaSimbolos);// TODO: metodo necesario en la tablaSimbolo 
   
   $$ = crearASTNodo(NODO_FLOAT,simbolo,NULL,NULL);
 }
 | FALSE
 {
   Simbolo* simbolo = crearSimbolo();
-  simbolo->tipo = TIPO_BOOLEAN;
-  simbolo->tipoSimbolo = BOOLEAN_SIM;
+  simbolo->tipoDato = TIPO_BOOLEAN;
+  simbolo->tipoSimbolo = SIMBOLO_BOOLEAN_LITERAL;
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
   
@@ -386,8 +378,8 @@ INT_LITERAL
 | TRUE
 {
   Simbolo* simbolo = crearSimbolo();
-  simbolo->tipo = TIPO_BOOLEAN;
-  simbolo->tipoSimbolo = BOOLEAN_SIM;
+  simbolo->tipoDato = TIPO_BOOLEAN;
+  simbolo->tipoSimbolo = SIMBOLO_BOOLEAN_LITERAL;
   simbolo->valor = $1;
   agregarSimbolo(simbolo, tablaSimbolos);
   

@@ -1,5 +1,5 @@
 
-#line 3 "lex.yy.c"
+#line 2 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -527,8 +527,8 @@ char *yytext;
     extern int yylineno; 
     /* Se pone en 1 ante un error lexico (caracter inesperado). */
     int error_lexico = 0;
+#line 530 "lex.yy.c"
 #line 531 "lex.yy.c"
-#line 532 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -747,7 +747,7 @@ YY_DECL
 	{
 #line 21 "lex.l"
 
-#line 751 "lex.yy.c"
+#line 750 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -858,7 +858,7 @@ case 9:
 YY_RULE_SETUP
 #line 34 "lex.l"
 { 
-    yylval.valor = 1;
+    yylval.valor_int = 1;
     fprintf(yyout, "TRUE\n");
     return TRUE; 
 }
@@ -867,7 +867,7 @@ case 10:
 YY_RULE_SETUP
 #line 39 "lex.l"
 { 
-    yylval.valor = 0;
+    yylval.valor_int = 0;
     fprintf(yyout, "FALSE\n");
     return FALSE; 
 }
@@ -885,7 +885,7 @@ case 12:
 YY_RULE_SETUP
 #line 50 "lex.l"
 { 
-    yylval.valor = atoi(yytext);
+    yylval.valor_int = atoi(yytext);
     fprintf(yyout, "INT_LITERAL\n");
     return INT_LITERAL; 
 }
@@ -894,7 +894,7 @@ case 13:
 YY_RULE_SETUP
 #line 56 "lex.l"
 {
-    yylval.valor = atof(yytext);
+    yylval.valor_float = atof(yytext);
     fprintf(yyout, "FLOAT_LITERAL\n");
     return FLOAT_LITERAL;
 }
@@ -1004,16 +1004,20 @@ case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
 #line 90 "lex.l"
-{}
+{
+                // fprintf(stderr, "llegue a com bloque \n");
+                }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 91 "lex.l"
-{}
+#line 93 "lex.l"
+{
+                // fprintf(stderr, "llegue a com linea \n");
+                }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 93 "lex.l"
+#line 97 "lex.l"
 {
                 error_lexico = 1;
                 fprintf(stderr,
@@ -1024,10 +1028,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 100 "lex.l"
+#line 104 "lex.l"
 ECHO;
 	YY_BREAK
-#line 1031 "lex.yy.c"
+#line 1034 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2044,5 +2048,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 100 "lex.l"
+#line 104 "lex.l"
 

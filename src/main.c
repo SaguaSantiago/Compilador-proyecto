@@ -32,7 +32,7 @@ static int termina_en(const char *s, const char *sufijo) {
 
 int main(int argc, char *argv[]) {
   const char *input = NULL;
-  const char *target = NULL;   /* NULL = etapa corriente (parse) */
+  const char *target = NULL;
   const char *opt_val = NULL;  /* optimizaciones solicitadas      */
   const char *salida = NULL;   /* parametro de -o                 */
   int debug = 0;

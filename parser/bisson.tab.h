@@ -45,9 +45,9 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 15 "bisson.y"
+#line 1 "bisson.y"
 
-  #include "enums.h"
+  #include "compilador.h"
 
 #line 53 "bisson.tab.h"
 
@@ -87,8 +87,8 @@ extern int yydebug;
     MOD = 282,                     /* MOD  */
     RESTA = 283,                   /* RESTA  */
     DIV = 284,                     /* DIV  */
-    INT_LITERAL = 285,             /* INT_LITERAL  */
-    FLOAT_LITERAL = 286,           /* FLOAT_LITERAL  */
+    FLOAT_LITERAL = 285,           /* FLOAT_LITERAL  */
+    INT_LITERAL = 286,             /* INT_LITERAL  */
     TRUE = 287,                    /* TRUE  */
     FALSE = 288,                   /* FALSE  */
     Id = 289                       /* Id  */
@@ -100,13 +100,16 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 30 "bisson.y"
+#line 21 "bisson.y"
 
-  ASTNodo nodo;
-  float valor; // Los tipo INT seran tratados como FLOAT internamente.
+  ASTNodo* nodo;
+  TipoDato tipo_dato;
+  int valor_int;
+  float valor_float;
   char* nombre;
+  NodoId* lista_nombres;
 
-#line 110 "bisson.tab.h"
+#line 113 "bisson.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

@@ -13,8 +13,6 @@ Requisitos: solo `gcc` y `make`.
 * `make test`         # corre la suite de tests (tests/run_tests.sh)
 * `make gen`          # regenera bisson.tab.c/h y lex.yy.c desde bisson.y y lex.l
 * `make clean`        # elimina binarios y objetos
-* `make distclean`    # clean + borra los generados por bison/flex (estan trackeados)
-* `make rebuild`      # clean + all
 
 Uso del compilador:
 
@@ -125,3 +123,36 @@ suite se encuentra en `tests/` y consta de **18 casos**:
 | `bad_*` (10) | `falta_puntocoma`, `punto_y_coma_extra`, `llave_sin_cerrar`, `llamada_vacia`, `id_numerico`, `declaracion` (`int ;`), `expr_incompleta`, `comas_en_llamada`, `comentario_sin_cerrar`, `caracter_ilegal` | exit != 0, **sin** archivo de salida, stderr con el patrón `.err` esperado |
 
 Resultado: **18/18 aprobados**.
+
+--- Etapa: **2.1 (Árbol Sintático y Tabla de Simbolos)** ·
+
+---
+
+## 1. Division de responsabilidades
+
+- Lillo Lucas: Implementacion de funciones de `TSdef.c` y `ASTdef.c`, creacion de nodos en la gramatica.
+- Sagua Santiago: Creacion de nodos en la gramatica, traduccion de la gramatica, implementacion de diversas acciones de la gramatica e implementacion de funciones en `TSdef.c` y `ASTdef.c`.
+- Brizuela Paloma: Creacion de nodos en la gramatica y estructuracion del proyecto. 
+
+## 2. Lista de desiciones de diseño
+Para esta etapa hubo que centrar la atencion en el diseño de los siguientes puntos: 
+  1. Formato de la TS. 
+  2. Tipos implementados: Simbolo, NodoNivel, TablaSimbolos, NodoSimbolo, NodoId y ASTNodo.
+  3. Enumerados implementados: TipoNodo, TipoSimbolo y TipoDato.
+  4. Construcción del AST. 
+  
+## 3. Desiciones tomadas en la etapa
+
+Se decicidio modularizar diversas acciones de construcción para el AST y la TS en metodos declarados en `ASTdef.c` y `TSdef.c`. Por otra parte se decidio estructurar todas las cabeceras en un mismo directorio junto con la creacion de `compilador.h` que importa las demas cabeceras necesarias para `bisson.y`; los archivos `.c` en el directorio `proyecto/src` y los archivos ligados a flex y bisson en el directorio `proyecto/parser`.
+
+A la hora de las declaraciones múltiples de variables, aceptadas por `TDS26`, se optó por la creación de listas de id's para que la regla encargada de armar el nodo declaraciones creara a partir de esta los nodos de las declaraciones por separado.
+
+En cuanto a la estructura de la TS, decidimos diseñarla como un arreglo de listas, siendo la i-esima posicion del arreglo una marca inicial de los simbolos propios del i-esimo nivel de la tabla de simbolos.
+
+Con el objetivo de anticiparnos a ciertos escenarios del analisis semántico, decidimos añadir al tipo simbolo un campo nuevo `nodoBloque` cuyo uso se lo brindará la invocación de métodos, de manera que, el nodo correspondiente a esta sentencia pueda acceder al bloque de ejecución del método; además, se diseñó que el funcionamiento del no terminal `Expresiones` armase una lista de símbolos global (`listaExpresiones`) para que, en un futuro, se pueda analizar su correctitud frente a los parámetros esperados.
+
+## 4. Detalles de implementación interesantes
+No se presentaron algoritmos complejos o poco triviales en esta etapa. 
+
+## 5. Problemas de producción
+En cuanto a diseño no tuvimos problemas especificos, fue una construcción similar a la misma etapa correspondiente al preproyecto, sin embargo los problemas aparecieron en la implementación del diseño donde el problema más común fue la no inicialización de punteros o el mal pasaje de parametros. Se localizaron y resolvieron estos conflictos utilizando logs tanto en `bisson.y` como en `lex.l` para llevar una traza de la ejecución. 
