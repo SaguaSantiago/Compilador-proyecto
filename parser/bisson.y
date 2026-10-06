@@ -208,9 +208,9 @@ Expresiones: Expr Expresiones {
           ;
 Expr:
     Id{// TODO: buscar simbolo declaracion en la tabla de simbolos para asignarle tipo de datos
-      Simbolo* simboloId = crearSimbolo();
-      simboloId->tipoSimbolo = SIMBOLO_IDENTIFICADOR;
-      simboloId->nombre = strdup($1);
+      -- Simbolo* simboloId = crearSimbolo();
+      -- simboloId->tipoSimbolo = SIMBOLO_IDENTIFICADOR;
+      -- simboloId->nombre = strdup($1);
       $$ = crearASTNodo(NODO_IDENTIFICADOR, simboloId, NULL, NULL);
     }
     | Metodo_invocacion {$$ = $1;}
@@ -232,21 +232,21 @@ Expr:
       simbolo->tipoSimbolo = SIMBOLO_RESTA;
       agregarSimbolo(simbolo, tablaSimbolos);
       simbolo->tipoDato = $2->simbolo->tipoDato;
-      $$ = crearASTNodo(NODO_RESTA, simbolo, NULL, $2);
+      $$ = crearASTNodo(NODO_RESTA, simbolo, $2, NULL);
     }
     | NOT Expr
     {
-      if ($2->simbolo->tipoDato != TIPO_BOOLEAN){
-        fprintf(stderr, "Error: tipo de dato incompatible con operador '!'.\n");
-        exit(1);
-      }
+      -- if ($2->simbolo->tipoDato != TIPO_BOOLEAN){
+      --   fprintf(stderr, "Error: tipo de dato incompatible con operador '!'.\n");
+      --   exit(1);
+      -- }
 
       Simbolo* simbolo = crearSimbolo();
       simbolo->tipoDato = TIPO_BOOLEAN;
       simbolo->tipoSimbolo = SIMBOLO_NOT;
       agregarSimbolo(simbolo, tablaSimbolos);
       $2->simbolo->valor = abs($2->simbolo->valor - 1); //TODO ver si funciona
-      $$ = crearASTNodo(NODO_NOT, simbolo, NULL, $2);
+      $$ = crearASTNodo(NODO_NOT, simbolo, $2, NULL);
     }
     | PARENTESIS_IZQ Expr PARENTESIS_DER
     {
