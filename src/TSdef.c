@@ -55,20 +55,24 @@ void sacarNivel(TablaSimbolos *ts){
     ts->nivelActual--; 
 }
 
-Simbolo* buscarSimbolo(char* nombre, TipoSimbolo tipoSimbolo, TablaSimbolos *tabla){
+Simbolo* buscarSimbolo(char* nombre, TablaSimbolos *tabla){
     int nivel = tabla->nivelActual;
-    NodoNivel* nodoActual = tabla->niveles[nivel].sig;
+    
+    while(nivel >= 0){
+        NodoNivel* nodoActual = tabla->niveles[nivel].sig;
 
-    while (nodoActual != NULL) {
-        if (nodoActual->sim != NULL &&
-            nodoActual->sim->nombre != NULL &&
-            strcmp(nodoActual->sim->nombre, nombre) == 0) {
-            return nodoActual->sim;
+        while (nodoActual != NULL) {
+            if (nodoActual->sim != NULL &&
+                nodoActual->sim->nombre != NULL &&
+                strcmp(nodoActual->sim->nombre, nombre) == 0) {
+                return nodoActual->sim;
+            }
+
+            nodoActual = nodoActual->sig;
         }
 
-        nodoActual = nodoActual->sig;
+        nivel--;
     }
-
     return NULL;
 }
 
@@ -88,6 +92,7 @@ Simbolo *crearSimbolo(void) {
   nuevoSimbolo->tipoDato = 0;
   nuevoSimbolo->tipoSimbolo = 0;
   nuevoSimbolo->valor = 0;
+  nuevoSimbolo->valor_float = 0;
 
   return nuevoSimbolo;
 }

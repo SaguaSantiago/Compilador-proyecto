@@ -124,7 +124,9 @@ suite se encuentra en `tests/` y consta de **18 casos**:
 
 Resultado: **18/18 aprobados**.
 
---- Etapa: **2.1 (Árbol Sintático y Tabla de Simbolos)** ·
+---
+
+ Etapa: **2.1 (Árbol Sintático y Tabla de Simbolos)** ·
 
 ---
 
@@ -156,3 +158,35 @@ No se presentaron algoritmos complejos o poco triviales en esta etapa.
 
 ## 5. Problemas de producción
 En cuanto a diseño no tuvimos problemas especificos, fue una construcción similar a la misma etapa correspondiente al preproyecto, sin embargo los problemas aparecieron en la implementación del diseño donde el problema más común fue la no inicialización de punteros o el mal pasaje de parametros. Se localizaron y resolvieron estos conflictos utilizando logs tanto en `bisson.y` como en `lex.l` para llevar una traza de la ejecución. 
+
+---
+
+ Etapa: **2.2 (Ánalisis Semántico)** ·
+
+---
+
+## 1. División del trabajo en la etapa
+
+El trabajo se repartió de la siguiente manera :
+
+- **Lucas Lillo** : 
+- **Santiago Sagua** :
+- **Paloma Brizuela** :
+
+---
+
+## 2. Decisiones de diseño
+
+* Desacoplamiento de la creación de tabla de símbolos y creación del árbol
+* Se elimino el enfoque anterior de busqueda de expresiones a traves de la variable global `listaExpresiones` 
+## 3. Descripción del diseño y decisiones clave
+
+### Arquitectura
+
+### Alternativas consideradas y justificación
+
+### Deficiencias detectadas y alternativas propuestas
+
+## 4. Detalles de implementación interesantes
+
+## 5. Problemas de producción

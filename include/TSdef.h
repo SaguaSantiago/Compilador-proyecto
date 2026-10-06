@@ -10,6 +10,7 @@ typedef struct Simbolo {
   char *nombre;
   TipoDato tipoDato;
   int valor;
+  float valor_float;
   Simbolo *parametros;
   ASTNodo *nodoBloque;
 } Simbolo;
@@ -34,7 +35,7 @@ void sacarNivel(TablaSimbolos *ts);
 
 Simbolo *crearSimbolo(void);
 
-Simbolo *buscarSimbolo(char* nombre, TipoSimbolo tipo, TablaSimbolos *TablaSimbolos);
+Simbolo *buscarSimbolo(char* nombre, TablaSimbolos *TablaSimbolos);
 /**
  * nodo necesario para crear una lista de simbolos
  * (se usa en la creacion del nodo expresiones)
