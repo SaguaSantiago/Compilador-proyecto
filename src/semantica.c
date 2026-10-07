@@ -1,5 +1,8 @@
 #include "ASTdef.h"
 #include "TSdef.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 extern ASTNodo* raiz;
 
@@ -61,7 +64,7 @@ void analisisSemantico(ASTNodo* nodo){
         analisisSemantico(nodo->der); 
         break;
     
-    case NODO_IF:
+    case NODO_IF: 
     case NODO_IF_ELSE:
     case NODO_WHILE:
         if(nodo->izq->simbolo->tipoDato != TIPO_BOOLEAN){
@@ -129,6 +132,7 @@ void analisisSemantico(ASTNodo* nodo){
         }
         break;
     case NODO_RESTA:
+        analisisSemantico(nodo->izq);
         if(nodo->der == NULL){
             // operador unario de la resta
             if(nodo->izq->simbolo->tipoDato == TIPO_FLOAT) nodo->simbolo->valor_float = -nodo->simbolo->valor_float; 
@@ -137,8 +141,129 @@ void analisisSemantico(ASTNodo* nodo){
                 // lanzar error de tipo no numerico
             }
         } else {
+            analisisSemantico(nodo->der);
             // operador binario
+            if((nodo->izq->simbolo->tipoDato == TIPO_FLOAT)&&(nodo->der->simbolo->tipoDato == TIPO_FLOAT)){
+                nodo->simbolo->valor_float = (nodo->izq->simbolo->valor_float - nodo->der->simbolo->valor_float);
+            } else if ((nodo->izq->simbolo->tipoDato == TIPO_INTEGER) && (nodo->der->simbolo->tipoDato == TIPO_INTEGER)){
+                 nodo->simbolo->valor = (nodo->izq->simbolo->valor - nodo->der->simbolo->valor);
+            } else {
+                //LANZAR ERROR DE TIPOS DISTINTOS
+            }
             
+        }
+        break;
+    case NODO_NOT:
+        analisisSemantico(nodo->izq);
+        if(nodo->izq->simbolo->tipoDato != TIPO_BOOLEAN){
+            //LANZAR ERROR DE TIPO NO B0OLEANO
+        }
+        if(nodo->izq->simbolo->valor == 0) nodo->simbolo->valor = 1;
+        else if (nodo->izq->simbolo->valor == 1) nodo->simbolo->valor=0;
+        break;
+    case NODO_SUMA:
+        analisisSemantico(nodo->izq);
+        analisisSemantico(nodo->der);
+        if((nodo->izq->simbolo->tipoDato == TIPO_FLOAT)&&(nodo->der->simbolo->tipoDato == TIPO_FLOAT)){
+            nodo->simbolo->valor_float = (nodo->izq->simbolo->valor_float + nodo->der->simbolo->valor_float);
+        } else if ((nodo->izq->simbolo->tipoDato == TIPO_INTEGER) && (nodo->der->simbolo->tipoDato == TIPO_INTEGER)){
+            nodo->simbolo->valor = (nodo->izq->simbolo->valor + nodo->der->simbolo->valor);
+        } else {
+            //LANZAR ERROR DE TIPOS DISTINTOS
+        }
+        break;
+    case NODO_MULTIPLICACION:
+        analisisSemantico(nodo->izq);
+        analisisSemantico(nodo->der);
+        if((nodo->izq->simbolo->tipoDato == TIPO_FLOAT)&&(nodo->der->simbolo->tipoDato == TIPO_FLOAT)){
+            nodo->simbolo->valor_float = (nodo->izq->simbolo->valor_float * nodo->der->simbolo->valor_float);
+        } else if ((nodo->izq->simbolo->tipoDato == TIPO_INTEGER) && (nodo->der->simbolo->tipoDato == TIPO_INTEGER)){
+            nodo->simbolo->valor = (nodo->izq->simbolo->valor * nodo->der->simbolo->valor);
+        } else {
+            //LANZAR ERROR DE TIPOS DISTINTOS
+        }
+        break;
+    case NODO_DIVISION:
+        analisisSemantico(nodo->izq);
+        analisisSemantico(nodo->der);
+        if((nodo->izq->simbolo->tipoDato == TIPO_FLOAT)&&(nodo->der->simbolo->tipoDato == TIPO_FLOAT)){
+            nodo->simbolo->valor_float = (nodo->izq->simbolo->valor_float / nodo->der->simbolo->valor_float);
+        } else if ((nodo->izq->simbolo->tipoDato == TIPO_INTEGER) && (nodo->der->simbolo->tipoDato == TIPO_INTEGER)){
+            nodo->simbolo->valor = (nodo->izq->simbolo->valor / nodo->der->simbolo->valor);
+        } else {
+            //LANZAR ERROR DE TIPOS DISTINTOS
+        }
+        break;
+    case NODO_MOD:
+        analisisSemantico(nodo->izq);
+        analisisSemantico(nodo->der);
+        if((nodo->izq->simbolo->tipoDato == TIPO_FLOAT)&&(nodo->der->simbolo->tipoDato == TIPO_FLOAT)){
+            nodo->simbolo->valor_float = fmodf(nodo->izq->simbolo->valor_float, nodo->der->simbolo->valor_float);
+        } else if ((nodo->izq->simbolo->tipoDato == TIPO_INTEGER) && (nodo->der->simbolo->tipoDato == TIPO_INTEGER)){
+            nodo->simbolo->valor = (nodo->izq->simbolo->valor % nodo->der->simbolo->valor);
+        } else {
+            //LANZAR ERROR DE TIPOS DISTINTOS
+        }
+        break;
+    case NODO_AND:
+        analisisSemantico(nodo->izq);
+        analisisSemantico(nodo->der);
+        if((nodo->izq->simbolo->tipoDato == TIPO_BOOLEAN)&&(nodo->der->simbolo->tipoDato == TIPO_BOOLEAN)){
+            if((nodo->izq->simbolo->valor == 1)&& (nodo->der->simbolo->valor == 1)){
+                nodo->simbolo->valor = 1;
+            } else{
+                nodo->simbolo->valor = 0;
+            }
+        }else{
+            //LANZAR ERROR DE TIPOS DISTINTOS
+        }
+        break;
+    case NODO_OR:
+        analisisSemantico(nodo->izq);
+        analisisSemantico(nodo->der);
+        if((nodo->izq->simbolo->tipoDato == TIPO_BOOLEAN)&&(nodo->der->simbolo->tipoDato == TIPO_BOOLEAN)){
+            if((nodo->izq->simbolo->valor == 0)&& (nodo->der->simbolo->valor == 0)){
+                nodo->simbolo->valor = 0;
+            } else{
+                nodo->simbolo->valor = 1;
+            }
+        }else{
+            //LANZAR ERROR DE TIPOS DISTINTOS
+        }
+        break;
+    case NODO_IGUALDAD:
+        analisisSemantico(nodo->izq);
+        analisisSemantico(nodo->der);
+        if((nodo->izq->simbolo->tipoDato == TIPO_FLOAT)&&(nodo->der->simbolo->tipoDato == TIPO_FLOAT)){
+            nodo->simbolo->valor_float = (nodo->izq->simbolo->valor_float == nodo->der->simbolo->valor_float);
+        } else if ((nodo->izq->simbolo->tipoDato == TIPO_INTEGER) && (nodo->der->simbolo->tipoDato == TIPO_INTEGER)){
+            nodo->simbolo->valor = (nodo->izq->simbolo->valor == nodo->der->simbolo->valor);
+        } else if((nodo->izq->simbolo->tipoDato == TIPO_BOOLEAN)&&(nodo->der->simbolo->tipoDato == TIPO_BOOLEAN)){
+            nodo->simbolo->valor = (nodo->izq->simbolo->valor == nodo->der->simbolo->valor);
+        }else{
+            //LANZAR ERROR DE TIPOS DE HIJOS DISINTOS
+        }
+        break;
+    case NODO_MENOR:
+        analisisSemantico(nodo->izq);
+        analisisSemantico(nodo->der);
+        if((nodo->izq->simbolo->tipoDato == TIPO_FLOAT)&&(nodo->der->simbolo->tipoDato == TIPO_FLOAT)){
+            nodo->simbolo->valor_float = (nodo->izq->simbolo->valor_float < nodo->der->simbolo->valor_float);
+        } else if ((nodo->izq->simbolo->tipoDato == TIPO_INTEGER) && (nodo->der->simbolo->tipoDato == TIPO_INTEGER)){
+            nodo->simbolo->valor = (nodo->izq->simbolo->valor < nodo->der->simbolo->valor);
+        }else{
+            //LANZAR ERROR DE TIPOS DISTINTOS O NO NUMERICOS
+        }
+        break;
+    case NODO_MAYOR:
+        analisisSemantico(nodo->izq);
+        analisisSemantico(nodo->der);
+        if((nodo->izq->simbolo->tipoDato == TIPO_FLOAT)&&(nodo->der->simbolo->tipoDato == TIPO_FLOAT)){
+            nodo->simbolo->valor_float = (nodo->izq->simbolo->valor_float > nodo->der->simbolo->valor_float);
+        } else if ((nodo->izq->simbolo->tipoDato == TIPO_INTEGER) && (nodo->der->simbolo->tipoDato == TIPO_INTEGER)){
+            nodo->simbolo->valor = (nodo->izq->simbolo->valor > nodo->der->simbolo->valor);
+        }else{
+            //LANZAR ERROR DE TIPOS DISTINTOS O NO NUMERICOS
         }
         break;
     default:
