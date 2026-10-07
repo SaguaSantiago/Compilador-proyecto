@@ -100,7 +100,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 21 "bisson.y"
+#line 20 "bisson.y"
 
   ASTNodo* nodo;
   TipoDato tipo_dato;

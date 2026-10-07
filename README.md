@@ -177,8 +177,11 @@ El trabajo se repartió de la siguiente manera :
 
 ## 2. Decisiones de diseño
 
-* Desacoplamiento de la creación de tabla de símbolos y creación del árbol
-* Se elimino el enfoque anterior de busqueda de expresiones a traves de la variable global `listaExpresiones` 
+* Desacoplamiento de la creación de tabla de símbolos y creación del árbol.
+* Se movio el enfoque anterior de busqueda de expresiones a traves de la variable global `listaExpresiones` para adaptarlo al analisis semantico.
+* Se agrego un nuevo no terminal a la gramatica llamado `Var_declaracion`, esto para arreglar el mal funcionamiento de `Var_declaraciones` ya que antes tenia la forma `Var_declaraciones: Declaracion Var_declaraciones` y ahora es `Var_declaraciones: Var_declaracion Var_declaraciones`.
+* Se movieron las adiciones de simbolo a la tabla de `bisson.y` a `semantica.c`.
+
 ## 3. Descripción del diseño y decisiones clave
 
 ### Arquitectura

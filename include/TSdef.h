@@ -5,13 +5,15 @@
 
 #define DEFAULT_NIVELES_CANT 10
 // TODO: documentar funciones y tipos
+typedef struct nodo_simbolo NodoSimbolo;
+
 typedef struct Simbolo {
   TipoSimbolo tipoSimbolo;
   char *nombre;
   TipoDato tipoDato;
   int valor;
   float valor_float;
-  Simbolo *parametros;
+  NodoSimbolo *parametros;
   ASTNodo *nodoBloque;
 } Simbolo;
 
@@ -36,14 +38,17 @@ void sacarNivel(TablaSimbolos *ts);
 Simbolo *crearSimbolo(void);
 
 Simbolo *buscarSimbolo(char* nombre, TablaSimbolos *TablaSimbolos);
+
+int existeSimboloEnNivel(char* nombre, TablaSimbolos *tabla);
+
 /**
  * nodo necesario para crear una lista de simbolos
  * (se usa en la creacion del nodo expresiones)
  * */
-typedef struct nodo_simbolo {
+struct nodo_simbolo {
   Simbolo *simbolo;
   struct nodo_simbolo *sig;
-} NodoSimbolo;
+};
 
 void agregarSimboloALista(Simbolo *simbolo, NodoSimbolo **lista);
 #endif

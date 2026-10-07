@@ -40,6 +40,7 @@ typedef enum TipoNodo {
 typedef struct ASTNodo {
   Simbolo *simbolo;
   TipoNodo tipo;
+  int linea;
 
   struct ASTNodo *izq;
   struct ASTNodo *der;

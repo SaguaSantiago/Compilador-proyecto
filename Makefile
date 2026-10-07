@@ -23,7 +23,7 @@ endif
 HEADERS := include/enums.h include/tipos.h include/compilador.h \
            include/ASTdef.h include/TSdef.h
 
-SOURCES := src/main.c src/astdef.c src/TSdef.c \
+SOURCES := src/main.c src/astdef.c src/TSdef.c src/semantica.c \
            parser/bisson.tab.c parser/lex.yy.c
 OBJECTS := $(SOURCES:.c=.o)
 
@@ -52,7 +52,7 @@ parser/lex.yy.c: parser/lex.l parser/bisson.tab.h
 	cd parser && $(FLEX) lex.l
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $^
+	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 src/main.o: src/main.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -61,6 +61,9 @@ src/astdef.o: src/astdef.c include/ASTdef.h include/enums.h include/tipos.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 src/TSdef.o: src/TSdef.c include/TSdef.h include/ASTdef.h include/enums.h include/tipos.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+src/semantica.o: src/semantica.c include/TSdef.h include/ASTdef.h include/enums.h include/tipos.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 parser/bisson.tab.o: parser/bisson.tab.c parser/bisson.tab.h $(HEADERS)

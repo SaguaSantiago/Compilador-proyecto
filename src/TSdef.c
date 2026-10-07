@@ -45,13 +45,14 @@ void agregarNivel(TablaSimbolos *ts){
     NodoNivel* nuevoNodo = malloc(sizeof(NodoNivel)); 
     nuevoNodo->sim = NULL;
     nuevoNodo->sig = NULL;
+    
+    NodoNivel nivelActual = ts->niveles[ts->nivelActual];
 
-    NodoNivel *nivelActual = ts->niveles[ts->nivelActual].sig;
-
-    nivelActual->sig = nuevoNodo;   
+    nivelActual.sig = nuevoNodo;
 }
 
 void sacarNivel(TablaSimbolos *ts){
+    ts->niveles[ts->nivelActual].sig = NULL;
     ts->nivelActual--; 
 }
 
@@ -74,6 +75,23 @@ Simbolo* buscarSimbolo(char* nombre, TablaSimbolos *tabla){
         nivel--;
     }
     return NULL;
+}
+
+int existeSimboloEnNivel(char* nombre, TablaSimbolos *tabla){
+    int nivel = tabla->nivelActual;
+    NodoNivel* nodoActual = tabla->niveles[nivel].sig;
+
+    while (nodoActual != NULL) {
+        if (nodoActual->sim != NULL &&
+            nodoActual->sim->nombre != NULL &&
+            strcmp(nodoActual->sim->nombre, nombre) == 0) {
+            return 1;
+        }
+
+        nodoActual = nodoActual->sig;
+    }
+
+    return 0;
 }
 
 void agregarSimboloALista(Simbolo *simbolo, NodoSimbolo **lista) {

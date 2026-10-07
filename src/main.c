@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "semantica.h"
 
 extern int yyparse(void);
 extern int yylex(void);
+extern ASTNodo* raiz;
 
 /* Definidos en lex.yy.c */
 extern FILE *yyin;
@@ -141,6 +143,8 @@ int main(int argc, char *argv[]) {
     ok = (yyparse() == 0 && error_lexico == 0);
     if (ok) {
       fprintf(yyout, "Analisis sintactico OK\n");
+      analisisSemantico(raiz);
+      fprintf(yyout, "Analisis semantico OK\n");
     }
   }
 
