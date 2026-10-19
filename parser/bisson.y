@@ -224,8 +224,11 @@ Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER
         simboloId->tipoSimbolo = SIMBOLO_IDENTIFICADOR;
         ASTNodo* nodoId = crearASTNodo(NODO_IDENTIFICADOR, simboloId, NULL, NULL);
 
+        Simbolo* simboloInvocacion = crearSimbolo(); 
+        simboloInvocacion->tipoSimbolo = SIMBOLO_INVOCACION;
+        simboloInvocacion->nombre = strdup($1);
         
-        $$ = crearASTNodo(NODO_INVOCACION, NULL, nodoId, $3);
+        $$ = crearASTNodo(NODO_INVOCACION, simboloInvocacion, nodoId, $3);
       }
       ;
 
@@ -235,6 +238,7 @@ Expresiones: Expr Expresiones {
           | Expr {
             $$ = $1;
           }
+          | %empty {$$ = NULL;}
           ;
 Expr:
     Id{

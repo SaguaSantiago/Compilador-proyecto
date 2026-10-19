@@ -498,7 +498,7 @@ union yyalloc
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  20
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  55
+#define YYNRULES  56
 /* YYNSTATES -- Number of states.  */
 #define YYNSTATES  95
 
@@ -555,9 +555,9 @@ static const yytype_int16 yyrline[] =
        0,    44,    44,    50,    54,    57,    58,    70,    83,   109,
      116,   125,   129,   133,   139,   151,   162,   165,   169,   172,
      177,   178,   181,   195,   197,   200,   204,   205,   211,   220,
-     231,   234,   239,   246,   247,   248,   255,   263,   272,   278,
-     280,   282,   286,   293,   300,   307,   314,   324,   332,   342,
-     350,   358,   368,   378,   387,   396
+     235,   238,   241,   244,   251,   252,   253,   260,   268,   277,
+     283,   285,   287,   291,   298,   305,   312,   319,   329,   337,
+     347,   355,   363,   373,   383,   392,   401
 };
 #endif
 
@@ -624,11 +624,11 @@ static const yytype_int8 yydefact[] =
        0,     1,     3,    10,     0,    16,    16,     0,     8,     0,
        0,     0,    10,     9,    15,     0,     0,    16,    18,     7,
        6,    14,    18,     0,    21,    17,     0,     0,     0,     0,
-       0,    21,     0,     0,    28,     0,     0,    53,    52,    55,
-      54,    32,    33,     0,    34,     0,     0,     0,     0,    19,
-      20,    23,     0,    37,    36,    42,    44,    27,    47,    48,
-      51,    50,    49,    46,    43,    45,     0,    39,    40,    41,
-       0,    26,     0,     0,    31,    38,    35,     0,    22,    29,
+       0,    21,     0,     0,    28,     0,     0,    54,    53,    56,
+      55,    33,    34,     0,    35,     0,     0,     0,    32,    19,
+      20,    23,     0,    38,    37,    43,    45,    27,    48,    49,
+      52,    51,    50,    47,    44,    46,     0,    40,    41,    42,
+       0,    26,     0,     0,    31,    39,    36,     0,    22,    29,
        0,    30,    24,     0,    25
 };
 
@@ -721,9 +721,9 @@ static const yytype_int8 yyr1[] =
        0,    35,    36,    37,    37,    38,    38,    38,    39,    40,
       40,    41,    41,    41,    42,    42,    42,    43,    43,    44,
       45,    45,    46,    46,    46,    46,    46,    46,    46,    47,
-      48,    48,    49,    49,    49,    49,    49,    49,    49,    50,
-      50,    50,    51,    51,    51,    51,    51,    52,    52,    53,
-      53,    53,    54,    54,    54,    54
+      48,    48,    48,    49,    49,    49,    49,    49,    49,    49,
+      50,    50,    50,    51,    51,    51,    51,    51,    52,    52,
+      53,    53,    53,    54,    54,    54,    54
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
@@ -732,9 +732,9 @@ static const yytype_int8 yyr2[] =
        0,     2,     1,     2,     0,     1,     6,     6,     3,     3,
        1,     1,     1,     1,     4,     2,     0,     2,     0,     4,
        2,     0,     4,     2,     5,     7,     3,     3,     2,     4,
-       2,     1,     1,     1,     1,     3,     2,     2,     3,     1,
+       2,     1,     0,     1,     1,     1,     3,     2,     2,     3,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1
+       1,     1,     1,     1,     1,     1,     1
 };
 
 
@@ -1700,29 +1700,39 @@ yyreduce:
         simboloId->tipoSimbolo = SIMBOLO_IDENTIFICADOR;
         ASTNodo* nodoId = crearASTNodo(NODO_IDENTIFICADOR, simboloId, NULL, NULL);
 
-        (yyval.nodo) = crearASTNodo(NODO_INVOCACION, NULL, nodoId, (yyvsp[-1].nodo));
+        Simbolo* simboloInvocacion = crearSimbolo(); 
+        simboloInvocacion->tipoSimbolo = SIMBOLO_INVOCACION;
+        simboloInvocacion->nombre = strdup((yyvsp[-3].nombre));
+        
+        (yyval.nodo) = crearASTNodo(NODO_INVOCACION, simboloInvocacion, nodoId, (yyvsp[-1].nodo));
       }
-#line 1706 "bisson.tab.c"
+#line 1710 "bisson.tab.c"
     break;
 
   case 30: /* Expresiones: Expr Expresiones  */
-#line 231 "bisson.y"
+#line 235 "bisson.y"
                               {
             (yyval.nodo) = crearASTNodo(NODO_EXPRESIONES, NULL, (yyvsp[-1].nodo), (yyvsp[0].nodo));
            }
-#line 1714 "bisson.tab.c"
+#line 1718 "bisson.tab.c"
     break;
 
   case 31: /* Expresiones: Expr  */
-#line 234 "bisson.y"
+#line 238 "bisson.y"
                  {
             (yyval.nodo) = (yyvsp[0].nodo);
           }
-#line 1722 "bisson.tab.c"
+#line 1726 "bisson.tab.c"
     break;
 
-  case 32: /* Expr: Id  */
-#line 239 "bisson.y"
+  case 32: /* Expresiones: %empty  */
+#line 241 "bisson.y"
+                   {(yyval.nodo) = NULL;}
+#line 1732 "bisson.tab.c"
+    break;
+
+  case 33: /* Expr: Id  */
+#line 244 "bisson.y"
       {
       Simbolo* simboloId = crearSimbolo();
       simboloId->tipoSimbolo = SIMBOLO_IDENTIFICADOR;
@@ -1730,34 +1740,34 @@ yyreduce:
       
       (yyval.nodo) = crearASTNodo(NODO_IDENTIFICADOR, simboloId, NULL, NULL);
     }
-#line 1734 "bisson.tab.c"
+#line 1744 "bisson.tab.c"
     break;
 
-  case 33: /* Expr: Metodo_invocacion  */
-#line 246 "bisson.y"
+  case 34: /* Expr: Metodo_invocacion  */
+#line 251 "bisson.y"
                         {(yyval.nodo) = (yyvsp[0].nodo);}
-#line 1740 "bisson.tab.c"
+#line 1750 "bisson.tab.c"
     break;
 
-  case 34: /* Expr: Literal  */
-#line 247 "bisson.y"
+  case 35: /* Expr: Literal  */
+#line 252 "bisson.y"
               {(yyval.nodo) = (yyvsp[0].nodo);}
-#line 1746 "bisson.tab.c"
+#line 1756 "bisson.tab.c"
     break;
 
-  case 35: /* Expr: Expr Op_binario Expr  */
-#line 249 "bisson.y"
+  case 36: /* Expr: Expr Op_binario Expr  */
+#line 254 "bisson.y"
     {
       (yyvsp[-1].nodo)->izq = (yyvsp[-2].nodo);
       (yyvsp[-1].nodo)->der = (yyvsp[0].nodo);
 
       (yyval.nodo) = (yyvsp[-1].nodo);
     }
-#line 1757 "bisson.tab.c"
+#line 1767 "bisson.tab.c"
     break;
 
-  case 36: /* Expr: RESTA Expr  */
-#line 256 "bisson.y"
+  case 37: /* Expr: RESTA Expr  */
+#line 261 "bisson.y"
     {
       Simbolo* simbolo = crearSimbolo();
       simbolo->tipoSimbolo = SIMBOLO_RESTA;
@@ -1765,11 +1775,11 @@ yyreduce:
       simbolo->tipoDato = (yyvsp[0].nodo)->simbolo->tipoDato;
       (yyval.nodo) = crearASTNodo(NODO_RESTA, simbolo, (yyvsp[0].nodo), NULL);
     }
-#line 1769 "bisson.tab.c"
+#line 1779 "bisson.tab.c"
     break;
 
-  case 37: /* Expr: NOT Expr  */
-#line 264 "bisson.y"
+  case 38: /* Expr: NOT Expr  */
+#line 269 "bisson.y"
     {
       Simbolo* simbolo = crearSimbolo();
       simbolo->tipoDato = TIPO_BOOLEAN;
@@ -1778,92 +1788,92 @@ yyreduce:
       (yyvsp[0].nodo)->simbolo->valor = abs((yyvsp[0].nodo)->simbolo->valor - 1); //TODO ver si funciona
       (yyval.nodo) = crearASTNodo(NODO_NOT, simbolo, (yyvsp[0].nodo), NULL);
     }
-#line 1782 "bisson.tab.c"
+#line 1792 "bisson.tab.c"
     break;
 
-  case 38: /* Expr: PARENTESIS_IZQ Expr PARENTESIS_DER  */
-#line 273 "bisson.y"
+  case 39: /* Expr: PARENTESIS_IZQ Expr PARENTESIS_DER  */
+#line 278 "bisson.y"
     {
       (yyval.nodo) = (yyvsp[-1].nodo); 
     }
-#line 1790 "bisson.tab.c"
+#line 1800 "bisson.tab.c"
     break;
 
-  case 39: /* Op_binario: Op_arit  */
-#line 279 "bisson.y"
+  case 40: /* Op_binario: Op_arit  */
+#line 284 "bisson.y"
           {(yyval.nodo) = (yyvsp[0].nodo);}
-#line 1796 "bisson.tab.c"
+#line 1806 "bisson.tab.c"
     break;
 
-  case 40: /* Op_binario: Op_cond  */
-#line 281 "bisson.y"
+  case 41: /* Op_binario: Op_cond  */
+#line 286 "bisson.y"
           {(yyval.nodo) = (yyvsp[0].nodo);}
-#line 1802 "bisson.tab.c"
+#line 1812 "bisson.tab.c"
     break;
 
-  case 41: /* Op_binario: Op_rel  */
-#line 283 "bisson.y"
+  case 42: /* Op_binario: Op_rel  */
+#line 288 "bisson.y"
           {(yyval.nodo) = (yyvsp[0].nodo);}
-#line 1808 "bisson.tab.c"
+#line 1818 "bisson.tab.c"
     break;
 
-  case 42: /* Op_arit: SUMA  */
-#line 287 "bisson.y"
+  case 43: /* Op_arit: SUMA  */
+#line 292 "bisson.y"
         { 
           Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_SUMA;
           
           (yyval.nodo) = crearASTNodo(NODO_SUMA, simbolo, NULL, NULL);
         }
-#line 1819 "bisson.tab.c"
+#line 1829 "bisson.tab.c"
     break;
 
-  case 43: /* Op_arit: RESTA  */
-#line 294 "bisson.y"
+  case 44: /* Op_arit: RESTA  */
+#line 299 "bisson.y"
         {
           Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_RESTA;
           
           (yyval.nodo) = crearASTNodo(NODO_RESTA, simbolo, NULL, NULL);
         }
-#line 1830 "bisson.tab.c"
+#line 1840 "bisson.tab.c"
     break;
 
-  case 44: /* Op_arit: MULTIPLICACION  */
-#line 301 "bisson.y"
+  case 45: /* Op_arit: MULTIPLICACION  */
+#line 306 "bisson.y"
         {
           Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_MULTIPLICACION;
           
           (yyval.nodo) = crearASTNodo(NODO_MULTIPLICACION, simbolo, NULL, NULL);
         }
-#line 1841 "bisson.tab.c"
+#line 1851 "bisson.tab.c"
     break;
 
-  case 45: /* Op_arit: DIV  */
-#line 308 "bisson.y"
+  case 46: /* Op_arit: DIV  */
+#line 313 "bisson.y"
         {
           Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_DIV;
           
           (yyval.nodo) = crearASTNodo(NODO_DIVISION, simbolo, NULL, NULL);
         }
-#line 1852 "bisson.tab.c"
+#line 1862 "bisson.tab.c"
     break;
 
-  case 46: /* Op_arit: MOD  */
-#line 315 "bisson.y"
+  case 47: /* Op_arit: MOD  */
+#line 320 "bisson.y"
         {
           Simbolo* simbolo = crearSimbolo();
           simbolo->tipoSimbolo = SIMBOLO_MOD;
           
           (yyval.nodo) = crearASTNodo(NODO_MOD, simbolo, NULL, NULL);
         }
-#line 1863 "bisson.tab.c"
+#line 1873 "bisson.tab.c"
     break;
 
-  case 47: /* Op_cond: AND  */
-#line 324 "bisson.y"
+  case 48: /* Op_cond: AND  */
+#line 329 "bisson.y"
    {
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_BOOLEAN;
@@ -1872,11 +1882,11 @@ yyreduce:
 
   (yyval.nodo) = crearASTNodo(NODO_AND,simbolo,NULL,NULL);
 }
-#line 1876 "bisson.tab.c"
+#line 1886 "bisson.tab.c"
     break;
 
-  case 48: /* Op_cond: OR  */
-#line 332 "bisson.y"
+  case 49: /* Op_cond: OR  */
+#line 337 "bisson.y"
     {
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_BOOLEAN;
@@ -1885,11 +1895,11 @@ yyreduce:
 
   (yyval.nodo) = crearASTNodo(NODO_OR,simbolo,NULL,NULL);
 }
-#line 1889 "bisson.tab.c"
+#line 1899 "bisson.tab.c"
     break;
 
-  case 49: /* Op_rel: IGUALDAD  */
-#line 342 "bisson.y"
+  case 50: /* Op_rel: IGUALDAD  */
+#line 347 "bisson.y"
         {
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_BOOLEAN;
@@ -1898,11 +1908,11 @@ yyreduce:
 
   (yyval.nodo) = crearASTNodo(NODO_IGUALDAD,simbolo,NULL,NULL);
 }
-#line 1902 "bisson.tab.c"
+#line 1912 "bisson.tab.c"
     break;
 
-  case 50: /* Op_rel: MENOR  */
-#line 350 "bisson.y"
+  case 51: /* Op_rel: MENOR  */
+#line 355 "bisson.y"
        {
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_BOOLEAN;
@@ -1911,11 +1921,11 @@ yyreduce:
 
   (yyval.nodo) = crearASTNodo(NODO_MENOR,simbolo,NULL,NULL);
 }
-#line 1915 "bisson.tab.c"
+#line 1925 "bisson.tab.c"
     break;
 
-  case 51: /* Op_rel: MAYOR  */
-#line 358 "bisson.y"
+  case 52: /* Op_rel: MAYOR  */
+#line 363 "bisson.y"
        {
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_BOOLEAN;
@@ -1924,11 +1934,11 @@ yyreduce:
 
   (yyval.nodo) = crearASTNodo(NODO_MAYOR,simbolo,NULL,NULL);
 }
-#line 1928 "bisson.tab.c"
+#line 1938 "bisson.tab.c"
     break;
 
-  case 52: /* Literal: INT_LITERAL  */
-#line 369 "bisson.y"
+  case 53: /* Literal: INT_LITERAL  */
+#line 374 "bisson.y"
 {
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_INTEGER;
@@ -1938,11 +1948,11 @@ yyreduce:
 
   (yyval.nodo) = crearASTNodo(NODO_INT,simbolo,NULL,NULL);
 }
-#line 1942 "bisson.tab.c"
+#line 1952 "bisson.tab.c"
     break;
 
-  case 53: /* Literal: FLOAT_LITERAL  */
-#line 379 "bisson.y"
+  case 54: /* Literal: FLOAT_LITERAL  */
+#line 384 "bisson.y"
 {
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_FLOAT;
@@ -1951,11 +1961,11 @@ yyreduce:
   
   (yyval.nodo) = crearASTNodo(NODO_FLOAT,simbolo,NULL,NULL);
 }
-#line 1955 "bisson.tab.c"
+#line 1965 "bisson.tab.c"
     break;
 
-  case 54: /* Literal: FALSE  */
-#line 388 "bisson.y"
+  case 55: /* Literal: FALSE  */
+#line 393 "bisson.y"
 {
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_BOOLEAN;
@@ -1964,11 +1974,11 @@ yyreduce:
   
   (yyval.nodo) = crearASTNodo(NODO_BOOLEAN,simbolo,NULL,NULL);
 }
-#line 1968 "bisson.tab.c"
+#line 1978 "bisson.tab.c"
     break;
 
-  case 55: /* Literal: TRUE  */
-#line 397 "bisson.y"
+  case 56: /* Literal: TRUE  */
+#line 402 "bisson.y"
 {
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_BOOLEAN;
@@ -1978,11 +1988,11 @@ yyreduce:
   
   (yyval.nodo) = crearASTNodo(NODO_BOOLEAN,simbolo,NULL,NULL);
 }
-#line 1982 "bisson.tab.c"
+#line 1992 "bisson.tab.c"
     break;
 
 
-#line 1986 "bisson.tab.c"
+#line 1996 "bisson.tab.c"
 
       default: break;
     }
@@ -2206,7 +2216,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 407 "bisson.y"
+#line 412 "bisson.y"
 
 
 void yyerror(const char *s)

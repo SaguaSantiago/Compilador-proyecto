@@ -6,7 +6,6 @@
 
 extern TablaSimbolos* tabla;
 extern TipoDato retornoEsperado;
-extern NodoSimbolo* listaExpresiones;
 
 void analisisSemantico(ASTNodo* nodo);
 #endif

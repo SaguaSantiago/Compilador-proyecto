@@ -9,7 +9,6 @@
 
 TablaSimbolos* tabla;
 TipoDato retornoEsperado;
-NodoSimbolo* listaExpresiones;
 
 const char* nombreTipo(TipoDato tipo){
     switch (tipo) {
@@ -292,7 +291,6 @@ void analisisSemantico(ASTNodo* nodo){
         analisisSemantico(nodo->izq); 
 
         encontrado = buscarSimbolo(nodo->izq->simbolo->nombre, tabla);
-        fprintf(stderr, "encontrado %s \n", encontrado->nombre); //debugg
 
         if (encontrado == NULL){
             lanzarError(nodo, "el identificador '%s' no está declarado", nodo->izq->simbolo->nombre);
@@ -316,7 +314,7 @@ void analisisSemantico(ASTNodo* nodo){
             lanzarError(nodo, "la condición de control debe ser de tipo boolean");
         }
         agregarNivel(tabla);
-        retornoEsperado = TIPO_VOID;
+        
         analisisSemantico(nodo->izq);
         analisisSemantico(nodo->der);
         sacarNivel(tabla);
@@ -344,44 +342,31 @@ void analisisSemantico(ASTNodo* nodo){
         break;
         
     case NODO_INVOCACION:
-        fprintf(stderr, "llegue a invocacion \n"); //debugg
         analisisSemantico(nodo->izq); //id 
-        
-        if(nodo->izq->simbolo->tipoSimbolo != SIMBOLO_MET_DECL){
-            lanzarError(nodo, "'%s' no es un método", nodo->izq->simbolo->nombre);
+        Simbolo* metodo = nodo->izq->simbolo; 
+        if (metodo->tipoSimbolo != SIMBOLO_MET_DECL){
+            lanzarError(nodo, "'%s no es un metodo", nodo->izq->simbolo->nombre);
         }
 
-        NodoSimbolo* expresiones = listaExpresiones;
-        free(listaExpresiones);
-        listaExpresiones = NULL;
+        nodo->simbolo->tipoDato = metodo->tipoDato;
 
-        NodoSimbolo* nodoSimboloActual = expresiones;
-        NodoSimbolo* nodoParametroActual = nodo->simbolo->parametros;
-        fprintf(stderr, "llegue nodo abajo \n"); //debugg
-        
-        while (nodoSimboloActual != NULL && nodoParametroActual != NULL) {
-            if(nodoSimboloActual->simbolo->tipoDato != nodoParametroActual->simbolo->tipoDato){
+        NodoSimbolo* param = metodo->parametros;
+        ASTNodo* arg = nodo->der;
+
+        while (arg != NULL && param != NULL) {
+            ASTNodo* expr = (arg->tipo == NODO_EXPRESIONES) ? arg->izq : arg;
+            analisisSemantico(expr);
+            if (expr->simbolo->tipoDato != param->simbolo->tipoDato)
                 lanzarError(nodo, "tipo de parámetro incorrecto en la invocación a '%s' (%s vs %s)",
-                            nodo->izq->simbolo->nombre,
-                            nombreTipo(nodoSimboloActual->simbolo->tipoDato),
-                            nombreTipo(nodoParametroActual->simbolo->tipoDato));
-            }
-
-            nodoSimboloActual = nodoSimboloActual->sig;
-            nodoParametroActual = nodoParametroActual->sig;
-
-            if((nodoSimboloActual == NULL && nodoParametroActual != NULL) 
-            || nodoSimboloActual != NULL && nodoParametroActual == NULL){
-                //lanzar error cantidad de parametros incompatible  
-            }
-
-        if(nodoSimboloActual != NULL || nodoParametroActual != NULL){
-            lanzarError(nodo, "cantidad de parámetros incompatible en la invocación a '%s'",
-                        nodo->izq->simbolo->nombre);
+                            metodo->nombre, nombreTipo(expr->simbolo->tipoDato),
+                            nombreTipo(param->simbolo->tipoDato));
+            param = param->sig;
+            arg   = (arg->tipo == NODO_EXPRESIONES) ? arg->der : NULL;
         }
-
-
+        if (arg != NULL || param != NULL)
+            lanzarError(nodo, "cantidad de parámetros incompatible en la invocación a '%s'", metodo->nombre);
         break;
+
     
     case NODO_IDENTIFICADOR:
         encontrado = buscarSimbolo(nodo->simbolo->nombre, tabla);
@@ -391,13 +376,6 @@ void analisisSemantico(ASTNodo* nodo){
         }
 
         nodo->simbolo = encontrado;
-        break;
-
-    case NODO_EXPRESIONES:
-        analisisSemantico(nodo->izq);
-        analisisSemantico(nodo->der);
-        
-        agregarSimboloALista(nodo->izq->simbolo, &listaExpresiones);
         break;
         
     case NODO_RESTA:
@@ -488,6 +466,6 @@ void analisisSemantico(ASTNodo* nodo){
         analisisSemantico(nodo->izq);
         analisisSemantico(nodo->der);
         break;
-}
-}
+
+    }
 }
