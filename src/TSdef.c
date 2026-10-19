@@ -114,3 +114,7 @@ Simbolo *crearSimbolo(void) {
 
   return nuevoSimbolo;
 }
+
+NodoNivel *obtenerNivelActual(TablaSimbolos *ts){
+    return ts->niveles + ts->nivelActual;
+}

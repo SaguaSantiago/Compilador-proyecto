@@ -19,6 +19,7 @@ typedef struct Simbolo {
 
 typedef struct Nivel {
   Simbolo *sim;
+  TipoDato retornoEsperado;
   struct Nivel *sig;
 } NodoNivel;
 
@@ -40,6 +41,8 @@ Simbolo *crearSimbolo(void);
 Simbolo *buscarSimbolo(char* nombre, TablaSimbolos *TablaSimbolos);
 
 int existeSimboloEnNivel(char* nombre, TablaSimbolos *tabla);
+
+NodoNivel *obtenerNivelActual(TablaSimbolos *ts);
 
 /**
  * nodo necesario para crear una lista de simbolos

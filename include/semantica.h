@@ -5,7 +5,6 @@
 #include <stdio.h>
 
 extern TablaSimbolos* tabla;
-extern TipoDato retornoEsperado;
 
 void analisisSemantico(ASTNodo* nodo);
 #endif

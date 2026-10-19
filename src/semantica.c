@@ -8,7 +8,6 @@
 #include <math.h>
 
 TablaSimbolos* tabla;
-TipoDato retornoEsperado;
 
 const char* nombreTipo(TipoDato tipo){
     switch (tipo) {
@@ -247,10 +246,15 @@ int procesarOpNumerica(ASTNodo *nodo) {
 }
 
 void analisisSemantico(ASTNodo* nodo){
+    
     if(tabla == NULL) {
         inicializarTs(&tabla);
-        retornoEsperado = TIPO_VOID;
+        NodoNivel *nivelActual = obtenerNivelActual(tabla);
+        nivelActual->retornoEsperado = TIPO_VOID;
     }
+    
+    NodoNivel *nivelActual = obtenerNivelActual(tabla);
+
 
     if(nodo == NULL) return;
 
@@ -273,9 +277,10 @@ void analisisSemantico(ASTNodo* nodo){
         if(existeSimboloEnNivel(nodo->simbolo->nombre, tabla)){
             lanzarError(nodo, "el método '%s' ya está declarado en este nivel", nodo->simbolo->nombre);
         }
-        retornoEsperado = nodo->simbolo->tipoDato; 
-
         agregarNivel(tabla);
+
+        nivelActual=obtenerNivelActual(tabla);
+        nivelActual->retornoEsperado = nodo->simbolo->tipoDato; 
 
         analisisSemantico(nodo->izq); //parametros -> NODO_DECL_VAR
         analisisSemantico(nodo->der); //bloque
@@ -313,8 +318,15 @@ void analisisSemantico(ASTNodo* nodo){
         if(nodo->izq->simbolo->tipoDato != TIPO_BOOLEAN){
             lanzarError(nodo, "la condición de control debe ser de tipo boolean");
         }
+
+        nivelActual=obtenerNivelActual(tabla);
+        TipoDato retornoHeredado = nivelActual->retornoEsperado;
+
         agregarNivel(tabla);
-        
+
+        nivelActual=obtenerNivelActual(tabla);
+        nivelActual->retornoEsperado = retornoHeredado;
+
         analisisSemantico(nodo->izq);
         analisisSemantico(nodo->der);
         sacarNivel(tabla);
@@ -332,13 +344,16 @@ void analisisSemantico(ASTNodo* nodo){
             analisisSemantico(nodo->izq);
             nodo->simbolo->tipoDato = nodo->izq->simbolo->tipoDato;
         }
+
+        nivelActual=obtenerNivelActual(tabla);
+        TipoDato retornoEsperado = nivelActual->retornoEsperado;
         
         if(nodo->simbolo->tipoDato != retornoEsperado){
             lanzarError(nodo, "tipo de retorno incompatible: se esperaba %s, se encontró %s",
                         nombreTipo(retornoEsperado),
                         nombreTipo(nodo->simbolo->tipoDato));
         }
-        retornoEsperado = TIPO_VOID;
+
         break;
         
     case NODO_INVOCACION:
