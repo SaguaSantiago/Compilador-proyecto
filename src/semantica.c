@@ -67,10 +67,12 @@ void analisisSemantico(ASTNodo* nodo){
         analisisSemantico(nodo->der); 
         Simbolo* simboloExpresion = nodo->der->simbolo;
         if (encontrado->tipoDato != simboloExpresion->tipoDato){
-            lanzarError(nodo, "tipos incompatibles en la asignación a '%s' (%s vs %s)",
+            if(!(esTipoNumerico(encontrado->tipoDato)&& esTipoNumerico(simboloExpresion->tipoDato))){
+                lanzarError(nodo, "tipos incompatibles en la asignación a '%s' (%s vs %s)",
                         nodo->izq->simbolo->nombre,
                         nombreTipo(encontrado->tipoDato),
                         nombreTipo(simboloExpresion->tipoDato));
+            }
         }
         
         break;
