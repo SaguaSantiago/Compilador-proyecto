@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <math.h>
+#include "utils.h"
 
 TablaSimbolos* tabla;
 

@@ -9,5 +9,6 @@ int chequearTipos(TipoDato tipoEsperado, int cantidadTipos,...);
 int esTipoNumerico(TipoDato tipo);
 int procesarOpNumerica(ASTNodo *nodo);
 int procesarOpBooleano(ASTNodo *nodo);
+int procesarComparacion(ASTNodo *nodo);
 
 #endif
