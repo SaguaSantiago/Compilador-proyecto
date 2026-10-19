@@ -37,6 +37,7 @@ void inicializarTs(TablaSimbolos **ts){
     }
 
     (*ts)->nivelActual = 0;
+    obtenerNivelActual(*ts)->retornoEsperado = TIPO_VOID;
 }
 
 void agregarNivel(TablaSimbolos *ts){

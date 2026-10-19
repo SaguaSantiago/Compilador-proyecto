@@ -249,8 +249,6 @@ void analisisSemantico(ASTNodo* nodo){
     
     if(tabla == NULL) {
         inicializarTs(&tabla);
-        NodoNivel *nivelActual = obtenerNivelActual(tabla);
-        nivelActual->retornoEsperado = TIPO_VOID;
     }
     
     NodoNivel *nivelActual = obtenerNivelActual(tabla);
