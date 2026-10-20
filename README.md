@@ -169,9 +169,9 @@ En cuanto a diseño no tuvimos problemas especificos, fue una construcción simi
 
 El trabajo se repartió de la siguiente manera :
 
-- **Lucas Lillo** : 
-- **Santiago Sagua** :
-- **Paloma Brizuela** :
+- **Lucas Lillo** : Reestructuración de la gramática, modularización y función principal `analisisSemantico`. 
+- **Santiago Sagua** : Desarrollo de `semantica.c`, función principal `analisisSemantico` y funciones auxiliares. 
+- **Paloma Brizuela** : Modularización, función principal `analisisSemantico` y funciones auxiliares. 
 
 ---
 
@@ -181,15 +181,19 @@ El trabajo se repartió de la siguiente manera :
 * Se movio el enfoque anterior de busqueda de expresiones a traves de la variable global `listaExpresiones` para adaptarlo al analisis semantico.
 * Se agrego un nuevo no terminal a la gramatica llamado `Var_declaracion`, esto para arreglar el mal funcionamiento de `Var_declaraciones` ya que antes tenia la forma `Var_declaraciones: Declaracion Var_declaraciones` y ahora es `Var_declaraciones: Var_declaracion Var_declaraciones`.
 * Se movieron las adiciones de simbolo a la tabla de `bisson.y` a `semantica.c`.
+* Se opto por incorporar la referencia al tipo de retorno en cada nivel de la tabla de simbolos. 
 
 ## 3. Descripción del diseño y decisiones clave
 
 ### Arquitectura
-
+El núcleo de esta etapa coinsiste en la creación de `semantica.c`, aqui se concentra el codigo que maneja el analisis semantico del lenguaje. Se basa en un recorrido recursivo por el arbol y un analisis sistematico por cada nodo. Se optó por separar el analisis de simbolos de la creacion, de esta manera los simbolos son creados en `bisson.y` y el chequeo semantico se realiza en `semantica.c`. 
 ### Alternativas consideradas y justificación
-
-### Deficiencias detectadas y alternativas propuestas
+Esta bien remarcar que el analisis se podria haber hecho en la propia gramatica dentro de `bisson.y` y asi no tener que recorrer nuevamente el árbol pero esto hubiera aumentado el acoplamiento y dificultado el manejo del codigo. 
 
 ## 4. Detalles de implementación interesantes
-
+Unos detalles que vale la pena recalcar son, por ejemplo, la incorporacion de los atributos `parametros` en el tipo `Simbolo` y `tipoRetorno` en `NodoNivel`, el primero utilizado para almacenar los tipos de parametros esperados por un metodo y el segundo para guardar el retorno esperado por un nivel (int, void, bool o float).
 ## 5. Problemas de producción
+Se debieron plantear muchas estructuras para solucionar diversas cuestiones del análisis semántico, para ello se analizaron diferentes alternativas que a continuación detallaremos.
+
+* **Manejo de niveles**: A la hora de decidir como íbamos a manejar los niveles propusimos dos soluciones, una variable global `retornoEsperado` que almacene el tipo esperado o que el nivel de la tabla de simbolos guarde el tipo de retorno esperado, finalmente se optó por la segunda opción ya que nos pareció la mas limpia a la hora de debuggear el código.
+* **Guardar parametros de los metodos**: la comparación entre parametros esperados y argumentos pasados requirió reestructurar el código. Para ello se agregó un nuevo atributo en `Simbolo` donde se guardan los parametros esperados por un metodo y, al momento de recorrer la invocación de dicha función, se comparan ordenadamente los parametros guardados en este atributo con los argumentos pasados. 
