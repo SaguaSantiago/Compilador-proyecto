@@ -385,7 +385,7 @@ INT_LITERAL
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_FLOAT;
   simbolo->tipoSimbolo = SIMBOLO_FLOAT_LITERAL;
-  simbolo->valor = $1;
+  simbolo->valor_float = $1;
   
   $$ = crearASTNodo(NODO_FLOAT,simbolo,NULL,NULL);
 }
