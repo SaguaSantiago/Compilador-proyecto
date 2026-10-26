@@ -9,7 +9,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
     switch (nodo->tipo)
     {
     case NODO_ASIGNACION:
-        char *valor = generarExpresion(nodo->izq);
+        char *valor = generarExpresion(nodo->der);
         char *destino = nodo->izq->simbolo->nombre;
 
         Instruccion inst = {
