@@ -9,14 +9,11 @@ void construirCodigoIntermedio(ASTNodo *nodo){
     switch (nodo->tipo)
     {
     case NODO_ASIGNACION:
-        char *valor = generarExpresion(nodo->izq);
-        char *destino = nodo->izq->simbolo->nombre;
-
         Instruccion inst = {
             .op = ASSIGN,
-            .arg1 = valor, 
+            .arg1 = nodo->der->simbolo, 
             .arg2 = NULL,
-            .resultado = destino,
+            .resultado = nodo->izq->simbolo,
             .label = NULL
         };
 
@@ -31,14 +28,12 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         ASTNodo *bloqueIf = bloquesIf->izq;
         ASTNodo *bloqueElse = bloquesIf->der;
 
-        char *resultadoCondicion = generarExpresion(condicion);
-
         char *etiquetaElse = nuevoLabel();
         char *etiquetaFin = nuevoLabel();
 
         Instruccion saltoElse = {
             .op = IF_FALSE,
-            .arg1 = resultadoCondicion,
+            .arg1 = condicion->simbolo,
             .arg2 = NULL,
             .resultado = NULL,
             .label = etiquetaElse
@@ -85,7 +80,6 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         ASTNodo* condicionWhile = nodo->izq;
         ASTNodo* bloqueWhile = nodo->der;
 
-        char resCondicionWhile = generarExpresion(condicionWhile);
         
         char *inicioWhileLabel = nuevoLabel();
         char *finWhileLabel = nuevoLabel();
@@ -101,7 +95,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
         Instruccion saltoFinWhile = {
             .op = IF_FALSE,
-            .arg1 = resCondicionWhile,
+            .arg1 = condicionWhile->simbolo,
             .arg2 = NULL,
             .resultado = NULL,
             .label = finWhileLabel

@@ -48,17 +48,14 @@ void mostrarCodigo(void) {
                 printf("%s = %s + %s\n",
                        inst.resultado, inst.arg1, inst.arg2);
                 break;
-
             case SUB:
                 printf("%s = %s - %s\n",
                        inst.resultado, inst.arg1, inst.arg2);
                 break;
-
             case MUL:
                 printf("%s = %s * %s\n",
                        inst.resultado, inst.arg1, inst.arg2);
                 break;
-
             case DIV:
                 printf("%s = %s / %s\n",
                        inst.resultado, inst.arg1, inst.arg2);
@@ -79,10 +76,6 @@ void mostrarCodigo(void) {
             case EQ:
                 printf("%s = %s == %s\n",
                     inst.resultado, inst.arg1, inst.arg2);
-                break;
-            case NE:
-                printf("%s = %s != %s\n",
-                    inst.resultado, inst.arg1, inst.arg2);//TODO esto funciona asi? 
                 break;
             case LABEL:
                 printf("%s:\n", inst.label);

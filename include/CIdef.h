@@ -1,7 +1,7 @@
 #ifndef CIDEF_H
 #define CIDEF_H
 
-#include <stdio.h>
+#include "TSdef.h"
 
 extern int contadorTemp;
 extern int contadorLabel;
@@ -25,9 +25,9 @@ typedef enum Op{
 
 typedef struct Instruccion{
     Op op; 
-    char *arg1;
-    char *arg2;
-    char *resultado;
+    Simbolo *arg1;
+    Simbolo *arg2;
+    Simbolo *resultado;
     char *label; 
 }Instruccion;
 
