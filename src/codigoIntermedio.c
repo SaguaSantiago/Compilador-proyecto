@@ -82,7 +82,51 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
         break; 
     case NODO_WHILE:
+        ASTNodo* condicionWhile = nodo->izq;
+        ASTNodo* bloqueWhile = nodo->der;
+
+        char resCondicionWhile = generarExpresion(condicionWhile);
         
+        char *inicioWhileLabel = nuevoLabel();
+        char *finWhileLabel = nuevoLabel();
+
+        Instruccion inicioWhile = {
+            .op = LABEL,
+            .arg1 = NULL,
+            .arg2 = NULL,
+            .resultado = NULL,
+            .label = inicioWhileLabel
+        };
+        emitir(inicioWhile);
+
+        Instruccion saltoFinWhile = {
+            .op = IF_FALSE,
+            .arg1 = resCondicionWhile,
+            .arg2 = NULL,
+            .resultado = NULL,
+            .label = finWhileLabel
+        };
+        emitir(saltoFinWhile);
+
+        construirCodigoIntermedio(bloqueWhile);
+
+        Instruccion saltoInicioWhile = {
+            .op = GOTO,
+            .arg1 = NULL,
+            .arg2 = NULL,
+            .resultado = NULL,
+            .label = inicioWhileLabel
+        };
+        emitir(saltoInicioWhile);
+
+        Instruccion finWhile = {
+            .op = LABEL,
+            .arg1 = NULL,
+            .arg2 = NULL,
+            .resultado = NULL,
+            .label = finWhileLabel
+        };
+        emitir(finWhile);
         break;
 
     case NODO_BLOQUE:
