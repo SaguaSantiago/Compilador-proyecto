@@ -3,7 +3,7 @@
 #include "codigoIntermedio.h"
 #include "TSdef.h"
 
-//procesa los nodos que representan isntrucciones del programa que no generan nuevos valores: if, while, etc. 
+//procesa los nodos que representan instrucciones del programa que no generan nuevos valores: if, while, etc. 
 void construirCodigoIntermedio(ASTNodo *nodo){
     if(nodo == NULL) return;
 
@@ -270,7 +270,42 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         break;
         
     case NODO_NOT:
+        Simbolo *expresionNotIzquierda = generarExpresion(nodo->izq);
+
+        Simbolo *notTemp = nuevoTemporal(); 
+        notTemp->tipoDato = nodo->tipo; 
+
+        Instruccion notInst = { 
+            .op = NOT,
+            .arg1 = expresionNotIzquierda,
+            .arg2 = NULL,
+            .resultado = notTemp,
+            .label = NULL,
+        };
+
+        emitir(notInst);
+
+        return notTemp;
+        break;
     case NODO_AND:
+        Simbolo *expresionAndIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionAndDerecha = generarExpresion(nodo->der);
+
+        Simbolo *andTemp = nuevoTemporal(); 
+        andTemp->tipoDato = nodo->tipo; 
+
+        Instruccion andInst = { 
+            .op = AND,
+            .arg1 = expresionAndIzquierda,
+            .arg2 = expresionAndDerecha,
+            .resultado = andTemp,
+            .label = NULL,
+        };
+
+        emitir(andInst);
+
+        return andTemp;
+        break;
     case NODO_OR:
     case NODO_IGUALDAD:
     case NODO_MENOR:

@@ -93,6 +93,7 @@ int procesarOpBooleano(ASTNodo *nodo){
 
     return 1;
 }
+
 int procesarComparacion(ASTNodo *nodo){
     if (nodo == NULL || nodo->simbolo == NULL ||
         nodo->izq == NULL || nodo->der == NULL ||
