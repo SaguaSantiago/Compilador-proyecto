@@ -3,6 +3,7 @@
 #include "codigoIntermedio.h"
 #include "TSdef.h"
 
+//procesa los nodos que representan isntrucciones del programa que no generan nuevos valores: if, while, etc. 
 void construirCodigoIntermedio(ASTNodo *nodo){
     if(nodo == NULL) return;
 
@@ -136,9 +137,11 @@ void construirCodigoIntermedio(ASTNodo *nodo){
     
     case NODO_RETORNO:
         
+        Simbolo *expresionRetorno = generarExpresion(nodo->izq);
+
         Instruccion instRetorno = {
             .op = RETURN,
-            .arg1 = nodo->izq->,
+            .arg1 = expresionRetorno,
             .arg2 = NULL,
             .resultado = nodo->simbolo,
             .label = NULL,
@@ -149,37 +152,9 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         
     case NODO_INVOCACION:
         
-         
-
         break;
-    case NODO_IDENTIFICADOR:
+
     
-        break;
-        
-    case NODO_RESTA:
-    
-        break;
-    case NODO_NOT:
-
-        break;
-
-    case NODO_SUMA:
-    case NODO_MULTIPLICACION:
-    case NODO_DIVISION:
-    case NODO_MOD:
-        
-        break;
-    case NODO_AND:
-    case NODO_OR:
-        
-        break;
-    case NODO_IGUALDAD:
-       
-        break;
-    case NODO_MENOR:
-    case NODO_MAYOR:
-        
-        break;
     default:
         construirCodigoIntermedio(nodo->izq);
         construirCodigoIntermedio(nodo->der);
@@ -188,6 +163,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
     }
 }
 
+//procesa los nodos que generan un nuevo valor, en general, los que generar nuevos temporales 
 Simbolo *generarExpresion(ASTNodo *nodo){
     if (nodo == NULL) return NULL; 
 
@@ -215,6 +191,92 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         emitir(sumInst);
 
         return sumTemp;
+        break;
+    case NODO_RESTA:
+        Simbolo *expresionRestaIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionRestaDerecha = generarExpresion(nodo->der);
+
+        Simbolo *restaTemp = nuevoTemporal(); 
+        restaTemp->tipoDato = nodo->tipo; 
+
+        Instruccion restaInst = { 
+            .op = SUB,
+            .arg1 = expresionRestaIzquierda,
+            .arg2 = expresionRestaDerecha,
+            .resultado = restaTemp,
+            .label = NULL,
+        };
+
+        emitir(restaInst);
+
+        return restaTemp;
+        break;
+    case NODO_MULTIPLICACION:
+        Simbolo *expresionMultIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionMultDerecha = generarExpresion(nodo->der);
+
+        Simbolo *multTemp = nuevoTemporal(); 
+        multTemp->tipoDato = nodo->tipo; 
+
+        Instruccion multInst = { 
+            .op = MUL,
+            .arg1 = expresionMultIzquierda,
+            .arg2 = expresionMultDerecha,
+            .resultado = multTemp,
+            .label = NULL,
+        };
+
+        emitir(multInst);
+
+        return multTemp;
+        break;
+    case NODO_DIVISION:
+        Simbolo *expresionDivIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionDivDerecha = generarExpresion(nodo->der);
+
+        Simbolo *divTemp = nuevoTemporal(); 
+        divTemp->tipoDato = nodo->tipo; 
+
+        Instruccion divInst = { 
+            .op = DIV,
+            .arg1 = expresionDivIzquierda,
+            .arg2 = expresionDivDerecha,
+            .resultado = divTemp,
+            .label = NULL,
+        };
+
+        emitir(divInst);
+
+        return divTemp;
+        break;
+    case NODO_MOD:
+        Simbolo *expresionModIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionModDerecha = generarExpresion(nodo->der);
+
+        Simbolo *modTemp = nuevoTemporal(); 
+        modTemp->tipoDato = nodo->tipo; 
+
+        Instruccion modInst = { 
+            .op = MOD,
+            .arg1 = expresionModIzquierda,
+            .arg2 = expresionModDerecha,
+            .resultado = modTemp,
+            .label = NULL,
+        };
+
+        emitir(modInst);
+
+        return modTemp;
+        break;
+        
+    case NODO_NOT:
+    case NODO_AND:
+    case NODO_OR:
+    case NODO_IGUALDAD:
+    case NODO_MENOR:
+    case NODO_MAYOR:
+        
+        break;
     default:
 
 
