@@ -31,7 +31,7 @@ typedef struct Instruccion{
     char *label; 
 }Instruccion;
 
-char* nuevoTemporal();
+Simbolo* nuevoTemporal();
 
 char* nuevoLabel();
 

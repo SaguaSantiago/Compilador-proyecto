@@ -8,9 +8,13 @@ static Instruccion *codigo = NULL;
 static int codigoCantidad = 0;
 static int codigoCapacidad = 10; 
 
-char* nuevoTemporal() {
-    char *temp = (char*)malloc(10 * sizeof(char));
-    sprintf(temp, "t%d", contadorTemp++);
+Simbolo* nuevoTemporal() {
+    char *tempChar = (char*)malloc(10 * sizeof(char));
+    sprintf(tempChar, "t%d", contadorTemp++);
+
+    Simbolo *temp = crearSimbolo(); 
+    temp->nombre = tempChar; 
+
     return temp;
 }
 

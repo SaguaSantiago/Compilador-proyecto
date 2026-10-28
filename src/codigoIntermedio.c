@@ -8,10 +8,17 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
     switch (nodo->tipo)
     {
+    case NODO_DECL_MET:
+        
+        break; 
     case NODO_ASIGNACION:
+        ASTNodo *expresion = nodo->der;
+        
+        Simbolo *expresionAsignacion = generarExpresion(expresion);
+
         Instruccion inst = {
             .op = ASSIGN,
-            .arg1 = nodo->der->simbolo, 
+            .arg1 = expresionAsignacion, 
             .arg2 = NULL,
             .resultado = nodo->izq->simbolo,
             .label = NULL
@@ -128,12 +135,23 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         break;
     
     case NODO_RETORNO:
+        
+        Instruccion instRetorno = {
+            .op = RETURN,
+            .arg1 = nodo->izq->,
+            .arg2 = NULL,
+            .resultado = nodo->simbolo,
+            .label = NULL,
+        };
+
+        emitir(instRetorno); 
         break;
         
     case NODO_INVOCACION:
-        break;
+        
+         
 
-    
+        break;
     case NODO_IDENTIFICADOR:
     
         break;
@@ -167,5 +185,39 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         construirCodigoIntermedio(nodo->der);
         break;
 
+    }
+}
+
+Simbolo *generarExpresion(ASTNodo *nodo){
+    if (nodo == NULL) return NULL; 
+
+    switch (nodo->tipo)
+    {
+    case NODO_IDENTIFICADOR:
+        return nodo->simbolo;
+        break;
+    
+    case NODO_SUMA:
+        Simbolo *expresionSumaIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionSumaDerecha = generarExpresion(nodo->der);
+
+        Simbolo *sumTemp = nuevoTemporal(); 
+        sumTemp->tipoDato = nodo->tipo; 
+
+        Instruccion sumInst = { 
+            .op = ADD,
+            .arg1 = expresionSumaIzquierda,
+            .arg2 = expresionSumaDerecha,
+            .resultado = sumTemp,
+            .label = NULL,
+        };
+
+        emitir(sumInst);
+
+        return sumTemp;
+    default:
+
+
+        break;
     }
 }
