@@ -10,7 +10,30 @@ void construirCodigoIntermedio(ASTNodo *nodo){
     switch (nodo->tipo)
     {
     case NODO_DECL_VAR: 
+        if (nodo->simbolo->esGlobal){
+            Instruccion globalVarDecl = {
+                .op = VAR_GLOBAL,
+                .arg1 = nodo->simbolo,
+                .arg2 = NULL,
+                .resultado = NULL,
+                .label = NULL
+            };
+
+            emitir(globalVarDecl);
+        }
+        else{
+            Instruccion localVarDecl = {
+                .op = VAR_LOCAL,
+                .arg1 = nodo->simbolo,
+                .arg2 = NULL,
+                .resultado = NULL,
+                .label = NULL
+            };
+
+            emitir(localVarDecl);
+        }
         
+        break;
     case NODO_DECL_MET:
         ASTNodo *parametros = nodo->izq;
         ASTNodo *bloqueMetodo = nodo->der;
