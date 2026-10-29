@@ -64,24 +64,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
         emitir(finMetodo); 
         
-        break; 
-    // case NODO_PARAM_DECL: 
-    //     //los parametros son pusheados de manera que el primer parametro quede al tope de la pila
-    //     construirCodigoIntermedio(nodo->der); 
-
-    //     Simbolo *simboloParametro = nodo->izq->simbolo; 
-
-    //     Instruccion parametroPush = { 
-    //         .op = PUSH,
-    //         .arg1 = simboloParametro, 
-    //         .arg2 = NULL, 
-    //         .resultado = NULL,
-    //         .label = NULL
-    //     }; 
-
-    //     emitir(parametroPush);
-        
-    //     break;
+        break;
     case NODO_ASIGNACION:
         ASTNodo *expresion = nodo->der;
         
