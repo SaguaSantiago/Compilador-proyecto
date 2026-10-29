@@ -112,6 +112,7 @@ Simbolo *crearSimbolo(void) {
   nuevoSimbolo->tipoSimbolo = 0;
   nuevoSimbolo->valor = 0;
   nuevoSimbolo->valor_float = 0;
+  nuevoSimbolo->esGlobal = 0;
 
   return nuevoSimbolo;
 }
