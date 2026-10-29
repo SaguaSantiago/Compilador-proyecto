@@ -9,11 +9,13 @@
 #include "utils.h"
 
 TablaSimbolos* tabla;
+int existeMain;
 
 void analisisSemantico(ASTNodo* nodo){
     
     if(tabla == NULL) {
         inicializarTs(&tabla);
+        existeMain = 0;
     }
     
     NodoNivel *nivelActual = obtenerNivelActual(tabla);
@@ -31,7 +33,7 @@ void analisisSemantico(ASTNodo* nodo){
         }
         Simbolo* simbolo_var =  nodo->simbolo;
         if(tabla->nivelActual == 0) simbolo_var->esGlobal = 1;
-        
+
         agregarSimbolo(simbolo_var, tabla);
         
         analisisSemantico(nodo->izq);
@@ -41,6 +43,7 @@ void analisisSemantico(ASTNodo* nodo){
         if(existeSimboloEnNivel(nodo->simbolo->nombre, tabla)){
             lanzarError(nodo, "el método '%s' ya está declarado en este nivel", nodo->simbolo->nombre);
         }
+        if(strcmp(nodo->simbolo->nombre, "main") == 0) existeMain = 0;
         agregarNivel(tabla);
 
         nivelActual=obtenerNivelActual(tabla);
@@ -249,4 +252,6 @@ void analisisSemantico(ASTNodo* nodo){
         break;
 
     }
+
+    if(!existeMain) lanzarError(nodo, "Se necesita la declaración de la funcion \"main\" para ejecutar el programa");
 }
