@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "codigoIntermedio.h"
 #include "TSdef.h"
+#include <string.h>
 
 //procesa los nodos que representan instrucciones del programa que no generan nuevos valores: if, while, etc. 
 void construirCodigoIntermedio(ASTNodo *nodo){
@@ -40,13 +41,12 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
         construirCodigoIntermedio(parametros);
 
-        char* etiquetaInicionMetodo = nuevoLabel(); 
         Instruccion inicioMetodo = {
             .op = LABEL,
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL, 
-            .label = etiquetaInicionMetodo
+            .label = strdup(nodo->simbolo->nombre)
         };
 
         emitir(inicioMetodo);
@@ -59,29 +59,29 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = NULL, 
             .arg2 = NULL,
             .resultado = NULL,
-            .label = etiquetaFinMetodo
+            .label = strdup(etiquetaFinMetodo)
         };
 
         emitir(finMetodo); 
         
         break; 
-    case NODO_PARAM_DECL: 
-        //los parametros son pusheados de manera que el primer parametro quede al tope de la pila
-        construirCodigoIntermedio(nodo->der); 
+    // case NODO_PARAM_DECL: 
+    //     //los parametros son pusheados de manera que el primer parametro quede al tope de la pila
+    //     construirCodigoIntermedio(nodo->der); 
 
-        Simbolo *simboloParametro = nodo->izq->simbolo; 
+    //     Simbolo *simboloParametro = nodo->izq->simbolo; 
 
-        Instruccion parametroPush = { 
-            .op = PUSH,
-            .arg1 = simboloParametro, 
-            .arg2 = NULL, 
-            .resultado = NULL,
-            .label = NULL
-        }; 
+    //     Instruccion parametroPush = { 
+    //         .op = PUSH,
+    //         .arg1 = simboloParametro, 
+    //         .arg2 = NULL, 
+    //         .resultado = NULL,
+    //         .label = NULL
+    //     }; 
 
-        emitir(parametroPush);
+    //     emitir(parametroPush);
         
-        break;
+    //     break;
     case NODO_ASIGNACION:
         ASTNodo *expresion = nodo->der;
         
@@ -110,7 +110,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = expresionCondicionIf,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = etiquetaFinIf
+            .label = strdup(etiquetaFinIf)
         };
 
         emitir(saltoFinIf);
@@ -122,7 +122,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = etiquetaFinIf
+            .label = strdup(etiquetaFinIf)
         };
 
         emitir(finIf);
@@ -145,7 +145,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = expresionCondicionIfElse,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = etiquetaElse
+            .label = strdup(etiquetaElse)
         };
 
         emitir(saltoElse);
@@ -157,7 +157,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = etiquetaFinIfElse
+            .label = strdup(etiquetaFinIfElse)
         };
 
         emitir(saltoFinIfElse);
@@ -167,7 +167,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = etiquetaElse
+            .label = strdup(etiquetaElse)
         };
 
         emitir(inicioElse);
@@ -179,7 +179,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = etiquetaFinIfElse
+            .label = strdup(etiquetaFinIfElse)
         };
 
         emitir(finIfElse);
@@ -197,7 +197,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = inicioWhileLabel
+            .label = strdup(inicioWhileLabel)
         };
         emitir(inicioWhile);
 
@@ -208,7 +208,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = expresionCondicionWhile,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = finWhileLabel
+            .label = strdup(finWhileLabel)
         };
         emitir(saltoFinWhile);
 
@@ -219,7 +219,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = inicioWhileLabel
+            .label = strdup(inicioWhileLabel)
         };
         emitir(saltoInicioWhile);
 
@@ -228,7 +228,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = finWhileLabel
+            .label = strdup(finWhileLabel)
         };
         emitir(finWhile);
         break;
@@ -249,6 +249,34 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         break;
         
     case NODO_INVOCACION:
+        //pusheamos los argumentos
+        ASTNodo *argumentos = nodo->der;
+        while (argumentos != NULL){
+            Simbolo *expresionActual = generarExpresion(argumentos->izq);
+
+            Instruccion argumentoPush = { 
+                .op = PUSH, 
+                .arg1 = expresionActual,
+                .arg2 = NULL,
+                .resultado = NULL, 
+                .label = NULL
+            };
+
+            emitir(argumentoPush);
+
+            argumentos = argumentos->der; 
+        }
+
+        //call al label del metodo 
+        Instruccion callMetodo = {
+            .op = CALL,
+            .arg1 = nodo->simbolo,
+            .arg2 = NULL,
+            .resultado = NULL,
+            .label = NULL
+        };
+
+        emitir(callMetodo); 
         
         break;
 

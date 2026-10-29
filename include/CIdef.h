@@ -14,6 +14,7 @@ typedef enum Op{
     MOD,
     ASSIGN,
     PUSH,
+    CALL,
     LT,
     GT,
     EQ,
