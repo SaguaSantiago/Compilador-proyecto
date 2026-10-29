@@ -29,19 +29,50 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         break;
     
     case NODO_IF: 
+        ASTNodo *condicionIf = nodo->izq;
+  
+        char *etiquetaFinIf = nuevoLabel();
+
+        Simbolo *expresionCondicionIf = generarExpresion(condicionIf);
+
+        Instruccion saltoFinIf = {
+            .op = IF_FALSE,
+            .arg1 = expresionCondicionIf,
+            .arg2 = NULL,
+            .resultado = NULL,
+            .label = etiquetaFinIf
+        };
+
+        emitir(saltoFinIf);
+
+        construirCodigoIntermedio(nodo->der);
+
+        Instruccion finIf = {
+            .op = LABEL,
+            .arg1 = NULL,
+            .arg2 = NULL,
+            .resultado = NULL,
+            .label = etiquetaFinIf
+        };
+
+        emitir(finIf);
+
+        break;
     case NODO_IF_ELSE:
-        ASTNodo *condicion = nodo->izq;
+        ASTNodo *condicionIfElse = nodo->izq;
         ASTNodo *bloquesIf = nodo->der;
 
         ASTNodo *bloqueIf = bloquesIf->izq;
         ASTNodo *bloqueElse = bloquesIf->der;
 
         char *etiquetaElse = nuevoLabel();
-        char *etiquetaFin = nuevoLabel();
+        char *etiquetaFinIfElse = nuevoLabel();
+
+        Simbolo *expresionCondicionIfElse = generarExpresion(condicionIfElse);
 
         Instruccion saltoElse = {
             .op = IF_FALSE,
-            .arg1 = condicion->simbolo,
+            .arg1 = expresionCondicionIfElse,
             .arg2 = NULL,
             .resultado = NULL,
             .label = etiquetaElse
@@ -51,15 +82,15 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
         construirCodigoIntermedio(bloqueIf);
 
-        Instruccion saltoFin = {
+        Instruccion saltoFinIfElse = {
             .op = GOTO,
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = etiquetaFin
+            .label = etiquetaFinIfElse
         };
 
-        emitir(saltoFin);
+        emitir(saltoFinIfElse);
 
         Instruccion inicioElse = {
             .op = LABEL,
@@ -73,22 +104,21 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
         construirCodigoIntermedio(bloqueElse);
 
-        Instruccion fin = {
+        Instruccion finIfElse = {
             .op = LABEL,
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL,
-            .label = etiquetaFin
+            .label = etiquetaFinIfElse
         };
 
-        emitir(fin);
+        emitir(finIfElse);
 
         break; 
     case NODO_WHILE:
         ASTNodo* condicionWhile = nodo->izq;
         ASTNodo* bloqueWhile = nodo->der;
 
-        
         char *inicioWhileLabel = nuevoLabel();
         char *finWhileLabel = nuevoLabel();
 
@@ -101,9 +131,11 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         };
         emitir(inicioWhile);
 
+        Simbolo *expresionCondicionWhile = generarExpresion(condicionWhile);
+
         Instruccion saltoFinWhile = {
             .op = IF_FALSE,
-            .arg1 = condicionWhile->simbolo,
+            .arg1 = expresionCondicionWhile,
             .arg2 = NULL,
             .resultado = NULL,
             .label = finWhileLabel
@@ -131,10 +163,6 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         emitir(finWhile);
         break;
 
-    case NODO_BLOQUE:
-
-        break;
-    
     case NODO_RETORNO:
         
         Simbolo *expresionRetorno = generarExpresion(nodo->izq);
@@ -154,7 +182,6 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         
         break;
 
-    
     default:
         construirCodigoIntermedio(nodo->izq);
         construirCodigoIntermedio(nodo->der);
@@ -178,7 +205,8 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         Simbolo *expresionSumaDerecha = generarExpresion(nodo->der);
 
         Simbolo *sumTemp = nuevoTemporal(); 
-        sumTemp->tipoDato = nodo->tipo; 
+        sumTemp->tipoDato = nodo->simbolo->tipoDato;
+        sumTemp->valor = nodo->simbolo->valor; 
 
         Instruccion sumInst = { 
             .op = ADD,
@@ -197,7 +225,8 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         Simbolo *expresionRestaDerecha = generarExpresion(nodo->der);
 
         Simbolo *restaTemp = nuevoTemporal(); 
-        restaTemp->tipoDato = nodo->tipo; 
+        restaTemp->tipoDato = nodo->simbolo->tipoDato;
+        restaTemp->valor = nodo->simbolo->valor; 
 
         Instruccion restaInst = { 
             .op = SUB,
@@ -216,7 +245,8 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         Simbolo *expresionMultDerecha = generarExpresion(nodo->der);
 
         Simbolo *multTemp = nuevoTemporal(); 
-        multTemp->tipoDato = nodo->tipo; 
+        multTemp->tipoDato = nodo->simbolo->tipoDato;
+        multTemp->valor = nodo->simbolo->valor; 
 
         Instruccion multInst = { 
             .op = MUL,
@@ -235,7 +265,8 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         Simbolo *expresionDivDerecha = generarExpresion(nodo->der);
 
         Simbolo *divTemp = nuevoTemporal(); 
-        divTemp->tipoDato = nodo->tipo; 
+        divTemp->tipoDato = nodo->simbolo->tipoDato;
+        divTemp->valor = nodo->simbolo->valor; 
 
         Instruccion divInst = { 
             .op = DIV,
@@ -254,7 +285,8 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         Simbolo *expresionModDerecha = generarExpresion(nodo->der);
 
         Simbolo *modTemp = nuevoTemporal(); 
-        modTemp->tipoDato = nodo->tipo; 
+        modTemp->tipoDato = nodo->simbolo->tipoDato;
+        modTemp->valor = nodo->simbolo->valor; 
 
         Instruccion modInst = { 
             .op = MOD,
@@ -273,7 +305,8 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         Simbolo *expresionNotIzquierda = generarExpresion(nodo->izq);
 
         Simbolo *notTemp = nuevoTemporal(); 
-        notTemp->tipoDato = nodo->tipo; 
+        notTemp->tipoDato = nodo->simbolo->tipoDato;
+        notTemp->valor = nodo->simbolo->valor; 
 
         Instruccion notInst = { 
             .op = NOT,
@@ -292,7 +325,8 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         Simbolo *expresionAndDerecha = generarExpresion(nodo->der);
 
         Simbolo *andTemp = nuevoTemporal(); 
-        andTemp->tipoDato = nodo->tipo; 
+        andTemp->tipoDato = nodo->simbolo->tipoDato;
+        andTemp->valor = nodo->simbolo->valor; 
 
         Instruccion andInst = { 
             .op = AND,
@@ -307,14 +341,86 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         return andTemp;
         break;
     case NODO_OR:
+        Simbolo *expresionOrIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionOrDerecha = generarExpresion(nodo->der);
+
+        Simbolo *orTemp = nuevoTemporal(); 
+        orTemp->tipoDato = nodo->simbolo->tipoDato;
+        orTemp->valor = nodo->simbolo->valor; 
+
+        Instruccion orInst = { 
+            .op = OR,
+            .arg1 = expresionOrIzquierda,
+            .arg2 = expresionOrDerecha,
+            .resultado = orTemp,
+            .label = NULL,
+        };
+
+        emitir(orInst);
+
+        return orTemp;
+        break;
     case NODO_IGUALDAD:
+        Simbolo *expresionEqIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionEqDerecha = generarExpresion(nodo->der);
+
+        Simbolo *eqTemp = nuevoTempeqal(); 
+        eqTemp->tipoDato = nodo->simbolo->tipoDato;
+        eqTemp->valor = nodo->simbolo->valor; 
+
+        Instruccion eqInst = { 
+            .op = EQ,
+            .arg1 = expresionEqIzquierda,
+            .arg2 = expresionEqDerecha,
+            .resultado = eqTemp,
+            .label = NULL,
+        };
+
+        emitir(eqInst);
+
+        return eqTemp;
+        break;
     case NODO_MENOR:
+        Simbolo *expresionLtIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionLtDerecha = generarExpresion(nodo->der);
+
+        Simbolo *ltTemp = nuevoTemporal(); 
+        ltTemp->tipoDato = nodo->simbolo->tipoDato;
+        ltTemp->valor = nodo->simbolo->valor; 
+
+        Instruccion ltInst = { 
+            .op = LT,
+            .arg1 = expresionLtIzquierda,
+            .arg2 = expresionLtDerecha,
+            .resultado = ltTemp,
+            .label = NULL,
+        };
+
+        emitir(ltInst);
+
+        return ltTemp;
+        break;
     case NODO_MAYOR:
-        
+        Simbolo *expresionGtIzquierda = generarExpresion(nodo->izq);
+        Simbolo *expresionGtDerecha = generarExpresion(nodo->der);
+
+        Simbolo *gtTemp = nuevoTemporal(); 
+        gtTemp->tipoDato = nodo->simbolo->tipoDato;
+        gtTemp->valor = nodo->simbolo->valor; 
+
+        Instruccion gtInst = { 
+            .op = OR,
+            .arg1 = expresionGtIzquierda,
+            .arg2 = expresionGtDerecha,
+            .resultado = gtTemp,
+            .label = NULL,
+        };
+
+        emitir(gtInst);
+
+        return gtTemp;       
         break;
     default:
-
-
         break;
     }
 }
