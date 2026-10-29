@@ -15,6 +15,7 @@ typedef struct Simbolo {
   float valor_float;
   NodoSimbolo *parametros;
   ASTNodo *nodoBloque;
+  int esGlobal;
 } Simbolo;
 
 typedef struct Nivel {

@@ -30,6 +30,7 @@ void analisisSemantico(ASTNodo* nodo){
             lanzarError(nodo, "el símbolo '%s' ya está declarado en este nivel", nodo->simbolo->nombre);
         }
         Simbolo* simbolo_var =  nodo->simbolo;
+        if(tabla->nivelActual == 0) simbolo_var->esGlobal = 1;
         
         agregarSimbolo(simbolo_var, tabla);
         

@@ -55,6 +55,9 @@ int procesarOpBooleano(ASTNodo *nodo){
         return 0;
     }
 
+    TipoNodo tipo = nodo->tipo;
+    if(tipo != NODO_AND && tipo != NODO_OR) return 0;
+
     Simbolo *izquierdo = nodo->izq->simbolo;
     Simbolo *derecho = nodo->der->simbolo;
     TipoDato tipoIzq = izquierdo->tipoDato;
@@ -68,26 +71,9 @@ int procesarOpBooleano(ASTNodo *nodo){
     int valorDer = derecho->valor;
     int resultado;
 
-    switch (nodo->tipo) {
-    case NODO_AND:
-        if (valorIzq == 1 && valorDer == 1) {
-            resultado = 1;
-        } else {
-            resultado = 0;
-        }
-        break;
+    if(tipo == NODO_AND) resultado = valorIzq == 1 && valorDer == 1 ? 1 : 0;
+    else if(tipo == NODO_OR) resultado = valorIzq == 0 && valorDer == 0 ? 0 : 1;
 
-    case NODO_OR:
-        if (valorIzq == 0 && valorDer == 0) {
-            resultado = 0;
-        } else {
-            resultado = 1;
-        }
-        break;
-
-    default:
-        return 0;
-    }
     nodo->simbolo->tipoDato = TIPO_BOOLEAN;
     nodo->simbolo->valor = resultado;
 
