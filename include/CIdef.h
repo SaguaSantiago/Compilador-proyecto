@@ -13,6 +13,7 @@ typedef enum Op{
     DIV,
     MOD,
     ASSIGN,
+    PUSH,
     LT,
     GT,
     EQ,
@@ -22,6 +23,8 @@ typedef enum Op{
     LABEL,
     GOTO,
     IF_FALSE,
+    VAR_GLOBAL,
+    VAR_LOCAL,
     RETURN
 }Op;
 
