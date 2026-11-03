@@ -34,9 +34,18 @@
 %type<tipo_dato> Tipo_dato
 %type<nodo> Program Declaraciones Declaracion Var_declaraciones Var_declaracion Params_decl
 %type<nodo> Bloque Sentencias_list Sentencia 
-%type<nodo> Metodo_invocacion Expresiones Expr Literal 
-%type<nodo> Op_binario Op_arit Op_cond Op_rel 
+%type<nodo> Metodo_invocacion Expresiones Expr Literal
 %type<lista_nombres> Id_list
+
+%left OR
+%left AND
+%nonassoc IGUALDAD
+%nonassoc MENOR MAYOR
+%left SUMA RESTA
+%left MULTIPLICACION DIV MOD
+%precedence UNOT
+%precedence UMINUS
+
 %start Program
 
 %%
@@ -250,14 +259,82 @@ Expr:
     }
     | Metodo_invocacion {$$ = $1;}
     | Literal {$$ = $1;}
-    | Expr Op_binario Expr
+    | Expr SUMA Expr
     {
-      $2->izq = $1;
-      $2->der = $3;
-
-      $$ = $2;
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoSimbolo = SIMBOLO_SUMA;
+          
+      $$ = crearASTNodo(NODO_SUMA, simbolo, $1, $3);
     }
-    | RESTA Expr
+    |Expr RESTA Expr
+    {
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoSimbolo = SIMBOLO_RESTA;
+          
+      $$ = crearASTNodo(NODO_RESTA, simbolo, $1, $3);
+    }
+    |Expr MULTIPLICACION Expr
+    {
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoSimbolo = SIMBOLO_MULTIPLICACION;
+          
+      $$ = crearASTNodo(NODO_MULTIPLICACION, simbolo, $1, $3);
+    }
+    |Expr DIV Expr
+    {
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoSimbolo = SIMBOLO_DIV;
+          
+      $$ = crearASTNodo(NODO_DIVISION, simbolo, $1, $3);
+    }
+    |Expr MOD Expr
+    {
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoSimbolo = SIMBOLO_MOD;
+          
+      $$ = crearASTNodo(NODO_MOD, simbolo, $1, $3);
+    }
+    |Expr AND Expr
+    {
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoDato = TIPO_BOOLEAN;
+      simbolo->tipoSimbolo = SIMBOLO_AND;
+
+      $$ = crearASTNodo(NODO_AND,simbolo,$1,$3);
+    }
+    |Expr OR Expr
+    {
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoDato = TIPO_BOOLEAN;
+      simbolo->tipoSimbolo = SIMBOLO_OR;
+  
+      $$ = crearASTNodo(NODO_OR,simbolo,$1,$3);
+    }
+    |Expr IGUALDAD Expr
+    {
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoDato = TIPO_BOOLEAN;
+      simbolo->tipoSimbolo = SIMBOLO_IGUALDAD;
+  
+      $$ = crearASTNodo(NODO_IGUALDAD,simbolo,$1,$3);
+    }
+    |Expr MENOR Expr
+    {
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoDato = TIPO_BOOLEAN;
+      simbolo->tipoSimbolo = SIMBOLO_MENOR;
+  
+      $$ = crearASTNodo(NODO_MENOR,simbolo,$1,$3);
+    }
+    |Expr MAYOR Expr
+    {
+      Simbolo* simbolo = crearSimbolo();
+      simbolo->tipoDato = TIPO_BOOLEAN;
+      simbolo->tipoSimbolo = SIMBOLO_MAYOR;
+  
+      $$ = crearASTNodo(NODO_MAYOR,simbolo,$1,$3);
+    }
+    | RESTA Expr %prec UMINUS
     {
       Simbolo* simbolo = crearSimbolo();
       simbolo->tipoSimbolo = SIMBOLO_RESTA;
@@ -265,7 +342,7 @@ Expr:
       simbolo->tipoDato = $2->simbolo->tipoDato;
       $$ = crearASTNodo(NODO_RESTA, simbolo, $2, NULL);
     }
-    | NOT Expr
+    | NOT Expr %prec UNOT
     {
       Simbolo* simbolo = crearSimbolo();
       simbolo->tipoDato = TIPO_BOOLEAN;
@@ -279,95 +356,6 @@ Expr:
       $$ = $2; 
     }
     ;
-
-Op_binario: Op_arit
-          {$$ = $1;}
-          | Op_cond
-          {$$ = $1;}
-          | Op_rel
-          {$$ = $1;}
-          ;
-
-Op_arit: SUMA
-        { 
-          Simbolo* simbolo = crearSimbolo();
-          simbolo->tipoSimbolo = SIMBOLO_SUMA;
-          
-          $$ = crearASTNodo(NODO_SUMA, simbolo, NULL, NULL);
-        }
-        | RESTA
-        {
-          Simbolo* simbolo = crearSimbolo();
-          simbolo->tipoSimbolo = SIMBOLO_RESTA;
-          
-          $$ = crearASTNodo(NODO_RESTA, simbolo, NULL, NULL);
-        }
-        | MULTIPLICACION 
-        {
-          Simbolo* simbolo = crearSimbolo();
-          simbolo->tipoSimbolo = SIMBOLO_MULTIPLICACION;
-          
-          $$ = crearASTNodo(NODO_MULTIPLICACION, simbolo, NULL, NULL);
-        }
-        | DIV
-        {
-          Simbolo* simbolo = crearSimbolo();
-          simbolo->tipoSimbolo = SIMBOLO_DIV;
-          
-          $$ = crearASTNodo(NODO_DIVISION, simbolo, NULL, NULL);
-        }
-        | MOD
-        {
-          Simbolo* simbolo = crearSimbolo();
-          simbolo->tipoSimbolo = SIMBOLO_MOD;
-          
-          $$ = crearASTNodo(NODO_MOD, simbolo, NULL, NULL);
-        }
-        ;
-
-Op_cond: 
-AND{
-  Simbolo* simbolo = crearSimbolo();
-  simbolo->tipoDato = TIPO_BOOLEAN;
-  simbolo->tipoSimbolo = SIMBOLO_AND;
-  
-
-  $$ = crearASTNodo(NODO_AND,simbolo,NULL,NULL);
-} 
-| OR{
-  Simbolo* simbolo = crearSimbolo();
-  simbolo->tipoDato = TIPO_BOOLEAN;
-  simbolo->tipoSimbolo = SIMBOLO_OR;
-  
-
-  $$ = crearASTNodo(NODO_OR,simbolo,NULL,NULL);
-};
-
-Op_rel: 
-IGUALDAD{
-  Simbolo* simbolo = crearSimbolo();
-  simbolo->tipoDato = TIPO_BOOLEAN;
-  simbolo->tipoSimbolo = SIMBOLO_IGUALDAD;
-  
-
-  $$ = crearASTNodo(NODO_IGUALDAD,simbolo,NULL,NULL);
-} 
-| MENOR{
-  Simbolo* simbolo = crearSimbolo();
-  simbolo->tipoDato = TIPO_BOOLEAN;
-  simbolo->tipoSimbolo = SIMBOLO_MENOR;
-  
-
-  $$ = crearASTNodo(NODO_MENOR,simbolo,NULL,NULL);
-}
-| MAYOR{
-  Simbolo* simbolo = crearSimbolo();
-  simbolo->tipoDato = TIPO_BOOLEAN;
-  simbolo->tipoSimbolo = SIMBOLO_MAYOR;
-  
-
-  $$ = crearASTNodo(NODO_MAYOR,simbolo,NULL,NULL);
-};
 
 Literal: 
 INT_LITERAL
