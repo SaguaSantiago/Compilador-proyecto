@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "semantica.h"
+#include "codigoIntermedio.h"
+#include "CIdef.h"
 
 extern int yyparse(void);
 extern int yylex(void);
@@ -145,6 +147,8 @@ int main(int argc, char *argv[]) {
       fprintf(yyout, "Analisis sintactico OK\n");
       analisisSemantico(raiz);
       fprintf(yyout, "Analisis semantico OK\n");
+      construirCodigoIntermedio(raiz); 
+      mostrarCodigo(); 
     }
   }
 

@@ -30,7 +30,8 @@ void analisisSemantico(ASTNodo* nodo){
             lanzarError(nodo, "el símbolo '%s' ya está declarado en este nivel", nodo->simbolo->nombre);
         }
         Simbolo* simbolo_var =  nodo->simbolo;
-        if(tabla->nivelActual == 0) simbolo_var->esGlobal = 1;
+
+        simbolo_var->tipoSimbolo = tabla->nivelActual == 0 ? SIMBOLO_VAR_GLOBAL : SIMBOLO_VAR_LOCAL;
         
         agregarSimbolo(simbolo_var, tabla);
         
@@ -52,6 +53,7 @@ void analisisSemantico(ASTNodo* nodo){
         sacarNivel(tabla);
         
         Simbolo* simbolo_met =  nodo->simbolo;
+        simbolo_met->tipoSimbolo = SIMBOLO_METODO;
         agregarSimbolo(simbolo_met, tabla);
         
         break;
@@ -81,8 +83,9 @@ void analisisSemantico(ASTNodo* nodo){
     case NODO_IF: 
     case NODO_IF_ELSE:
     case NODO_WHILE:
+        analisisSemantico(nodo->izq);
         if(nodo->izq->simbolo->tipoDato != TIPO_BOOLEAN){
-            lanzarError(nodo, "la condición de control debe ser de tipo boolean");
+            lanzarError(nodo, "Se espera que la condición de control sea de tipo boolean pero se encontró el tipo %s", nodo->izq->simbolo->tipoDato);
         }
 
         nivelActual=obtenerNivelActual(tabla);
@@ -93,7 +96,6 @@ void analisisSemantico(ASTNodo* nodo){
         nivelActual=obtenerNivelActual(tabla);
         nivelActual->retornoEsperado = retornoHeredado;
 
-        analisisSemantico(nodo->izq);
         analisisSemantico(nodo->der);
         sacarNivel(tabla);
         break;
@@ -125,12 +127,12 @@ void analisisSemantico(ASTNodo* nodo){
     case NODO_INVOCACION:
         analisisSemantico(nodo->izq); //id 
         Simbolo* metodo = nodo->izq->simbolo; 
-        if (metodo->tipoSimbolo != SIMBOLO_MET_DECL){
-            lanzarError(nodo, "'%s no es un metodo", nodo->izq->simbolo->nombre);
+        
+        if (metodo->tipoSimbolo != SIMBOLO_METODO){
+            lanzarError(nodo, "'se esperaba que \"%s\" fuese un metodo pero en su lugar se encontro %d", nodo->izq->simbolo->nombre, nodo->izq->simbolo->tipoSimbolo);
         }
 
         nodo->simbolo->tipoDato = metodo->tipoDato;
-
         NodoSimbolo* param = metodo->parametros;
         ASTNodo* arg = nodo->der;
 
@@ -212,11 +214,11 @@ void analisisSemantico(ASTNodo* nodo){
         TipoDato tipoIzq = nodo->izq->simbolo->tipoDato;
         TipoDato tipoDer = nodo->der->simbolo->tipoDato;
 
-        if(chequearTipos(TIPO_FLOAT,tipoIzq,tipoDer)){
+        if(chequearTipos(TIPO_FLOAT,2,tipoIzq,tipoDer)){
             nodo->simbolo->valor_float = (nodo->izq->simbolo->valor_float == nodo->der->simbolo->valor_float);
-        } else if (chequearTipos(TIPO_INTEGER,tipoIzq,tipoDer)){
+        } else if (chequearTipos(TIPO_INTEGER,2,tipoIzq,tipoDer)){
             nodo->simbolo->valor = (nodo->izq->simbolo->valor == nodo->der->simbolo->valor);
-        } else if(chequearTipos(TIPO_BOOLEAN,tipoIzq,tipoDer)){
+        } else if(chequearTipos(TIPO_BOOLEAN,2,tipoIzq,tipoDer)){
             nodo->simbolo->valor = (nodo->izq->simbolo->valor == nodo->der->simbolo->valor);
         }else if(esTipoNumerico(tipoIzq) && esTipoNumerico(tipoDer)){
             float valorIzq = tipoIzq == TIPO_FLOAT

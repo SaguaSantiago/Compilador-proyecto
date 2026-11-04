@@ -7,26 +7,27 @@ extern int contadorTemp;
 extern int contadorLabel;
 
 typedef enum Op{
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-    MOD,
-    ASSIGN,
-    PUSH,
-    CALL,
-    LT,
-    GT,
-    EQ,
-    NOT,
-    AND,
-    OR,
-    LABEL,
-    GOTO,
-    IF_FALSE,
-    VAR_GLOBAL,
-    VAR_LOCAL,
-    RETURN
+    ADD,//0
+    SUB,//1
+    MUL,//2
+    DIV,//3
+    MOD,//4
+    ASSIGN,//5
+    PUSH,//6
+    CALL,//7
+    LT,//8
+    GT,//9
+    EQ,//10
+    NOT,//11
+    AND,//12
+    OR,//13
+    LABEL,//14
+    GOTO,//15
+    IF_FALSE,//16
+    VAR_GLOBAL,//17
+    VAR_LOCAL,//18
+    RETURN,//19
+    FIN_METODO
 }Op;
 
 typedef struct Instruccion{
