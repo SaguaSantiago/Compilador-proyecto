@@ -35,10 +35,10 @@ static int termina_en(const char *s, const char *sufijo) {
 }
 
 EtapaCompilacion procesarEtapa(char* etapaString){
-  if(strcmp(etapaString, "scan")) return SCAN;
-  else if(strcmp(etapaString, "parse")) return PARSE;
-  else if(strcmp(etapaString, "codinter")) return CODINTER;
-  else if(strcmp(etapaString, "assembly")) return ASSEMBLY;
+  if(strcmp(etapaString, "scan") == 0) return SCAN;
+  else if(strcmp(etapaString, "parse") == 0) return PARSE;
+  else if(strcmp(etapaString, "codinter") == 0) return CODINTER;
+  else if(strcmp(etapaString, "assembly") == 0) return ASSEMBLY;
 }
 
 
@@ -51,9 +51,10 @@ int optimizacionValida(char* optString){
 }
 
 int main(int argc, char *argv[]) {
+
   const char *input = NULL;
-  EtapaCompilacion target = NULL;
-  Optimizacion opt_val = NULL;  /* optimizaciones solicitadas      */
+  EtapaCompilacion target = CODINTER;
+  Optimizacion opt_val = ALL;  /* optimizaciones solicitadas      */
   const char *salida = NULL;   /* parametro de -o                 */
   int debug = 0;
   int i;
@@ -103,27 +104,26 @@ int main(int argc, char *argv[]) {
     }
   }
 
+
   if (input == NULL) {
     fprintf(stderr, "error: falta el archivo de entrada\n");
     uso(stderr);
     return 1;
   }
 
-  if (target == NULL) {
-    target = ASSEMBLY; /* etapa corriente */
-  }
 
-  if (target != SCAN && target != PARSE && target != CODINTER) {
+  if (target != SCAN && target != PARSE && target != CODINTER) { // TODO: implementar ASSEMBLY
     fprintf(stderr,
-            "error: la etapa '%s' no esta implementada en esta entrega\n",
+            "error: la etapa '%d' no esta implementada en esta entrega\n",
             target);
     return 1;
   }
 
+
   if (debug) {
-    printf("debug: entrada %s\n", input);
-    printf("debug: etapa %s\n", target);
-    printf("debug: optimizacion %s\n", opt_val != NULL ? opt_val : "ninguna");
+    printf("debug: entrada %d\n", input);
+    printf("debug: etapa %d\n", target);
+    printf("debug: optimizacion %s\n", "ALL"); // TODO: Implementar
   }
 
   yyin = fopen(input, "r");
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  ext = (strcmp(target, "scan") == 0) ? "lex" : "sint";
+  ext = target == SCAN? "lex" : "sint";
   len = strlen(input);
   out_path = (char *)malloc(len + 8);
   snprintf(out_path, len + 8, "%.*s.%s", (int)(len - 5), input, ext);
@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
     }
   } else {
     if(target >= PARSE) {
-      ok = (yyparse() == 0 && ok);
+      ok = yyparse() == 0;
       if (ok) {
         fprintf(yyout, "Analisis sintactico OK\n");
         analisisSemantico(raiz);
@@ -165,10 +165,10 @@ int main(int argc, char *argv[]) {
     }
 
     if(target >= CODINTER) {
+
       construirCodigoIntermedio(raiz); 
       mostrarCodigo(); 
     } // TODO: implementar
-
     if(target >= ASSEMBLY) {} // TODO: implementar
   }
 
@@ -177,7 +177,7 @@ int main(int argc, char *argv[]) {
   fclose(yyin);
 
   if (!ok) {
-    fprintf(stderr, "error: compilacion fallida en la etapa '%s'\n", target);
+    fprintf(stderr, "error: compilacion fallida en la etapa '%d'\n", target);
     remove(out_path);
     free(out_path);
     return 1;

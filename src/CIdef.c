@@ -68,7 +68,6 @@ void mostrarCodigo(void) {
                 sprintf(strValor1,"%d",arg1->valor);
             } 
             else if(arg1->tipoDato == TIPO_FLOAT){
-                fprintf(stderr, "tipo integer o boolean %d\n", arg1->tipoDato);
                 sprintf(strValor1,"%.2f",arg1->valor_float);
             } 
         }
@@ -109,7 +108,7 @@ void mostrarCodigo(void) {
                 break;
             case LT:
                 printf("%s = %s < %s\n",
-                    inst.resultado->nombre,  strValor1, strValor2);
+                    inst.resultado->nombre,  arg1->nombre, strValor2);
                 break;
             case GT: 
                 printf("%s = %s > %s\n",
@@ -127,18 +126,19 @@ void mostrarCodigo(void) {
                 printf("goto %s\n", inst.label);
                 break;
             case IF_FALSE:
-                printf("ifFalse %s goto %s\n", strValor1, inst.label);
+                printf("ifFalse %s goto %s\n", inst.arg1->nombre, inst.label);
                 break;
             case RETURN:
                 printf("return %s\n", strValor1);
                 break;
             case FIN_METODO:
                 printf("ret\n");
+                break;
             case PUSH:
-                printf("push %s\n", strValor1);
+                printf("push %s\n", inst.arg1);
                 break;
             case CALL:
-                printf("call %s\n", strValor1);
+                printf("%s = call %s\n", inst.resultado->nombre, inst.arg1->nombre);
                 break;
             default:
                 break;

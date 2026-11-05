@@ -91,7 +91,9 @@ extern int yydebug;
     INT_LITERAL = 286,             /* INT_LITERAL  */
     TRUE = 287,                    /* TRUE  */
     FALSE = 288,                   /* FALSE  */
-    Id = 289                       /* Id  */
+    Id = 289,                      /* Id  */
+    UNOT = 290,                    /* UNOT  */
+    UMINUS = 291                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -109,7 +111,7 @@ union YYSTYPE
   char* nombre;
   NodoId* lista_nombres;
 
-#line 113 "bisson.tab.h"
+#line 115 "bisson.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

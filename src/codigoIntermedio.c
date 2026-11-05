@@ -9,7 +9,6 @@ void construirCodigoIntermedio(ASTNodo *nodo){
     if(nodo == NULL) return;
     char* stringFin = "fin ";
 
-
     switch (nodo->tipo)
     {
     case NODO_DECL_VAR: 
@@ -467,9 +466,8 @@ Simbolo *generarExpresion(ASTNodo *nodo){
     case NODO_INVOCACION:
         //pusheamos los argumentos
         ASTNodo *argumentos = nodo->der;
-        while (argumentos != NULL){
+        while (argumentos != NULL && argumentos->izq != NULL){
             Simbolo *expresionActual = generarExpresion(argumentos->izq);
-
             Instruccion argumentoPush = { 
                 .op = PUSH, 
                 .arg1 = expresionActual,

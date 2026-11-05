@@ -44,7 +44,7 @@ void analisisSemantico(ASTNodo* nodo){
         if(existeSimboloEnNivel(nodo->simbolo->nombre, tabla)){
             lanzarError(nodo, "el método '%s' ya está declarado en este nivel", nodo->simbolo->nombre);
         }
-        if(strcmp(nodo->simbolo->nombre, "main") == 0) existeMain = 0;
+        if(strcmp(nodo->simbolo->nombre, "main") == 0) existeMain = 1;
         agregarNivel(tabla);
 
         nivelActual=obtenerNivelActual(tabla);
@@ -255,5 +255,5 @@ void analisisSemantico(ASTNodo* nodo){
 
     }
 
-    if(!existeMain) lanzarError(nodo, "Se necesita la declaración de la funcion \"main\" para ejecutar el programa");
+    if(!existeMain && nodo->tipo == NODO_ROOT) lanzarError(nodo, "Se necesita la declaración de la funcion \"main\" para ejecutar el programa");
 }
