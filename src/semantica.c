@@ -139,6 +139,7 @@ void analisisSemantico(ASTNodo* nodo){
         NodoSimbolo* param = metodo->parametros;
         ASTNodo* arg = nodo->der;
 
+        //compara los argumentos con los parametros del metodo, lanza una excepcion si no coinciden en cantidad o tipo
         while (arg != NULL && param != NULL) {
             ASTNodo* expr = (arg->tipo == NODO_EXPRESIONES) ? arg->izq : arg;
             analisisSemantico(expr);
@@ -152,7 +153,6 @@ void analisisSemantico(ASTNodo* nodo){
         if (arg != NULL || param != NULL)
             lanzarError(nodo, "cantidad de parámetros incompatible en la invocación a '%s'", metodo->nombre);
         break;
-
     
     case NODO_IDENTIFICADOR:
         encontrado = buscarSimbolo(nodo->simbolo->nombre, tabla);

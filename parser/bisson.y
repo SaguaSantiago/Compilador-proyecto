@@ -241,8 +241,8 @@ Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER
       }
       ;
 
-Expresiones: Expr Expresiones {
-            $$ = crearASTNodo(NODO_EXPRESIONES, NULL, $1, $2);
+Expresiones: Expr COMA Expresiones {
+            $$ = crearASTNodo(NODO_EXPRESIONES, NULL, $1, $3);
            }
           | Expr {
             $$ = $1;

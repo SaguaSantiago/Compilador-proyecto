@@ -466,8 +466,10 @@ Simbolo *generarExpresion(ASTNodo *nodo){
     case NODO_INVOCACION:
         //pusheamos los argumentos
         ASTNodo *argumentos = nodo->der;
-        while (argumentos != NULL && argumentos->izq != NULL){
-            Simbolo *expresionActual = generarExpresion(argumentos->izq);
+        while (argumentos != NULL){
+            ASTNodo *expr = argumentos->tipo == NODO_EXPRESIONES ? argumentos->izq : argumentos;     
+            Simbolo *expresionActual = generarExpresion(expr);
+
             Instruccion argumentoPush = { 
                 .op = PUSH, 
                 .arg1 = expresionActual,
@@ -479,6 +481,7 @@ Simbolo *generarExpresion(ASTNodo *nodo){
             emitir(argumentoPush);
 
             argumentos = argumentos->der; 
+
         }
 
         Simbolo* temp = nuevoTemporal();

@@ -135,10 +135,16 @@ void mostrarCodigo(void) {
                 printf("ret\n");
                 break;
             case PUSH:
-                printf("push %s\n", inst.arg1);
+                printf("push %d\n", arg1->valor);
                 break;
             case CALL:
                 printf("%s = call %s\n", inst.resultado->nombre, inst.arg1->nombre);
+                break;
+            case VAR_LOCAL:
+                printf("local %s\n", arg1->nombre);
+                break;
+            case VAR_GLOBAL:
+                printf("global %s\n", arg1->nombre);
                 break;
             default:
                 break;

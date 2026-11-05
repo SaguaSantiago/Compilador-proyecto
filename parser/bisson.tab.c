@@ -489,7 +489,7 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  11
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   250
+#define YYLAST   216
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  37
@@ -498,7 +498,7 @@ union yyalloc
 /* YYNRULES -- Number of rules.  */
 #define YYNRULES  52
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  101
+#define YYNSTATES  100
 
 /* YYMAXUTOK -- Last valid token kind.  */
 #define YYMAXUTOK   291
@@ -593,7 +593,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-47)
+#define YYTABLE_NINF (-1)
 
 #define yytable_value_is_error(Yyn) \
   ((Yyn) == YYTABLE_NINF)
@@ -602,17 +602,16 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      39,   -35,   -27,   -35,   -35,    45,   -35,    39,   -35,    13,
-      41,   -35,   -35,    34,    38,     9,     9,    21,   -35,    22,
-      44,    46,    43,   -35,    47,    51,    51,     9,     9,   -35,
-     -35,   -35,     9,    21,     8,   -35,   169,    56,   193,     6,
-      54,     8,    42,   193,   -35,   193,   193,   -35,   -35,   -35,
-     -35,    58,   -35,    83,   -35,   193,   106,   193,   193,   -35,
-     -35,   -35,   116,   -35,   -35,   193,   193,   -35,   193,   193,
-     193,   193,   193,   193,   193,   193,   139,   -35,   162,    59,
-      55,   -35,    -5,   -35,   147,   186,   221,   221,   210,   -35,
-      -5,   -35,    51,   -35,   -35,   193,   -35,    52,    -2,    51,
-     -35
+      43,   -35,   -28,   -35,   -35,     7,   -35,    43,   -35,    -9,
+      15,   -35,   -35,    33,    30,     9,     9,    22,   -35,    25,
+      56,    57,    32,   -35,    54,    59,    59,     9,     9,   -35,
+     -35,   -35,     9,    22,     8,   -35,   146,    63,   170,     6,
+      61,     8,    64,   170,   -35,   170,   170,   -35,   -35,   -35,
+     -35,    67,   -35,    36,   -35,   170,    60,   170,   170,   -35,
+     -35,   -35,    70,   -35,   -35,   170,   170,   -35,   170,   170,
+     170,   170,   170,   170,   170,   170,    93,   -35,   116,    77,
+     139,   -35,    -5,   -35,   101,   163,   187,   187,   126,   -35,
+      -5,   -35,    59,   -35,   -35,   170,    74,   -35,    59,   -35
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -629,15 +628,14 @@ static const yytype_int8 yydefact[] =
       20,    23,     0,    47,    46,     0,     0,    27,     0,     0,
        0,     0,     0,     0,     0,     0,     0,    26,     0,     0,
       31,    48,    36,    38,    41,    42,    45,    44,    43,    40,
-      37,    39,     0,    22,    29,     0,    30,    24,    37,     0,
-      25
+      37,    39,     0,    22,    29,    32,    24,    30,     0,    25
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -35,   -35,    67,   -35,    20,    75,     1,   -11,    61,   -26,
-      53,   -35,   -24,    15,   -34,   -35
+     -35,   -35,    95,   -35,    23,    86,     1,   -11,    72,   -26,
+      66,   -35,   -24,    10,   -34,   -35
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
@@ -652,62 +650,54 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      30,     9,    53,    66,    56,    21,   -46,    10,     9,    62,
+      30,     9,    53,    66,    56,    21,    10,    11,     9,    62,
       42,    63,    64,     1,    36,    57,    31,    42,    58,     3,
-       4,    76,    73,    78,    75,   -46,    37,   -46,    38,    33,
+       4,    76,    73,    78,    75,    13,    37,    15,    38,    33,
       77,    82,    83,    33,    84,    85,    86,    87,    88,    89,
-      90,    91,    39,     1,     2,    11,    16,    13,    32,     3,
-       4,    17,    32,    15,    18,    22,    24,    25,    61,    26,
-      17,    98,    65,    66,    27,    28,    97,    43,    55,    59,
-      58,    99,    94,   100,    12,     0,    68,    69,    45,    70,
-      71,    72,    73,    95,    75,    47,    48,    49,    50,    51,
-      65,    66,    23,    35,    60,    96,     0,     0,     0,    67,
+      90,    91,    39,    65,    66,    16,    18,     1,     2,    17,
+      17,    32,    67,     3,     4,    32,    22,    68,    69,    24,
+      70,    71,    72,    73,    74,    75,    96,    65,    66,    25,
+      26,    27,    99,    28,    28,    55,    59,    65,    66,    58,
+      61,    68,    69,    81,    70,    71,    72,    73,    74,    75,
+      94,    68,    69,    98,    70,    71,    72,    73,    74,    75,
+      65,    66,    12,    23,    35,    97,    92,    60,    65,    66,
        0,     0,     0,     0,    68,    69,     0,    70,    71,    72,
-      73,    74,    75,    65,    66,     0,     0,     0,     0,     0,
-      28,     0,     0,    65,    66,     0,     0,    68,    69,    81,
-      70,    71,    72,    73,    74,    75,     0,    68,    69,     0,
+      73,    74,    75,    65,    66,    70,    71,    72,    73,    74,
+      75,     0,    93,    65,    66,     0,     0,    68,    69,     0,
       70,    71,    72,    73,    74,    75,    65,    66,     0,     0,
-       0,     0,    92,     0,    65,    66,     0,     0,     0,     0,
-      68,    69,     0,    70,    71,    72,    73,    74,    75,    65,
-      66,    70,    71,    72,    73,    74,    75,     0,    93,     0,
-       0,    43,     0,    68,    69,    44,    70,    71,    72,    73,
-      74,    75,    45,    65,    66,     0,     0,    46,     0,    47,
-      48,    49,    50,    51,     0,    43,     0,    68,     0,     0,
-      70,    71,    72,    73,    74,    75,    45,    65,    66,     0,
-       0,    46,     0,    47,    48,    49,    50,    51,    65,    66,
-       0,     0,     0,     0,    70,    71,   -47,    73,    74,    75,
-       0,     0,     0,     0,     0,   -47,   -47,     0,    73,    74,
-      75
+      70,    71,    -1,    73,    74,    75,    95,     0,    43,     0,
+      68,    69,    44,    70,    71,    72,    73,    74,    75,    45,
+      65,    66,     0,     0,    46,     0,    47,    48,    49,    50,
+      51,     0,    43,     0,    68,     0,     0,    70,    71,    72,
+      73,    74,    75,    45,    65,    66,     0,     0,    46,     0,
+      47,    48,    49,    50,    51,     0,     0,     0,     0,     0,
+       0,    -1,    -1,     0,    73,    74,    75
 };
 
 static const yytype_int8 yycheck[] =
 {
-      26,     0,    36,     8,    38,    16,     8,    34,     7,    43,
+      26,     0,    36,     8,    38,    16,    34,     0,     7,    43,
       34,    45,    46,     4,     6,     9,    27,    41,    12,    10,
-      11,    55,    27,    57,    29,    27,    18,    29,    20,    28,
+      11,    55,    27,    57,    29,    34,    18,    12,    20,    28,
       56,    65,    66,    32,    68,    69,    70,    71,    72,    73,
-      74,    75,    34,     4,     5,     0,    12,    34,    28,    10,
-      11,    17,    32,    12,    16,    34,    34,    13,    16,    13,
-      17,    95,     7,     8,    17,    14,    92,    12,    12,    15,
-      12,    19,    13,    99,     7,    -1,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-       7,     8,    17,    32,    41,    80,    -1,    -1,    -1,    16,
+      74,    75,    34,     7,     8,    12,    16,     4,     5,    17,
+      17,    28,    16,    10,    11,    32,    34,    21,    22,    34,
+      24,    25,    26,    27,    28,    29,    92,     7,     8,    13,
+      13,    17,    98,    14,    14,    12,    15,     7,     8,    12,
+      16,    21,    22,    13,    24,    25,    26,    27,    28,    29,
+      13,    21,    22,    19,    24,    25,    26,    27,    28,    29,
+       7,     8,     7,    17,    32,    95,    13,    41,     7,     8,
       -1,    -1,    -1,    -1,    21,    22,    -1,    24,    25,    26,
-      27,    28,    29,     7,     8,    -1,    -1,    -1,    -1,    -1,
-      14,    -1,    -1,     7,     8,    -1,    -1,    21,    22,    13,
-      24,    25,    26,    27,    28,    29,    -1,    21,    22,    -1,
+      27,    28,    29,     7,     8,    24,    25,    26,    27,    28,
+      29,    -1,    16,     7,     8,    -1,    -1,    21,    22,    -1,
       24,    25,    26,    27,    28,    29,     7,     8,    -1,    -1,
-      -1,    -1,    13,    -1,     7,     8,    -1,    -1,    -1,    -1,
-      21,    22,    -1,    24,    25,    26,    27,    28,    29,     7,
-       8,    24,    25,    26,    27,    28,    29,    -1,    16,    -1,
-      -1,    12,    -1,    21,    22,    16,    24,    25,    26,    27,
-      28,    29,    23,     7,     8,    -1,    -1,    28,    -1,    30,
-      31,    32,    33,    34,    -1,    12,    -1,    21,    -1,    -1,
-      24,    25,    26,    27,    28,    29,    23,     7,     8,    -1,
-      -1,    28,    -1,    30,    31,    32,    33,    34,     7,     8,
-      -1,    -1,    -1,    -1,    24,    25,    26,    27,    28,    29,
-      -1,    -1,    -1,    -1,    -1,    24,    25,    -1,    27,    28,
-      29
+      24,    25,    26,    27,    28,    29,    17,    -1,    12,    -1,
+      21,    22,    16,    24,    25,    26,    27,    28,    29,    23,
+       7,     8,    -1,    -1,    28,    -1,    30,    31,    32,    33,
+      34,    -1,    12,    -1,    21,    -1,    -1,    24,    25,    26,
+      27,    28,    29,    23,     7,     8,    -1,    -1,    28,    -1,
+      30,    31,    32,    33,    34,    -1,    -1,    -1,    -1,    -1,
+      -1,    24,    25,    -1,    27,    28,    29
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
@@ -723,8 +713,7 @@ static const yytype_int8 yystos[] =
       47,    16,    51,    51,    51,     7,     8,    16,    21,    22,
       24,    25,    26,    27,    28,    29,    51,    46,    51,    50,
       51,    13,    51,    51,    51,    51,    51,    51,    51,    51,
-      51,    51,    13,    16,    13,    28,    50,    46,    51,    19,
-      46
+      51,    51,    13,    16,    13,    17,    46,    50,    19,    46
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
@@ -744,7 +733,7 @@ static const yytype_int8 yyr2[] =
        0,     2,     1,     2,     0,     1,     6,     6,     3,     3,
        1,     1,     1,     1,     4,     2,     0,     2,     0,     4,
        2,     0,     4,     2,     5,     7,     3,     3,     2,     4,
-       2,     1,     0,     1,     1,     1,     3,     3,     3,     3,
+       3,     1,     0,     1,     1,     1,     3,     3,     3,     3,
        3,     3,     3,     3,     3,     3,     2,     2,     3,     1,
        1,     1,     1
 };
@@ -1435,7 +1424,7 @@ yyreduce:
        {
         raiz = crearASTNodo(NODO_ROOT, NULL, (yyvsp[0].nodo), NULL);
        }
-#line 1439 "bisson.tab.c"
+#line 1428 "bisson.tab.c"
     break;
 
   case 3: /* Declaraciones: Declaracion Declaraciones  */
@@ -1443,19 +1432,19 @@ yyreduce:
               {
                 (yyval.nodo) = crearASTNodo(NODO_DECLS, NULL, (yyvsp[-1].nodo), (yyvsp[0].nodo));
               }
-#line 1447 "bisson.tab.c"
+#line 1436 "bisson.tab.c"
     break;
 
   case 4: /* Declaraciones: %empty  */
 #line 63 "bisson.y"
                        {(yyval.nodo) = NULL;}
-#line 1453 "bisson.tab.c"
+#line 1442 "bisson.tab.c"
     break;
 
   case 5: /* Declaracion: Var_declaracion  */
 #line 66 "bisson.y"
                              {(yyval.nodo) = (yyvsp[0].nodo);}
-#line 1459 "bisson.tab.c"
+#line 1448 "bisson.tab.c"
     break;
 
   case 6: /* Declaracion: Tipo_dato Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque  */
@@ -1471,7 +1460,7 @@ yyreduce:
           
             (yyval.nodo) = crearASTNodo(NODO_DECL_MET, simbolo, (yyvsp[-2].nodo), (yyvsp[0].nodo));
            }
-#line 1475 "bisson.tab.c"
+#line 1464 "bisson.tab.c"
     break;
 
   case 7: /* Declaracion: VOID Id PARENTESIS_IZQ Params_decl PARENTESIS_DER Bloque  */
@@ -1486,7 +1475,7 @@ yyreduce:
             listaParametros = NULL;
             (yyval.nodo) = crearASTNodo(NODO_DECL_MET, simbolo, (yyvsp[-2].nodo), (yyvsp[0].nodo));
            }
-#line 1490 "bisson.tab.c"
+#line 1479 "bisson.tab.c"
     break;
 
   case 8: /* Var_declaracion: Tipo_dato Id_list PUNTO_COMA  */
@@ -1515,7 +1504,7 @@ yyreduce:
             }
             (yyval.nodo) = decl_raiz;
            }
-#line 1519 "bisson.tab.c"
+#line 1508 "bisson.tab.c"
     break;
 
   case 9: /* Id_list: Id COMA Id_list  */
@@ -1526,7 +1515,7 @@ yyreduce:
          nodo_nombre->sig = (yyvsp[0].lista_nombres);
          (yyval.lista_nombres) = nodo_nombre;
        }
-#line 1530 "bisson.tab.c"
+#line 1519 "bisson.tab.c"
     break;
 
   case 10: /* Id_list: Id  */
@@ -1537,7 +1526,7 @@ yyreduce:
           nodo_nombre->sig = NULL;
           (yyval.lista_nombres) = nodo_nombre;
         }
-#line 1541 "bisson.tab.c"
+#line 1530 "bisson.tab.c"
     break;
 
   case 11: /* Tipo_dato: INT  */
@@ -1545,7 +1534,7 @@ yyreduce:
           {
             (yyval.tipo_dato) = TIPO_INTEGER;
           }
-#line 1549 "bisson.tab.c"
+#line 1538 "bisson.tab.c"
     break;
 
   case 12: /* Tipo_dato: FLOAT  */
@@ -1553,7 +1542,7 @@ yyreduce:
           {
             (yyval.tipo_dato) = TIPO_FLOAT;
           }
-#line 1557 "bisson.tab.c"
+#line 1546 "bisson.tab.c"
     break;
 
   case 13: /* Tipo_dato: BOOLEAN  */
@@ -1561,7 +1550,7 @@ yyreduce:
           {
             (yyval.tipo_dato) = TIPO_BOOLEAN;
           }
-#line 1565 "bisson.tab.c"
+#line 1554 "bisson.tab.c"
     break;
 
   case 14: /* Params_decl: Tipo_dato Id COMA Params_decl  */
@@ -1577,7 +1566,7 @@ yyreduce:
             
             (yyval.nodo) = crearASTNodo(NODO_PARAM_DECL, NULL, nodo, (yyvsp[0].nodo));
            }
-#line 1581 "bisson.tab.c"
+#line 1570 "bisson.tab.c"
     break;
 
   case 15: /* Params_decl: Tipo_dato Id  */
@@ -1592,13 +1581,13 @@ yyreduce:
             ASTNodo *nodo = crearASTNodo(NODO_DECL_VAR, simbolo, NULL, NULL);
             (yyval.nodo) = crearASTNodo(NODO_PARAM_DECL, NULL, nodo, NULL);
            }
-#line 1596 "bisson.tab.c"
+#line 1585 "bisson.tab.c"
     break;
 
   case 16: /* Params_decl: %empty  */
 #line 171 "bisson.y"
                     {(yyval.nodo) = NULL;}
-#line 1602 "bisson.tab.c"
+#line 1591 "bisson.tab.c"
     break;
 
   case 17: /* Var_declaraciones: Var_declaracion Var_declaraciones  */
@@ -1606,13 +1595,13 @@ yyreduce:
       {
           (yyval.nodo) = crearASTNodo(NODO_DECLS, NULL, (yyvsp[-1].nodo), (yyvsp[0].nodo));
       }
-#line 1610 "bisson.tab.c"
+#line 1599 "bisson.tab.c"
     break;
 
   case 18: /* Var_declaraciones: %empty  */
 #line 178 "bisson.y"
                {(yyval.nodo) = NULL;}
-#line 1616 "bisson.tab.c"
+#line 1605 "bisson.tab.c"
     break;
 
   case 19: /* Bloque: LLAVE_IZQ Var_declaraciones Sentencias_list LLAVE_DER  */
@@ -1620,19 +1609,19 @@ yyreduce:
                                                              {
   (yyval.nodo) = crearASTNodo(NODO_BLOQUE,NULL,(yyvsp[-2].nodo),(yyvsp[-1].nodo));
 }
-#line 1624 "bisson.tab.c"
+#line 1613 "bisson.tab.c"
     break;
 
   case 20: /* Sentencias_list: Sentencia Sentencias_list  */
 #line 186 "bisson.y"
                                            {(yyval.nodo) = crearASTNodo(NODO_SENTENCIAS, NULL, (yyvsp[-1].nodo), (yyvsp[0].nodo));}
-#line 1630 "bisson.tab.c"
+#line 1619 "bisson.tab.c"
     break;
 
   case 21: /* Sentencias_list: %empty  */
 #line 187 "bisson.y"
                         {(yyval.nodo) = NULL;}
-#line 1636 "bisson.tab.c"
+#line 1625 "bisson.tab.c"
     break;
 
   case 22: /* Sentencia: Id ASIGNACION Expr PUNTO_COMA  */
@@ -1649,13 +1638,13 @@ yyreduce:
 
         (yyval.nodo) = crearASTNodo(NODO_ASIGNACION, simbolo, nodoId, (yyvsp[-1].nodo));
       }
-#line 1653 "bisson.tab.c"
+#line 1642 "bisson.tab.c"
     break;
 
   case 23: /* Sentencia: Metodo_invocacion PUNTO_COMA  */
 #line 204 "bisson.y"
                                      {(yyval.nodo) = (yyvsp[-1].nodo);}
-#line 1659 "bisson.tab.c"
+#line 1648 "bisson.tab.c"
     break;
 
   case 24: /* Sentencia: IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque  */
@@ -1663,7 +1652,7 @@ yyreduce:
                                                      {
         (yyval.nodo) = crearASTNodo(NODO_IF, NULL, (yyvsp[-2].nodo), (yyvsp[0].nodo));
       }
-#line 1667 "bisson.tab.c"
+#line 1656 "bisson.tab.c"
     break;
 
   case 25: /* Sentencia: IF PARENTESIS_IZQ Expr PARENTESIS_DER Bloque ELSE Bloque  */
@@ -1672,13 +1661,13 @@ yyreduce:
         ASTNodo* bloques = crearASTNodo(NODO_BLOQUES_IF, NULL, (yyvsp[-2].nodo), (yyvsp[0].nodo));
         (yyval.nodo) = crearASTNodo(NODO_IF_ELSE, NULL, (yyvsp[-4].nodo), bloques);
       }
-#line 1676 "bisson.tab.c"
+#line 1665 "bisson.tab.c"
     break;
 
   case 26: /* Sentencia: WHILE Expr Bloque  */
 #line 213 "bisson.y"
                           {(yyval.nodo) = crearASTNodo(NODO_WHILE, NULL, (yyvsp[-1].nodo), (yyvsp[0].nodo));}
-#line 1682 "bisson.tab.c"
+#line 1671 "bisson.tab.c"
     break;
 
   case 27: /* Sentencia: RETURN Expr PUNTO_COMA  */
@@ -1689,7 +1678,7 @@ yyreduce:
 
         (yyval.nodo) = crearASTNodo(NODO_RETORNO, simbolo, (yyvsp[-1].nodo), NULL);
         }
-#line 1693 "bisson.tab.c"
+#line 1682 "bisson.tab.c"
     break;
 
   case 28: /* Sentencia: RETURN PUNTO_COMA  */
@@ -1701,7 +1690,7 @@ yyreduce:
 
         (yyval.nodo) = crearASTNodo(NODO_RETORNO, simbolo, NULL, NULL);
         }
-#line 1705 "bisson.tab.c"
+#line 1694 "bisson.tab.c"
     break;
 
   case 29: /* Metodo_invocacion: Id PARENTESIS_IZQ Expresiones PARENTESIS_DER  */
@@ -1718,15 +1707,15 @@ yyreduce:
         
         (yyval.nodo) = crearASTNodo(NODO_INVOCACION, simboloInvocacion, nodoId, (yyvsp[-1].nodo));
       }
-#line 1722 "bisson.tab.c"
+#line 1711 "bisson.tab.c"
     break;
 
-  case 30: /* Expresiones: Expr Expresiones  */
+  case 30: /* Expresiones: Expr COMA Expresiones  */
 #line 244 "bisson.y"
-                              {
-            (yyval.nodo) = crearASTNodo(NODO_EXPRESIONES, NULL, (yyvsp[-1].nodo), (yyvsp[0].nodo));
+                                   {
+            (yyval.nodo) = crearASTNodo(NODO_EXPRESIONES, NULL, (yyvsp[-2].nodo), (yyvsp[0].nodo));
            }
-#line 1730 "bisson.tab.c"
+#line 1719 "bisson.tab.c"
     break;
 
   case 31: /* Expresiones: Expr  */
@@ -1734,13 +1723,13 @@ yyreduce:
                  {
             (yyval.nodo) = (yyvsp[0].nodo);
           }
-#line 1738 "bisson.tab.c"
+#line 1727 "bisson.tab.c"
     break;
 
   case 32: /* Expresiones: %empty  */
 #line 250 "bisson.y"
                    {(yyval.nodo) = NULL;}
-#line 1744 "bisson.tab.c"
+#line 1733 "bisson.tab.c"
     break;
 
   case 33: /* Expr: Id  */
@@ -1752,19 +1741,19 @@ yyreduce:
       
       (yyval.nodo) = crearASTNodo(NODO_IDENTIFICADOR, simboloId, NULL, NULL);
     }
-#line 1756 "bisson.tab.c"
+#line 1745 "bisson.tab.c"
     break;
 
   case 34: /* Expr: Metodo_invocacion  */
 #line 260 "bisson.y"
                         {(yyval.nodo) = (yyvsp[0].nodo);}
-#line 1762 "bisson.tab.c"
+#line 1751 "bisson.tab.c"
     break;
 
   case 35: /* Expr: Literal  */
 #line 261 "bisson.y"
               {(yyval.nodo) = (yyvsp[0].nodo);}
-#line 1768 "bisson.tab.c"
+#line 1757 "bisson.tab.c"
     break;
 
   case 36: /* Expr: Expr SUMA Expr  */
@@ -1775,7 +1764,7 @@ yyreduce:
           
       (yyval.nodo) = crearASTNodo(NODO_SUMA, simbolo, (yyvsp[-2].nodo), (yyvsp[0].nodo));
     }
-#line 1779 "bisson.tab.c"
+#line 1768 "bisson.tab.c"
     break;
 
   case 37: /* Expr: Expr RESTA Expr  */
@@ -1786,7 +1775,7 @@ yyreduce:
           
       (yyval.nodo) = crearASTNodo(NODO_RESTA, simbolo, (yyvsp[-2].nodo), (yyvsp[0].nodo));
     }
-#line 1790 "bisson.tab.c"
+#line 1779 "bisson.tab.c"
     break;
 
   case 38: /* Expr: Expr MULTIPLICACION Expr  */
@@ -1797,7 +1786,7 @@ yyreduce:
           
       (yyval.nodo) = crearASTNodo(NODO_MULTIPLICACION, simbolo, (yyvsp[-2].nodo), (yyvsp[0].nodo));
     }
-#line 1801 "bisson.tab.c"
+#line 1790 "bisson.tab.c"
     break;
 
   case 39: /* Expr: Expr DIV Expr  */
@@ -1808,7 +1797,7 @@ yyreduce:
           
       (yyval.nodo) = crearASTNodo(NODO_DIVISION, simbolo, (yyvsp[-2].nodo), (yyvsp[0].nodo));
     }
-#line 1812 "bisson.tab.c"
+#line 1801 "bisson.tab.c"
     break;
 
   case 40: /* Expr: Expr MOD Expr  */
@@ -1819,7 +1808,7 @@ yyreduce:
           
       (yyval.nodo) = crearASTNodo(NODO_MOD, simbolo, (yyvsp[-2].nodo), (yyvsp[0].nodo));
     }
-#line 1823 "bisson.tab.c"
+#line 1812 "bisson.tab.c"
     break;
 
   case 41: /* Expr: Expr AND Expr  */
@@ -1831,7 +1820,7 @@ yyreduce:
 
       (yyval.nodo) = crearASTNodo(NODO_AND,simbolo,(yyvsp[-2].nodo),(yyvsp[0].nodo));
     }
-#line 1835 "bisson.tab.c"
+#line 1824 "bisson.tab.c"
     break;
 
   case 42: /* Expr: Expr OR Expr  */
@@ -1843,7 +1832,7 @@ yyreduce:
   
       (yyval.nodo) = crearASTNodo(NODO_OR,simbolo,(yyvsp[-2].nodo),(yyvsp[0].nodo));
     }
-#line 1847 "bisson.tab.c"
+#line 1836 "bisson.tab.c"
     break;
 
   case 43: /* Expr: Expr IGUALDAD Expr  */
@@ -1855,7 +1844,7 @@ yyreduce:
   
       (yyval.nodo) = crearASTNodo(NODO_IGUALDAD,simbolo,(yyvsp[-2].nodo),(yyvsp[0].nodo));
     }
-#line 1859 "bisson.tab.c"
+#line 1848 "bisson.tab.c"
     break;
 
   case 44: /* Expr: Expr MENOR Expr  */
@@ -1867,7 +1856,7 @@ yyreduce:
   
       (yyval.nodo) = crearASTNodo(NODO_MENOR,simbolo,(yyvsp[-2].nodo),(yyvsp[0].nodo));
     }
-#line 1871 "bisson.tab.c"
+#line 1860 "bisson.tab.c"
     break;
 
   case 45: /* Expr: Expr MAYOR Expr  */
@@ -1879,7 +1868,7 @@ yyreduce:
   
       (yyval.nodo) = crearASTNodo(NODO_MAYOR,simbolo,(yyvsp[-2].nodo),(yyvsp[0].nodo));
     }
-#line 1883 "bisson.tab.c"
+#line 1872 "bisson.tab.c"
     break;
 
   case 46: /* Expr: RESTA Expr  */
@@ -1891,7 +1880,7 @@ yyreduce:
       simbolo->tipoDato = (yyvsp[0].nodo)->simbolo->tipoDato;
       (yyval.nodo) = crearASTNodo(NODO_RESTA, simbolo, (yyvsp[0].nodo), NULL);
     }
-#line 1895 "bisson.tab.c"
+#line 1884 "bisson.tab.c"
     break;
 
   case 47: /* Expr: NOT Expr  */
@@ -1904,7 +1893,7 @@ yyreduce:
       (yyvsp[0].nodo)->simbolo->valor = abs((yyvsp[0].nodo)->simbolo->valor - 1); //TODO ver si funciona
       (yyval.nodo) = crearASTNodo(NODO_NOT, simbolo, (yyvsp[0].nodo), NULL);
     }
-#line 1908 "bisson.tab.c"
+#line 1897 "bisson.tab.c"
     break;
 
   case 48: /* Expr: PARENTESIS_IZQ Expr PARENTESIS_DER  */
@@ -1912,7 +1901,7 @@ yyreduce:
     {
       (yyval.nodo) = (yyvsp[-1].nodo); 
     }
-#line 1916 "bisson.tab.c"
+#line 1905 "bisson.tab.c"
     break;
 
   case 49: /* Literal: INT_LITERAL  */
@@ -1926,7 +1915,7 @@ yyreduce:
 
   (yyval.nodo) = crearASTNodo(NODO_INT,simbolo,NULL,NULL);
 }
-#line 1930 "bisson.tab.c"
+#line 1919 "bisson.tab.c"
     break;
 
   case 50: /* Literal: FLOAT_LITERAL  */
@@ -1939,7 +1928,7 @@ yyreduce:
   
   (yyval.nodo) = crearASTNodo(NODO_FLOAT,simbolo,NULL,NULL);
 }
-#line 1943 "bisson.tab.c"
+#line 1932 "bisson.tab.c"
     break;
 
   case 51: /* Literal: FALSE  */
@@ -1952,7 +1941,7 @@ yyreduce:
   
   (yyval.nodo) = crearASTNodo(NODO_BOOLEAN,simbolo,NULL,NULL);
 }
-#line 1956 "bisson.tab.c"
+#line 1945 "bisson.tab.c"
     break;
 
   case 52: /* Literal: TRUE  */
@@ -1966,11 +1955,11 @@ yyreduce:
   
   (yyval.nodo) = crearASTNodo(NODO_BOOLEAN,simbolo,NULL,NULL);
 }
-#line 1970 "bisson.tab.c"
+#line 1959 "bisson.tab.c"
     break;
 
 
-#line 1974 "bisson.tab.c"
+#line 1963 "bisson.tab.c"
 
       default: break;
     }

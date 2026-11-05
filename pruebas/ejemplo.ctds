@@ -1,12 +1,13 @@
-float prueba() {
+float prueba(int x, int y) {
   return 1.0;
 }
+int global;
 
 int main() {
   int y;
   y = 4;
-
-  while(prueba() < 2){
+  
+  while(prueba(y, 4) < 2){
     return y;
   }
 }
