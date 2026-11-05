@@ -32,10 +32,26 @@ static int termina_en(const char *s, const char *sufijo) {
   return ls >= lf && strcmp(s + ls - lf, sufijo) == 0;
 }
 
+EtapaCompilacion procesarEtapa(char* etapaString){
+  if(strcmp(etapaString, "scan")) return SCAN;
+  else if(strcmp(etapaString, "parse")) return PARSE;
+  else if(strcmp(etapaString, "codinter")) return CODINTER;
+  else if(strcmp(etapaString, "assembly")) return ASSEMBLY;
+}
+
+
+Optimizacion procesarOptimizacion(char* optString){
+  if(strcmp(optString, "all")) return ALL;
+}
+
+int optimizacionValida(char* optString){
+  return strcmp(optString, "all");
+}
+
 int main(int argc, char *argv[]) {
   const char *input = NULL;
-  const char *target = NULL;
-  const char *opt_val = NULL;  /* optimizaciones solicitadas      */
+  EtapaCompilacion target = NULL;
+  Optimizacion opt_val = NULL;  /* optimizaciones solicitadas      */
   const char *salida = NULL;   /* parametro de -o                 */
   int debug = 0;
   int i;
@@ -60,10 +76,10 @@ int main(int argc, char *argv[]) {
         uso(stderr);
         return 1;
       }
-      target = argv[++i];
+      target = procesarEtapa(argv[++i]);
     } else if (strcmp(arg, "-opt") == 0) {
-      if (i + 1 < argc && strcmp(argv[i + 1], "all") == 0) {
-        opt_val = argv[++i];
+      if (optimizacionValida(argv[i+1])) {
+        opt_val = procesarOptimizacion(argv[++i]);
       }
     } else if (strcmp(arg, "-debug") == 0) {
       debug = 1;
@@ -92,25 +108,20 @@ int main(int argc, char *argv[]) {
   }
 
   if (target == NULL) {
-    target = "parse"; /* etapa corriente */
+    target = ASSEMBLY; /* etapa corriente */
   }
 
-  if (strcmp(target, "scan") != 0 && strcmp(target, "parse") != 0) {
+  if (target != SCAN && target != PARSE && target != CODINTER) {
     fprintf(stderr,
             "error: la etapa '%s' no esta implementada en esta entrega\n",
             target);
     return 1;
   }
 
-  if (salida != NULL) {
-    fprintf(stderr,
-            "aviso: opcion -o ignorada (en esta etapa no se genera ejecutable)\n");
-  }
-
   if (debug) {
     printf("debug: entrada %s\n", input);
     printf("debug: etapa %s\n", target);
-    printf("debug: optimizaciones %s\n", opt_val != NULL ? opt_val : "ninguna");
+    printf("debug: optimizacion %s\n", opt_val != NULL ? opt_val : "ninguna");
   }
 
   yyin = fopen(input, "r");
@@ -132,21 +143,30 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  if (strcmp(target, "scan") == 0) {
-    while (yylex() != 0) {
+  if(target == SCAN) {
+    int resultado;
+    while ((resultado = yylex()) != 0) {
+      if(resultado == -1) break;
     }
-    ok = (error_lexico == 0);
+    ok = resultado != -1;
     if (ok) {
       fprintf(yyout, "Analisis lexico OK\n");
     }
   } else {
-    ok = (yyparse() == 0 && error_lexico == 0);
-    if (ok) {
-      fprintf(yyout, "Analisis sintactico OK\n");
-      analisisSemantico(raiz);
-      fprintf(yyout, "Analisis semantico OK\n");
+    if(target >= PARSE) {
+      ok = (yyparse() == 0 && ok);
+      if (ok) {
+        fprintf(yyout, "Analisis sintactico OK\n");
+        analisisSemantico(raiz);
+        fprintf(yyout, "Analisis semantico OK\n");
+      }
     }
+
+    if(target >= CODINTER) {} // TODO: implementar
+
+    if(target >= ASSEMBLY) {} // TODO: implementar
   }
+
 
   fclose(yyout);
   fclose(yyin);

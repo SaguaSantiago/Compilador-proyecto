@@ -4,7 +4,11 @@
 /**
  * Tipos de datos del lenguaje
  * */
-typedef enum Tipo_Dato { TIPO_INTEGER, TIPO_FLOAT, TIPO_BOOLEAN, TIPO_VOID } TipoDato;
+typedef enum Tipo_dato { TIPO_INTEGER, TIPO_FLOAT, TIPO_BOOLEAN, TIPO_VOID } TipoDato;
+
+typedef enum Etapa_compilacion { SCAN, PARSE, CODINTER, ASSEMBLY } EtapaCompilacion;
+
+typedef enum Optimizacion_enum { ALL } Optimizacion;
 
 typedef enum Tipo_simbolo {
   SIMBOLO_INVOCACION,

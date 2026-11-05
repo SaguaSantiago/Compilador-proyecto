@@ -1957,7 +1957,7 @@ yyreduce:
   Simbolo* simbolo = crearSimbolo();
   simbolo->tipoDato = TIPO_FLOAT;
   simbolo->tipoSimbolo = SIMBOLO_FLOAT_LITERAL;
-  simbolo->valor = (yyvsp[0].valor_float);
+  simbolo->valor_float = (yyvsp[0].valor_float);
   
   (yyval.nodo) = crearASTNodo(NODO_FLOAT,simbolo,NULL,NULL);
 }
