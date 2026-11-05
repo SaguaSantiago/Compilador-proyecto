@@ -1,5 +1,7 @@
 #include "CIdef.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 int contadorTemp = 0; 
 int contadorLabel = 0; 
@@ -14,6 +16,7 @@ Simbolo* nuevoTemporal() {
 
     Simbolo *temp = crearSimbolo(); 
     temp->nombre = tempChar; 
+    temp->tipoSimbolo = SIMBOLO_TEMPORAL;
 
     return temp;
 }
@@ -38,6 +41,7 @@ void emitir(Instruccion instruccion) {
         codigo = nuevoCodigo;
         codigoCapacidad = nuevaCapacidad;
     }
+    if (codigo == NULL) codigo = (Instruccion*)malloc(codigoCapacidad * sizeof(Instruccion));
 
     codigo[codigoCantidad] = instruccion;
     codigoCantidad++;
@@ -47,51 +51,94 @@ void mostrarCodigo(void) {
     for (size_t i = 0; i < codigoCantidad; i++) {
         Instruccion inst = codigo[i];
 
+        // fprintf(stderr, "op %d\n", inst.op);
+        // fprintf(stderr, "codigo ok \n");
+
+        Simbolo *arg1 = inst.arg1; 
+        Simbolo *arg2 = inst.arg2; 
+
+        char *strValor1 = (char*)malloc(64 * sizeof(char)); 
+        char *strValor2 = (char*)malloc(64 * sizeof(char));
+        
+        if (arg1 != NULL){
+            if (arg1->tipoSimbolo == SIMBOLO_VAR_LOCAL || arg1->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
+                strValor1 = strdup(arg1->nombre);
+            }
+            else if (arg1->tipoDato == TIPO_INTEGER || arg1->tipoDato == TIPO_BOOLEAN){
+                sprintf(strValor1,"%d",arg1->valor);
+            } 
+            else if(arg1->tipoDato == TIPO_FLOAT){
+                fprintf(stderr, "tipo integer o boolean %d\n", arg1->tipoDato);
+                sprintf(strValor1,"%.2f",arg1->valor_float);
+            } 
+        }
+
+        if (arg2 != NULL){
+            if (arg2->tipoSimbolo == SIMBOLO_VAR_LOCAL || arg2->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
+                strValor2 = strdup(arg2->nombre);
+            }
+            else if (arg2->tipoDato == TIPO_INTEGER || arg2->tipoDato == TIPO_BOOLEAN){
+                sprintf(strValor2,"%d",arg2->valor);
+            } 
+            else if(arg2->tipoDato == TIPO_FLOAT){
+                sprintf(strValor2,"%.2f",arg2->valor_float);
+            }
+        }
+        
         switch (inst.op) {
             case ADD:
                 printf("%s = %s + %s\n",
-                       inst.resultado, inst.arg1, inst.arg2);
+                       inst.resultado->nombre, strValor1, strValor2);
                 break;
             case SUB:
                 printf("%s = %s - %s\n",
-                       inst.resultado, inst.arg1, inst.arg2);
+                       inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case MUL:
                 printf("%s = %s * %s\n",
-                       inst.resultado, inst.arg1, inst.arg2);
+                       inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case DIV:
                 printf("%s = %s / %s\n",
-                       inst.resultado, inst.arg1, inst.arg2);
+                       inst.resultado->nombre,  strValor1, strValor2);
                 break;
 
             case ASSIGN:
                 printf("%s = %s\n",
-                       inst.resultado, inst.arg1);
+                       inst.resultado->nombre, strValor1);
                 break;
             case LT:
                 printf("%s = %s < %s\n",
-                    inst.resultado, inst.arg1, inst.arg2);
+                    inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case GT: 
                 printf("%s = %s > %s\n",
-                    inst.resultado, inst.arg1, inst.arg2);
+                    inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case EQ:
                 printf("%s = %s == %s\n",
-                    inst.resultado, inst.arg1, inst.arg2);
+                    inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case LABEL:
+                    
                 printf("%s:\n", inst.label);
                 break;
             case GOTO:
                 printf("goto %s\n", inst.label);
                 break;
             case IF_FALSE:
-                printf("ifFalse %s goto %s\n", inst.arg1, inst.label);
+                printf("ifFalse %s goto %s\n", strValor1, inst.label);
                 break;
             case RETURN:
-                printf("return %s\n", inst.arg1);
+                printf("return %s\n", strValor1);
+                break;
+            case FIN_METODO:
+                printf("ret\n");
+            case PUSH:
+                printf("push %s\n", strValor1);
+                break;
+            case CALL:
+                printf("call %s\n", strValor1);
                 break;
             default:
                 break;

@@ -114,7 +114,7 @@ int procesarComparacion(ASTNodo *nodo){
             return 0;
         }
 
-        nodo->simbolo->tipoDato = TIPO_INTEGER;
+        nodo->simbolo->tipoDato = TIPO_BOOLEAN;
         nodo->simbolo->valor = resultado;
     } else {
         int valorIzq = izquierdo->valor;
@@ -132,7 +132,7 @@ int procesarComparacion(ASTNodo *nodo){
             return 0;
         }
 
-        nodo->simbolo->tipoDato = TIPO_INTEGER;
+        nodo->simbolo->tipoDato = TIPO_BOOLEAN;
         nodo->simbolo->valor = resultado;
     }
 
@@ -192,7 +192,6 @@ int procesarOpNumerica(ASTNodo *nodo) {
         default:
             return 0;
         }
-
         nodo->simbolo->tipoDato = TIPO_FLOAT;
         nodo->simbolo->valor_float = resultado;
     } else {

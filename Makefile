@@ -24,7 +24,7 @@ HEADERS := include/enums.h include/tipos.h include/compilador.h \
            include/ASTdef.h include/TSdef.h include/utils.h
 
 SOURCES := src/main.c src/astdef.c src/TSdef.c src/semantica.c \
-           src/utils.c parser/bisson.tab.c parser/lex.yy.c
+           src/utils.c src/CIdef.c src/codigoIntermedio.c parser/bisson.tab.c parser/lex.yy.c
 OBJECTS := $(SOURCES:.c=.o)
 
 # .o sueltos que quedaron en la raiz de una compilacion en otra carpeta
@@ -67,6 +67,9 @@ src/semantica.o: src/semantica.c include/TSdef.h include/ASTdef.h include/enums.
 	$(CC) $(CFLAGS) -c $< -o $@
 
 src/utils.o: src/utils.c include/utils.h include/tipos.h include/TSdef.h include/ASTdef.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+src/codigoIntermedio.o: src/codigoIntermedio.c include/ASTdef.h include/CIdef.h include/codigoIntermedio.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 parser/bisson.tab.o: parser/bisson.tab.c parser/bisson.tab.h $(HEADERS)

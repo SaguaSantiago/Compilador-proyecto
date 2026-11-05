@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "semantica.h"
+#include "codigoIntermedio.h"
+#include "CIdef.h"
 
 extern int yyparse(void);
 extern int yylex(void);
@@ -162,7 +164,10 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    if(target >= CODINTER) {} // TODO: implementar
+    if(target >= CODINTER) {
+      construirCodigoIntermedio(raiz); 
+      mostrarCodigo(); 
+    } // TODO: implementar
 
     if(target >= ASSEMBLY) {} // TODO: implementar
   }

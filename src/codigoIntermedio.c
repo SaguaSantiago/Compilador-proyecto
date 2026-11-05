@@ -7,11 +7,13 @@
 //procesa los nodos que representan instrucciones del programa que no generan nuevos valores: if, while, etc. 
 void construirCodigoIntermedio(ASTNodo *nodo){
     if(nodo == NULL) return;
+    char* stringFin = "fin ";
+
 
     switch (nodo->tipo)
     {
     case NODO_DECL_VAR: 
-        if (nodo->simbolo->esGlobal){
+        if (nodo->simbolo->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
             Instruccion globalVarDecl = {
                 .op = VAR_GLOBAL,
                 .arg1 = nodo->simbolo,
@@ -39,7 +41,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         ASTNodo *parametros = nodo->izq;
         ASTNodo *bloqueMetodo = nodo->der;
 
-        construirCodigoIntermedio(parametros);
+        // construirCodigoIntermedio(parametros);
 
         Instruccion inicioMetodo = {
             .op = LABEL,
@@ -55,11 +57,11 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
         char* etiquetaFinMetodo = nuevoLabel(); 
         Instruccion finMetodo = {
-            .op = LABEL,
+            .op = FIN_METODO,
             .arg1 = NULL, 
             .arg2 = NULL,
             .resultado = NULL,
-            .label = strdup(etiquetaFinMetodo)
+            .label = NULL
         };
 
         emitir(finMetodo); 
@@ -230,39 +232,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
         emitir(instRetorno); 
         break;
-        
-    case NODO_INVOCACION:
-        //pusheamos los argumentos
-        ASTNodo *argumentos = nodo->der;
-        while (argumentos != NULL){
-            Simbolo *expresionActual = generarExpresion(argumentos->izq);
-
-            Instruccion argumentoPush = { 
-                .op = PUSH, 
-                .arg1 = expresionActual,
-                .arg2 = NULL,
-                .resultado = NULL, 
-                .label = NULL
-            };
-
-            emitir(argumentoPush);
-
-            argumentos = argumentos->der; 
-        }
-
-        //call al label del metodo 
-        Instruccion callMetodo = {
-            .op = CALL,
-            .arg1 = nodo->simbolo,
-            .arg2 = NULL,
-            .resultado = NULL,
-            .label = NULL
-        };
-
-        emitir(callMetodo); 
-        
-        break;
-
+    
     default:
         construirCodigoIntermedio(nodo->izq);
         construirCodigoIntermedio(nodo->der);
@@ -440,7 +410,7 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         Simbolo *expresionEqIzquierda = generarExpresion(nodo->izq);
         Simbolo *expresionEqDerecha = generarExpresion(nodo->der);
 
-        Simbolo *eqTemp = nuevoTempeqal(); 
+        Simbolo *eqTemp = nuevoTemporal(); 
         eqTemp->tipoDato = nodo->simbolo->tipoDato;
 
         Instruccion eqInst = { 
@@ -492,6 +462,42 @@ Simbolo *generarExpresion(ASTNodo *nodo){
         emitir(gtInst);
 
         return gtTemp;       
+        break;
+    
+    case NODO_INVOCACION:
+        //pusheamos los argumentos
+        ASTNodo *argumentos = nodo->der;
+        while (argumentos != NULL){
+            Simbolo *expresionActual = generarExpresion(argumentos->izq);
+
+            Instruccion argumentoPush = { 
+                .op = PUSH, 
+                .arg1 = expresionActual,
+                .arg2 = NULL,
+                .resultado = NULL, 
+                .label = NULL
+            };
+
+            emitir(argumentoPush);
+
+            argumentos = argumentos->der; 
+        }
+
+        Simbolo* temp = nuevoTemporal();
+        temp->tipoDato = nodo->simbolo->tipoDato;
+
+        //call al label del metodo 
+        Instruccion callMetodo = {
+            .op = CALL,
+            .arg1 = nodo->simbolo,
+            .arg2 = NULL,
+            .resultado = temp,
+            .label = NULL
+        };
+
+        emitir(callMetodo); 
+        
+        return temp;
         break;
     default:
         break;
