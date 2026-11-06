@@ -23,12 +23,13 @@ c-tds [opcion] nombreArchivo.ctds
   - `-target < etapa >:`      scan | parse | codinter | assembly
   - `-opt [optimizacion]:`  lista de optimizaciones; se acepta "all" sin efecto
                        hasta la etapa de optimización
-  - `-debug:`               imprime información de debugging en stdout
+  - `-debug:`               imprime en stdout el avance de las fases y los lexemas leídos
 
 
 Salidas: `-target parse` (default) genera `<nombre>.sint`; `-target scan` genera
 `<nombre>.lex`. Ambos contienen el listado de los tokens reconocidos por el analizador y la línea
 `Analisis sintactico OK` / `Analisis lexico OK`. Cualquier error va a stderr, el proceso termina con exit code 1.
+Los mensajes de seguimiento del compilador solo se imprimen al ejecutar con `-debug`.
 
 ---
 
