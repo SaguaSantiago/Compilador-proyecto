@@ -90,12 +90,8 @@ Comentario_linea 	    "//".*
 [ \t\r]+   {}
 \n         {}
 
-{Comentario_bloque} {
-                // fprintf(stderr, "llegue a com bloque \n");
-                }
-{Comentario_linea}  {
-                // fprintf(stderr, "llegue a com linea \n");
-                }
+{Comentario_bloque} {}
+{Comentario_linea}  {}
 
 .           {
                 error_lexico = 1;
