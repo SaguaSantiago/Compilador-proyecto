@@ -522,13 +522,16 @@ char *yytext;
 #line 2 "lex.l"
     #include <stdio.h>
     #include "bisson.tab.h"
+    #include "Logging.h"
     int yylex(void);
     extern int yywrap(void);
     extern int yylineno; 
     /* Se pone en 1 ante un error lexico (caracter inesperado). */
     int error_lexico = 0;
-#line 530 "lex.yy.c"
-#line 531 "lex.yy.c"
+    /* define una macro que se ejecuta antes de cada regla luego de encontrar un lexema*/
+    #define YY_USER_ACTION log_debug("Lexer: linea %d, lexema '%.*s'", yylineno, yyleng, yytext);
+#line 533 "lex.yy.c"
+#line 534 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -745,9 +748,9 @@ YY_DECL
 		}
 
 	{
-#line 21 "lex.l"
+#line 24 "lex.l"
 
-#line 750 "lex.yy.c"
+#line 753 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -816,47 +819,47 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 22 "lex.l"
+#line 25 "lex.l"
 { fprintf(yyout, "INT\n"); return INT; }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 23 "lex.l"
+#line 26 "lex.l"
 { fprintf(yyout, "BOOLEAN\n"); return BOOLEAN; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 24 "lex.l"
+#line 27 "lex.l"
 { fprintf(yyout, "VOID\n"); return VOID; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 26 "lex.l"
+#line 29 "lex.l"
 { fprintf(yyout, "RETURN\n"); return RETURN; }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 28 "lex.l"
+#line 31 "lex.l"
 { fprintf(yyout, "IF\n"); return IF; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 29 "lex.l"
+#line 32 "lex.l"
 { fprintf(yyout, "ELSE\n"); return ELSE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 31 "lex.l"
+#line 34 "lex.l"
 { fprintf(yyout, "WHILE\n"); return WHILE; }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 32 "lex.l"
+#line 35 "lex.l"
 { fprintf(yyout, "FLOAT\n"); return FLOAT; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 34 "lex.l"
+#line 37 "lex.l"
 { 
     yylval.valor_int = 1;
     fprintf(yyout, "TRUE\n");
@@ -865,7 +868,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 39 "lex.l"
+#line 42 "lex.l"
 { 
     yylval.valor_int = 0;
     fprintf(yyout, "FALSE\n");
@@ -874,7 +877,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 45 "lex.l"
+#line 48 "lex.l"
 { 
     yylval.nombre = strdup(yytext);
     fprintf(yyout, "Id\n");
@@ -883,7 +886,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 50 "lex.l"
+#line 53 "lex.l"
 { 
     yylval.valor_int = atoi(yytext);
     fprintf(yyout, "INT_LITERAL\n");
@@ -892,7 +895,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 56 "lex.l"
+#line 59 "lex.l"
 {
     yylval.valor_float = atof(yytext);
     fprintf(yyout, "FLOAT_LITERAL\n");
@@ -901,123 +904,123 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 63 "lex.l"
+#line 66 "lex.l"
 { fprintf(yyout, "SUMA\n"); return SUMA; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 64 "lex.l"
+#line 67 "lex.l"
 { fprintf(yyout, "MULTIPLICACION\n"); return MULTIPLICACION; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 65 "lex.l"
+#line 68 "lex.l"
 { fprintf(yyout, "ASIGNACION\n"); return ASIGNACION; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 67 "lex.l"
+#line 70 "lex.l"
 { fprintf(yyout, "PARENTESIS_IZQ\n"); return PARENTESIS_IZQ; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 68 "lex.l"
+#line 71 "lex.l"
 { fprintf(yyout, "PARENTESIS_DER\n"); return PARENTESIS_DER; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 69 "lex.l"
+#line 72 "lex.l"
 { fprintf(yyout, "LLAVE_IZQ\n"); return LLAVE_IZQ; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 70 "lex.l"
+#line 73 "lex.l"
 { fprintf(yyout, "LLAVE_DER\n"); return LLAVE_DER; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 71 "lex.l"
+#line 74 "lex.l"
 { fprintf(yyout, "PUNTO_COMA\n"); return PUNTO_COMA; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 73 "lex.l"
+#line 76 "lex.l"
 { fprintf(yyout, "COMA\n"); return COMA; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 75 "lex.l"
+#line 78 "lex.l"
 { fprintf(yyout, "AND\n"); return AND; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 76 "lex.l"
+#line 79 "lex.l"
 { fprintf(yyout, "OR\n"); return OR; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 77 "lex.l"
+#line 80 "lex.l"
 { fprintf(yyout, "NOT\n"); return NOT; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 79 "lex.l"
+#line 82 "lex.l"
 { fprintf(yyout, "MAYOR\n"); return MAYOR; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 80 "lex.l"
+#line 83 "lex.l"
 { fprintf(yyout, "MENOR\n"); return MENOR; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 81 "lex.l"
+#line 84 "lex.l"
 { fprintf(yyout, "IGUALDAD\n"); return IGUALDAD; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 83 "lex.l"
+#line 86 "lex.l"
 { fprintf(yyout, "MOD\n"); return MOD; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 84 "lex.l"
+#line 87 "lex.l"
 { fprintf(yyout, "RESTA\n"); return RESTA; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 85 "lex.l"
+#line 88 "lex.l"
 { fprintf(yyout, "DIV\n"); return DIV; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 87 "lex.l"
+#line 90 "lex.l"
 {}
 	YY_BREAK
 case 33:
 /* rule 33 can match eol */
 YY_RULE_SETUP
-#line 88 "lex.l"
+#line 91 "lex.l"
 {}
 	YY_BREAK
 case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
-#line 90 "lex.l"
+#line 93 "lex.l"
 {
                 // fprintf(stderr, "llegue a com bloque \n");
                 }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 93 "lex.l"
+#line 96 "lex.l"
 {
                 // fprintf(stderr, "llegue a com linea \n");
                 }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 97 "lex.l"
+#line 100 "lex.l"
 {
                 error_lexico = 1;
                 fprintf(stderr,
@@ -1028,10 +1031,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 104 "lex.l"
+#line 107 "lex.l"
 ECHO;
 	YY_BREAK
-#line 1034 "lex.yy.c"
+#line 1037 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2048,5 +2051,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 104 "lex.l"
+#line 107 "lex.l"
 

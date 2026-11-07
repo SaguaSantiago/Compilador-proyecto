@@ -1,11 +1,14 @@
 %{
     #include <stdio.h>
     #include "bisson.tab.h"
+    #include "Logging.h"
     int yylex(void);
     extern int yywrap(void);
     extern int yylineno; 
     /* Se pone en 1 ante un error lexico (caracter inesperado). */
     int error_lexico = 0;
+    /* define una macro que se ejecuta antes de cada regla luego de encontrar un lexema*/
+    #define YY_USER_ACTION log_debug("Lexer: linea %d, lexema '%.*s'", yylineno, yyleng, yytext);
 %}
 
 %option yylineno
@@ -87,12 +90,8 @@ Comentario_linea 	    "//".*
 [ \t\r]+   {}
 \n         {}
 
-{Comentario_bloque} {
-                // fprintf(stderr, "llegue a com bloque \n");
-                }
-{Comentario_linea}  {
-                // fprintf(stderr, "llegue a com linea \n");
-                }
+{Comentario_bloque} {}
+{Comentario_linea}  {}
 
 .           {
                 error_lexico = 1;

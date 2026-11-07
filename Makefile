@@ -21,9 +21,9 @@ WINPATH = $(1)
 endif
 
 HEADERS := include/enums.h include/tipos.h include/compilador.h \
-           include/ASTdef.h include/TSdef.h include/utils.h
+           include/ASTdef.h include/TSdef.h include/utils.h include/Logging.h
 
-SOURCES := src/main.c src/astdef.c src/TSdef.c src/semantica.c \
+SOURCES := src/main.c src/Logging.c src/astdef.c src/TSdef.c src/semantica.c \
            src/utils.c src/CIdef.c src/codigoIntermedio.c parser/bisson.tab.c parser/lex.yy.c
 OBJECTS := $(SOURCES:.c=.o)
 
@@ -57,6 +57,9 @@ $(TARGET): $(OBJECTS)
 src/main.o: src/main.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+src/Logging.o: src/Logging.c include/Logging.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
 src/astdef.o: src/astdef.c include/ASTdef.h include/enums.h include/tipos.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
@@ -75,7 +78,7 @@ src/codigoIntermedio.o: src/codigoIntermedio.c include/ASTdef.h include/CIdef.h 
 parser/bisson.tab.o: parser/bisson.tab.c parser/bisson.tab.h $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-parser/lex.yy.o: parser/lex.yy.c parser/bisson.tab.h
+parser/lex.yy.o: parser/lex.yy.c parser/bisson.tab.h include/Logging.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 run: $(TARGET)

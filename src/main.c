@@ -4,6 +4,7 @@
 #include "semantica.h"
 #include "codigoIntermedio.h"
 #include "CIdef.h"
+#include "Logging.h"
 
 extern int yyparse(void);
 extern int yylex(void);
@@ -52,13 +53,15 @@ int optimizacionValida(char* optString){
   return strcmp(optString, "all");
 }
 
+int debug;
+
 int main(int argc, char *argv[]) {
 
   const char *input = NULL;
   EtapaCompilacion target = CODINTER;
   Optimizacion opt_val = ALL;  /* optimizaciones solicitadas      */
   const char *salida = NULL;   /* parametro de -o                 */
-  int debug = 0;
+  debug = 0;
   int i;
   int ok;
   const char *ext;
@@ -123,22 +126,27 @@ int main(int argc, char *argv[]) {
 
 
   if (debug) {
-    printf("debug: entrada %d\n", input);
-    printf("debug: etapa %d\n", target);
-    printf("debug: optimizacion %s\n", "ALL"); // TODO: Implementar
+    logging_set_enabled(1);
   }
 
+  log_debug("Entrada: %s", input);
+  log_debug("Etapa solicitada: %d", target);
+  log_debug("Optimizacion solicitada: %s", "ALL");
+
+  log_debug("Abriendo archivo de entrada");
   yyin = fopen(input, "r");
   if (yyin == NULL) {
     fprintf(stderr, "error: no se puede abrir el archivo '%s'\n", input);
     return 1;
   }
+  log_debug("Archivo de entrada abierto");
 
   ext = target == SCAN? "lex" : "sint";
   len = strlen(input);
   out_path = (char *)malloc(len + 8);
   snprintf(out_path, len + 8, "%.*s.%s", (int)(len - 5), input, ext);
 
+  log_debug("Abriendo archivo de salida: %s", out_path);
   yyout = fopen(out_path, "w");
   if (yyout == NULL) {
     fprintf(stderr, "error: no se puede crear el archivo de salida '%s'\n", out_path);
@@ -146,29 +154,43 @@ int main(int argc, char *argv[]) {
     free(out_path);
     return 1;
   }
+  log_debug("Archivo de salida abierto");
 
   if(target == SCAN) {
     int resultado;
+    log_debug("Iniciando analisis lexico");
     while ((resultado = yylex()) != 0) {
       if(resultado == -1) break;
     }
     ok = resultado != -1;
     if (ok) {
       fprintf(yyout, "Analisis lexico OK\n");
+      log_debug("Analisis lexico finalizado correctamente");
+    } else {
+      log_debug("Analisis lexico finalizado con errores");
     }
   } else {
     if(target >= PARSE) {
+      log_debug("Iniciando analisis sintactico");
       ok = yyparse() == 0;
       if (ok) {
         fprintf(yyout, "Analisis sintactico OK\n");
+        log_debug("Analisis sintactico finalizado correctamente");
+        log_debug("Iniciando analisis semantico");
         analisisSemantico(raiz);
         fprintf(yyout, "Analisis semantico OK\n");
+        log_debug("Analisis semantico finalizado");
+      } else {
+        log_debug("Analisis sintactico finalizado con errores");
       }
     }
 
     if(target >= CODINTER) {
-      construirCodigoIntermedio(raiz); 
-      mostrarCodigo(); 
+      log_debug("Iniciando generacion de codigo intermedio");
+      construirCodigoIntermedio(raiz);
+      log_debug("Mostrando codigo intermedio");
+      mostrarCodigo();
+      log_debug("Generacion de codigo intermedio finalizada");
     } // TODO: implementar
     if(target >= ASSEMBLY) {
       construirCodigoAssembly(codigoIntermedio);
@@ -180,15 +202,14 @@ int main(int argc, char *argv[]) {
   fclose(yyin);
 
   if (!ok) {
+    log_debug("Compilacion fallida");
     fprintf(stderr, "error: compilacion fallida en la etapa '%d'\n", target);
     remove(out_path);
     free(out_path);
     return 1;
   }
 
-  if (debug) {
-    printf("debug: salida %s\n", out_path);
-  }
+  log_debug("Compilacion finalizada correctamente; salida: %s", out_path);
 
   free(out_path);
   return 0;

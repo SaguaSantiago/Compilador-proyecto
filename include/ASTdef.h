@@ -2,6 +2,7 @@
 #define AST_DEF_H
 #include "enums.h"
 #include "tipos.h"
+#include "TSdef.h"
 
 typedef enum TipoNodo {
   NODO_ROOT,
