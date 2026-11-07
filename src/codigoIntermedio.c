@@ -13,15 +13,17 @@ void construirCodigoIntermedio(ASTNodo *nodo){
     {
     case NODO_DECL_VAR: 
         if (nodo->simbolo->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
+            Simbolo* globalSimbolo = nodo->simbolo;
             Instruccion globalVarDecl = {
                 .op = VAR_GLOBAL,
-                .arg1 = nodo->simbolo,
+                .arg1 = globalSimbolo,
                 .arg2 = NULL,
                 .resultado = NULL,
                 .label = NULL
             };
 
             emitir(globalVarDecl);
+            agregarGlobal(globalSimbolo);
         }
         else{
             Instruccion localVarDecl = {
@@ -231,7 +233,6 @@ void construirCodigoIntermedio(ASTNodo *nodo){
 
         emitir(instRetorno); 
         break;
-    
     default:
         construirCodigoIntermedio(nodo->izq);
         construirCodigoIntermedio(nodo->der);

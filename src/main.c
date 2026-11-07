@@ -14,6 +14,8 @@ extern FILE *yyin;
 extern FILE *yyout;
 extern int error_lexico;
 
+extern Instruccion* codigoIntermedio;
+
 /* Se llama al final del archivo; 1 = no hay mas entradas. */
 int yywrap(void) { return 1; }
 
@@ -165,11 +167,12 @@ int main(int argc, char *argv[]) {
     }
 
     if(target >= CODINTER) {
-
       construirCodigoIntermedio(raiz); 
       mostrarCodigo(); 
     } // TODO: implementar
-    if(target >= ASSEMBLY) {} // TODO: implementar
+    if(target >= ASSEMBLY) {
+      construirCodigoAssembly(codigoIntermedio);
+    } // TODO: implementar
   }
 
 

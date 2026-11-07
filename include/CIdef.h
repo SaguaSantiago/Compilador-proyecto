@@ -3,8 +3,16 @@
 
 #include "TSdef.h"
 
-extern int contadorTemp;
-extern int contadorLabel;
+Instruccion *codigoIntermedio;
+int contadorTemp;
+int contadorLabel;
+
+typedef struct ListaGlobales { 
+    Simbolo *variableGlobal; 
+    struct ListaGlobales *sig;
+}ListaGlobales; 
+
+ListaGlobales *listaGlobales;
 
 typedef enum Op{
     ADD,//0
@@ -45,5 +53,7 @@ char* nuevoLabel();
 void emitir(Instruccion instruccion);
 
 void mostrarCodigo(void);
+
+void agregarGlobal(Simbolo *var); 
 
 #endif

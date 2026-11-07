@@ -6,9 +6,20 @@
 int contadorTemp = 0; 
 int contadorLabel = 0; 
 
-static Instruccion *codigo = NULL; 
-static int codigoCantidad = 0;
-static int codigoCapacidad = 10; 
+*codigoIntermedio = NULL; 
+codigoCantidad = 0;
+codigoCapacidad = 10; 
+
+
+void agregarGlobal(Simbolo* var){
+    if(var->tipoSimbolo != VAR_GLOBAL) return;
+    if (listaGlobales == NULL) listaGlobales = (ListaGlobales*) malloc(sizeof(ListaGlobales));
+
+    ListaGlobales *nuevaVar = (ListaGlobales*) malloc(sizeof(ListaGlobales));
+    nuevaVar->variableGlobal = var; 
+    nuevaVar->sig = listaGlobales->sig;
+    listaGlobales->sig = nuevaVar; 
+}
 
 Simbolo* nuevoTemporal() {
     char *tempChar = (char*)malloc(10 * sizeof(char));
@@ -32,24 +43,24 @@ void emitir(Instruccion instruccion) {
         size_t nuevaCapacidad = codigoCapacidad * 2;
 
         Instruccion *nuevoCodigo =
-            realloc(codigo, nuevaCapacidad * sizeof(Instruccion));
+            realloc(codigoIntermedio, nuevaCapacidad * sizeof(Instruccion));
 
         if (nuevoCodigo == NULL) {
             fprintf(stderr, "Error al reservar memoria para el codigo");
         }
 
-        codigo = nuevoCodigo;
+        codigoIntermedio = nuevoCodigo;
         codigoCapacidad = nuevaCapacidad;
     }
-    if (codigo == NULL) codigo = (Instruccion*)malloc(codigoCapacidad * sizeof(Instruccion));
+    if (codigoIntermedio == NULL) codigoIntermedio = (Instruccion*)malloc(codigoCapacidad * sizeof(Instruccion));
 
-    codigo[codigoCantidad] = instruccion;
+    codigoIntermedio[codigoCantidad] = instruccion;
     codigoCantidad++;
 }
 
 void mostrarCodigo(void) {
     for (size_t i = 0; i < codigoCantidad; i++) {
-        Instruccion inst = codigo[i];
+        Instruccion inst = codigoIntermedio[i];
 
         // fprintf(stderr, "op %d\n", inst.op);
         // fprintf(stderr, "codigo ok \n");
