@@ -2,6 +2,5 @@
 #define GENERACION_ASSEMBLY_H
 #include "CIdef.h"
 
-
-void construirCodigoAssembly(Instruccion *codigoIntermedio);
+void construirCodigoAssembly(Instruccion *codigoIntermedio, int codigoCantidad);
 #endif

@@ -1007,20 +1007,16 @@ case 34:
 /* rule 34 can match eol */
 YY_RULE_SETUP
 #line 93 "lex.l"
-{
-                // fprintf(stderr, "llegue a com bloque \n");
-                }
+{}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 96 "lex.l"
-{
-                // fprintf(stderr, "llegue a com linea \n");
-                }
+#line 94 "lex.l"
+{}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 100 "lex.l"
+#line 96 "lex.l"
 {
                 error_lexico = 1;
                 fprintf(stderr,
@@ -1031,10 +1027,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 107 "lex.l"
+#line 103 "lex.l"
 ECHO;
 	YY_BREAK
-#line 1037 "lex.yy.c"
+#line 1033 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2051,5 +2047,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 107 "lex.l"
+#line 103 "lex.l"
 

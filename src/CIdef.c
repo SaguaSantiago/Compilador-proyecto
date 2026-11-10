@@ -3,22 +3,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-int contadorTemp = 0; 
-int contadorLabel = 0; 
+Instruccion* codigoIntermedio;
 
-*codigoIntermedio = NULL; 
-codigoCantidad = 0;
-codigoCapacidad = 10; 
+int contadorTemp = 0;
+int contadorLabel = 0;
 
+int codigoCantidad = 0;
+int codigoCapacidad = 10;
+
+int offsetsCant;
+ListaOffsets *offsets;
+
+ListaGlobales *listaGlobales;
 
 void agregarGlobal(Simbolo* var){
-    if(var->tipoSimbolo != VAR_GLOBAL) return;
+    if(var->tipoSimbolo != SIMBOLO_VAR_GLOBAL) return;
     if (listaGlobales == NULL) listaGlobales = (ListaGlobales*) malloc(sizeof(ListaGlobales));
-
     ListaGlobales *nuevaVar = (ListaGlobales*) malloc(sizeof(ListaGlobales));
     nuevaVar->variableGlobal = var; 
     nuevaVar->sig = listaGlobales->sig;
     listaGlobales->sig = nuevaVar; 
+    fprintf(stderr, "Agrego un global %s y de tipo %d\n", var->nombre, var->tipoDato);
 }
 
 Simbolo* nuevoTemporal() {
@@ -28,8 +33,41 @@ Simbolo* nuevoTemporal() {
     Simbolo *temp = crearSimbolo(); 
     temp->nombre = tempChar; 
     temp->tipoSimbolo = SIMBOLO_TEMPORAL;
-
+    temp->offset = obtenerOffset();
     return temp;
+}
+
+int obtenerOffset(){
+    // TODO Crear flag
+    //no optimizado
+    offsetsCant += 8;
+    return offsetsCant;
+    //optimizado
+    if(offsets == NULL){ 
+        offsets = (ListaOffsets*)malloc(sizeof(ListaOffsets));
+        offsetsCant += 8;
+        offsets->offset = offsetsCant;
+    };
+    int result = offsets->offset;
+    offsets = offsets->sig;
+    return result;
+}
+
+void soltarOffset(int offset){
+    ListaOffsets* nuevo = (ListaOffsets*)malloc(sizeof(ListaOffsets));
+    nuevo->offset = offset;
+    nuevo->sig = offsets;
+    offsets = nuevo;
+}
+
+void reiniciarOffset(){
+    offsets = NULL;
+    offsetsCant = 0; 
+}
+
+void soltarTemporal(Simbolo* temp){
+    if(temp == NULL || temp->tipoSimbolo != SIMBOLO_TEMPORAL) return;
+    soltarOffset(temp->offset);
 }
 
 char* nuevoLabel() {
@@ -56,6 +94,8 @@ void emitir(Instruccion instruccion) {
 
     codigoIntermedio[codigoCantidad] = instruccion;
     codigoCantidad++;
+    soltarTemporal(instruccion.arg1);
+    soltarTemporal(instruccion.arg2);
 }
 
 void mostrarCodigo(void) {

@@ -33,7 +33,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
                 .resultado = NULL,
                 .label = NULL
             };
-
+            nodo->simbolo->offset = obtenerOffset();
             emitir(localVarDecl);
         }
         
@@ -45,7 +45,7 @@ void construirCodigoIntermedio(ASTNodo *nodo){
         // construirCodigoIntermedio(parametros);
 
         Instruccion inicioMetodo = {
-            .op = LABEL,
+            .op = INICIO_METODO,
             .arg1 = NULL,
             .arg2 = NULL,
             .resultado = NULL, 

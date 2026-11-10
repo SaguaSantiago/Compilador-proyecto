@@ -1,13 +1,16 @@
 int global1;
-float prueba(int x, int y) {
-  return 1.0;
+int prueba(int x, int y) {
+  int z;
+  global1 = 1;
+  z = 3 + global1;
+  return global1;
 }
 int global;
 
 int main() {
-  int y;
+  int y; // 1
   y = 4;
-  
+  y = y + 1;
   while(prueba(y, 4) < 2){
     return y;
   }

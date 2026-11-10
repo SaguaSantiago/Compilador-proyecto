@@ -3,6 +3,7 @@
 #include <string.h>
 #include "semantica.h"
 #include "codigoIntermedio.h"
+#include "generacionAssembly.h"
 #include "CIdef.h"
 #include "Logging.h"
 
@@ -16,6 +17,7 @@ extern FILE *yyout;
 extern int error_lexico;
 
 extern Instruccion* codigoIntermedio;
+extern int codigoCantidad;
 
 /* Se llama al final del archivo; 1 = no hay mas entradas. */
 int yywrap(void) { return 1; }
@@ -58,7 +60,7 @@ int debug;
 int main(int argc, char *argv[]) {
 
   const char *input = NULL;
-  EtapaCompilacion target = CODINTER;
+  EtapaCompilacion target = ASSEMBLY;
   Optimizacion opt_val = ALL;  /* optimizaciones solicitadas      */
   const char *salida = NULL;   /* parametro de -o                 */
   debug = 0;
@@ -117,12 +119,12 @@ int main(int argc, char *argv[]) {
   }
 
 
-  if (target != SCAN && target != PARSE && target != CODINTER) { // TODO: implementar ASSEMBLY
-    fprintf(stderr,
-            "error: la etapa '%d' no esta implementada en esta entrega\n",
-            target);
-    return 1;
-  }
+  // if (target != SCAN && target != PARSE && target != CODINTER) { // TODO: implementar ASSEMBLY
+  //   fprintf(stderr,
+  //           "error: la etapa '%d' no esta implementada en esta entrega\n",
+  //           target);
+  //   return 1;
+  // }
 
 
   if (debug) {
@@ -193,7 +195,7 @@ int main(int argc, char *argv[]) {
       log_debug("Generacion de codigo intermedio finalizada");
     } // TODO: implementar
     if(target >= ASSEMBLY) {
-      construirCodigoAssembly(codigoIntermedio);
+      construirCodigoAssembly(codigoIntermedio, codigoCantidad);
     } // TODO: implementar
   }
 

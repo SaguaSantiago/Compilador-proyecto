@@ -15,7 +15,7 @@ typedef struct Simbolo {
   float valor_float;
   NodoSimbolo *parametros;
   ASTNodo *nodoBloque;
-  int esGlobal;
+  int offset
 } Simbolo;
 
 typedef struct Nivel {

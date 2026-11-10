@@ -3,17 +3,6 @@
 
 #include "TSdef.h"
 
-Instruccion *codigoIntermedio;
-int contadorTemp;
-int contadorLabel;
-
-typedef struct ListaGlobales { 
-    Simbolo *variableGlobal; 
-    struct ListaGlobales *sig;
-}ListaGlobales; 
-
-ListaGlobales *listaGlobales;
-
 typedef enum Op{
     ADD,//0
     SUB,//1
@@ -35,16 +24,27 @@ typedef enum Op{
     VAR_GLOBAL,//17
     VAR_LOCAL,//18
     RETURN,//19
-    FIN_METODO
+    INICIO_METODO,//20
+    FIN_METODO//21
 }Op;
 
-typedef struct Instruccion{
+typedef struct instruccion{
     Op op; 
     Simbolo *arg1;
     Simbolo *arg2;
     Simbolo *resultado;
     char *label; 
 }Instruccion;
+
+typedef struct Lista_globales { 
+    Simbolo *variableGlobal; 
+    struct Lista_globales *sig;
+}ListaGlobales; 
+
+typedef struct Lista_offsets{
+    int offset;
+    struct Lista_offsets *sig;
+}ListaOffsets;
 
 Simbolo* nuevoTemporal();
 
@@ -55,5 +55,7 @@ void emitir(Instruccion instruccion);
 void mostrarCodigo(void);
 
 void agregarGlobal(Simbolo *var); 
+
+int obtenerOffset();
 
 #endif
