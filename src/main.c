@@ -108,6 +108,7 @@ int main(int argc, char *argv[]) {
         return 1;
       }
       input = arg;
+      if(salida == NULL) salida = strdup(input);
     }
   }
 
@@ -144,7 +145,7 @@ int main(int argc, char *argv[]) {
   log_debug("Archivo de entrada abierto");
 
   ext = target == SCAN? "lex" : "sint";
-  len = strlen(input);
+  len = strlen(salida);
   out_path = (char *)malloc(len + 8);
   snprintf(out_path, len + 8, "%.*s.%s", (int)(len - 5), input, ext);
 
@@ -171,6 +172,8 @@ int main(int argc, char *argv[]) {
     } else {
       log_debug("Analisis lexico finalizado con errores");
     }
+    fclose(yyout);
+    yyout = NULL;
   } else {
     if(target >= PARSE) {
       log_debug("Iniciando analisis sintactico");
@@ -185,13 +188,25 @@ int main(int argc, char *argv[]) {
       } else {
         log_debug("Analisis sintactico finalizado con errores");
       }
+      fclose(yyout);
+      yyout = NULL;
     }
 
     if(target >= CODINTER) {
       log_debug("Iniciando generacion de codigo intermedio");
       construirCodigoIntermedio(raiz);
-      log_debug("Mostrando codigo intermedio");
-      mostrarCodigo();
+      if(debug) {
+        log_debug("Mostrando codigo intermedio");
+        mostrarCodigo(stdout);
+      } else {
+        free(out_path);
+        out_path = (char *)malloc(len + 8);
+        snprintf(out_path, len + 8, "%.*s.int", (int)(len - 5), salida);
+        FILE *intFile = fopen(out_path, "w");
+        log_debug("Escribiendo codigo intermedio");
+        mostrarCodigo(intFile);
+        fclose(intFile);
+      }
       log_debug("Generacion de codigo intermedio finalizada");
     } // TODO: implementar
     if(target >= ASSEMBLY) {
@@ -200,7 +215,7 @@ int main(int argc, char *argv[]) {
   }
 
 
-  fclose(yyout);
+  if (yyout != NULL) fclose(yyout);
   fclose(yyin);
 
   if (!ok) {

@@ -2,6 +2,7 @@
 #define CIDEF_H
 
 #include "TSdef.h"
+#include <stdio.h>
 
 typedef enum Op{
     ADD,//0
@@ -52,7 +53,7 @@ char* nuevoLabel();
 
 void emitir(Instruccion instruccion);
 
-void mostrarCodigo(void);
+void mostrarCodigo(FILE* out);
 
 void agregarGlobal(Simbolo *var); 
 

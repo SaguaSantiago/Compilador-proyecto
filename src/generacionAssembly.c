@@ -27,6 +27,7 @@ void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
                 break;
             case TIPO_FLOAT: 
                 fprintf(f, "  %s: resd 1 \n", listaGlobales->variableGlobal->nombre);
+                break;
             case TIPO_BOOLEAN:
                 fprintf(f, "  %s: resb 1 \n", listaGlobales->variableGlobal->nombre);
                 break;
@@ -126,14 +127,14 @@ void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
                 movArg(arg2, "%r11");
 
                 fprintf(f, "cmp %%r10, %%r11\n");
-                fprintf(f, "mov $0, %%r11");
-                fprintf(f, "mov $1, %%r10");
+                fprintf(f, "mov $0, %%r11\n");
+                fprintf(f, "mov $1, %%r10\n");
 
-                if(instruccionActual.op == LT) fprintf(f,"cmovl %%r10, %%r11");
-                else if(instruccionActual.op == GT) fprintf(f,"cmovg %%r10, %%r11");
-                else fprintf(f,"cmove %%r10, %%r11");
+                if(instruccionActual.op == LT) fprintf(f,"cmovl %%r10, %%r11\n");
+                else if(instruccionActual.op == GT) fprintf(f,"cmovg %%r10, %%r11\n");
+                else fprintf(f,"cmove %%r10, %%r11\n");
 
-                fprintf(f, "mov %%r11, -%d(%%rbp)", instruccionActual.resultado->offset);
+                fprintf(f, "mov %%r11, -%d(%%rbp)\n", instruccionActual.resultado->offset);
             break;
             // case NOT:
             // break;
@@ -156,7 +157,6 @@ void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
         }
     }
     
-    fclose(f);
 }
 
 void movArg(Simbolo* arg, char* dest_arg){

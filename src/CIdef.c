@@ -18,7 +18,10 @@ ListaGlobales *listaGlobales;
 
 void agregarGlobal(Simbolo* var){
     if(var->tipoSimbolo != SIMBOLO_VAR_GLOBAL) return;
-    if (listaGlobales == NULL) listaGlobales = (ListaGlobales*) malloc(sizeof(ListaGlobales));
+    if (listaGlobales == NULL) {
+        listaGlobales = (ListaGlobales*) malloc(sizeof(ListaGlobales));
+        listaGlobales->sig = NULL;
+    }
     ListaGlobales *nuevaVar = (ListaGlobales*) malloc(sizeof(ListaGlobales));
     nuevaVar->variableGlobal = var; 
     nuevaVar->sig = listaGlobales->sig;
@@ -98,7 +101,8 @@ void emitir(Instruccion instruccion) {
     soltarTemporal(instruccion.arg2);
 }
 
-void mostrarCodigo(void) {
+void mostrarCodigo(FILE* out) {
+    FILE* f = out == NULL ? stdout : out;
     for (size_t i = 0; i < codigoCantidad; i++) {
         Instruccion inst = codigoIntermedio[i];
 
@@ -137,65 +141,65 @@ void mostrarCodigo(void) {
         
         switch (inst.op) {
             case ADD:
-                printf("%s = %s + %s\n",
+                fprintf(f,"%s = %s + %s\n",
                        inst.resultado->nombre, strValor1, strValor2);
                 break;
             case SUB:
-                printf("%s = %s - %s\n",
+                fprintf(f,"%s = %s - %s\n",
                        inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case MUL:
-                printf("%s = %s * %s\n",
+                fprintf(f,"%s = %s * %s\n",
                        inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case DIV:
-                printf("%s = %s / %s\n",
+                fprintf(f,"%s = %s / %s\n",
                        inst.resultado->nombre,  strValor1, strValor2);
                 break;
 
             case ASSIGN:
-                printf("%s = %s\n",
+                fprintf(f,"%s = %s\n",
                        inst.resultado->nombre, strValor1);
                 break;
             case LT:
-                printf("%s = %s < %s\n",
+                fprintf(f,"%s = %s < %s\n",
                     inst.resultado->nombre,  arg1->nombre, strValor2);
                 break;
             case GT: 
-                printf("%s = %s > %s\n",
+                fprintf(f,"%s = %s > %s\n",
                     inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case EQ:
-                printf("%s = %s == %s\n",
+                fprintf(f,"%s = %s == %s\n",
                     inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case LABEL:
                     
-                printf("%s:\n", inst.label);
+                fprintf(f,"%s:\n", inst.label);
                 break;
             case GOTO:
-                printf("goto %s\n", inst.label);
+                fprintf(f,"goto %s\n", inst.label);
                 break;
             case IF_FALSE:
-                printf("ifFalse %s goto %s\n", inst.arg1->nombre, inst.label);
+                fprintf(f,"ifFalse %s goto %s\n", inst.arg1->nombre, inst.label);
                 break;
             case RETURN:
-                printf("return %s\n", strValor1);
+                fprintf(f,"return %s\n", strValor1);
                 break;
             case FIN_METODO:
-                printf("ret\n");
+                fprintf(f,"ret\n");
                 break;
             case PUSH:
-                printf("push %d\n", arg1->valor);
+                fprintf(f,"push %d\n", arg1->valor);
                 break;
             case CALL:
-                printf("%s = call %s\n", inst.resultado->nombre, inst.arg1->nombre);
+                fprintf(f,"%s = call %s\n", inst.resultado->nombre, inst.arg1->nombre);
                 break;
             case VAR_LOCAL:
-                printf("local %s\n", arg1->nombre);
+                fprintf(f,"local %s\n", arg1->nombre);
                 break;
             case VAR_GLOBAL:
-                printf("global %s\n", arg1->nombre);
+                fprintf(f,"global %s\n", arg1->nombre);
                 break;
             default:
                 break;

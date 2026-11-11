@@ -1,0 +1,22 @@
+global global1
+local z
+global1 = 1
+t0 = 3 + global1
+z = 0
+return global1
+ret
+global global
+local y
+y = 4
+t1 = y + 1
+y = 0
+L1:
+push 0
+push 4
+t2 = call prueba
+t3 = t2 < 2
+ifFalse t3 goto L2
+return y
+goto L1
+L2:
+ret
