@@ -22,6 +22,15 @@ static int parsearOptimizacion(const char *texto, Optimizacion *opt) {
   if (strcmp(texto, "all") == 0) {
     *opt = ALL;
     return 1;
+  } else if(strcmp(texto, "PC") == 0) {
+    *opt = PROPAGACION_CONSTANTES;
+    return 1;
+  } else if(strcmp(texto, "CM") == 0) {
+    *opt = CODIGO_MUERTO;
+    return 1;
+  } else if(strcmp(texto, "RT") == 0) {
+    *opt = REUTILIZACION_TEMPORALES;
+    return 1;
   }
   return 0;
 }

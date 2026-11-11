@@ -6,7 +6,10 @@
 extern FILE *yyout; //lex.yy.c
 extern ListaGlobales* listaGlobales;
 int calcularEspacio(Instruccion *codigoIntermedio, int cant, int inicial);
-void movArg(Simbolo* arg, char* dest_arg);
+void movArg(FILE* f, Simbolo* arg, char* dest_arg);
+
+int contadorParametros = 6; 
+int parametrosSobrantes = 0;
 
 void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codigoCantidad){
     FILE* f = out;
@@ -51,20 +54,22 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
         switch(instruccionActual.op){
             case INICIO_METODO:
                 int espaciosLocales = calcularEspacio(codigoIntermedio, codigoCantidad, indiceActual);
+                // int espaciosLocales = calcularEspacioOptimizado(codigoIntermedio, codigoCantidad, indiceActual);
                 if(espaciosLocales == -1) return;
                 fprintf(f, "%s:\n", instruccionActual.label);
                 fprintf(f, "enter $(8 * %d), $0\n", espaciosLocales);
                 break;    
             case FIN_METODO: 
-                fputs("ret \n", f);
+                fprintf(f,"leave \n");
+                fprintf(f,"ret \n");
                 break;
             case ADD:
             case SUB:
             case MUL:
                 //ARG1
-                movArg(arg1, "%r10");
+                movArg(f, arg1, "%r10");
                 //ARG2
-                movArg(arg2, "%r11");
+                movArg(f, arg2, "%r11");
 
                 if(instruccionActual.op == ADD) fprintf(f,"add %%r10, %%r11\n");
                 else if(instruccionActual.op == SUB) fprintf(f,"sub %%r10, %%r11\n");
@@ -74,10 +79,10 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
             case MOD:
             case DIV:
                 //ARG1
-                movArg(arg1, "%rdx");
+                movArg(f, arg1, "%rdx");
 
                 //ARG2
-                movArg(arg2, "%r10");
+                movArg(f, arg2, "%r10");
 
                 fprintf(f,"idiv %%r10\n");
                 
@@ -113,18 +118,54 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
 
                 
             break;
-            // case PUSH:
-            // break;
-            case CALL:
+            case PUSH:
+                movArg(f, arg1, "%r10");
+
+                switch (contadorParametros)
+                {
+                case 6:
+                    fprintf(f,"mov %%r10, %%rdi");
+                break;
+                case 5:
+                    fprintf(f,"mov %%r10, %%rsi");
+                break;
+                case 4:
+                    fprintf(f,"mov %%r10, %%rdx");
+                break;
+                case 3:
+                    fprintf(f,"mov %%r10, %%rcx");
+                break;
+                case 2:
+                    fprintf(f,"mov %%r10, %%r8");
+                break;
+                case 1:
+                    fprintf(f,"mov %%r10, %%r9");
+                break;
+                default:
+                    fprintf(f,"push %%r10");
+                    parametrosSobrantes++;
+                    break;
+                }
+
+                contadorParametros--; 
+            break;
+            case CALL: 
                 fprintf(f, "call %s\n", arg1->nombre);
                 fprintf(f, "mov %%eax, -%d(%%rbp)\n", instruccionActual.resultado->offset);
+
+                for(int i = 0 ; i < parametrosSobrantes ; i++){
+                    fprintf(f, "pop %%r10\n");
+                }
+
+                contadorParametros = 6;
+                parametrosSobrantes = 0; 
             break;
             case LT:
             case GT:
             case EQ:
-                movArg(arg1, "%r10");
+                movArg(f, arg1, "%r10");
                 
-                movArg(arg2, "%r11");
+                movArg(f, arg2, "%r11");
 
                 fprintf(f, "cmp %%r10, %%r11\n");
                 fprintf(f, "mov $0, %%r11\n");
@@ -137,47 +178,67 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
                 fprintf(f, "mov %%r11, -%d(%%rbp)\n", instruccionActual.resultado->offset);
             break;
             case NOT:
-                movArg(arg1, "%r11");
+                movArg(f, arg1, "%r11");
                 fprintf(f , "mov $1, %%r10\n"); 
 
                 fprintf(f, "sub %%r10, %%r11");
                 fprintf(f, "mov %%r11, -%d(%%rbp)\n", instruccionActual.resultado->offset);
             break;
             case AND:
-                movArg(arg1, "%r10");
-                movArg(arg2, "%r11");
+                movArg(f, arg1, "%r10");
+                movArg(f, arg2, "%r11");
 
-                fprintf(f, "add %%r10, %%r11");
-                fprintf(f, "mov $2, %%r10");
-                fprintf(f, "cmp %%r11, %%r10");
-                fprintf(f, "mov $1, %%r10");
-                fprintf(f, "mov $0, %%r11");
+                fprintf(f, "add %%r10, %%r11\n");
+                fprintf(f, "mov $2, %%r10\n");
+                fprintf(f, "cmp %%r11, %%r10\n");
+                fprintf(f, "mov $1, %%r10\n");
+                fprintf(f, "mov $0, %%r11\n");
 
-                fprintf(f, "cmove %%r10, %%r11"); 
+                fprintf(f, "cmove %%r10, %%r11\n"); 
 
                 fprintf(f, "mov %%r11, -%d(%%rbp)\n", instruccionActual.resultado->offset);
             break;
-            // case OR:
-            // break;
+            case OR:
+                movArg(f, arg1, "%r10");
+                
+                movArg(f, arg2, "%r11");
+                
+                fprintf(f, "add %%r10, %%r11\n");
+                fprintf(f, "mov $2, %%r10\n");
+                fprintf(f, "cmp %%r11, %%r10\n");
+                fprintf(f, "mov $0, %%r10\n");
+                fprintf(f, "cmp $1, %%r11\n");
+                fprintf(f, "cmoven %%r11, %%r10\n");
+                fprintf(f, "cmp %%r10, -%d(%%rbp)\n", instruccionActual.resultado->offset);
+            
+            break;
             case LABEL:
                 fprintf(f, "%s:\n", instruccionActual.label);
             break;
             case GOTO:
                 fprintf(f, "jmp %s\n", instruccionActual.label);
             break;
-            // case IF_FALSE:
-            // break;
-            // case RETURN:
-            // break;
+            
+            case IF_FALSE:
+                fprintf(f, ";IF_FALSE\n");
+                movArg(f, arg1, "%r11");
+                fprintf(f, "mov $0, %%r10\n");
+                fprintf(f, "cmp %%r11, %%r10\n");
+                fprintf(f,"je %s\n",instruccionActual.label);
+            break;
+            case RETURN:
+                movArg(f, arg1, "%r10");
+                fprintf(f, "mov %%r10, %%rax\n");
+            break;
             default:
                 fprintf(f,"instruccion no procesada: %d\n", instruccionActual.op);
         }
+        fprintf(f, "\n");
     }
     
 }
 
-void movArg(Simbolo* arg, char* dest_arg){
-    FILE* f = stdout;
+void movArg(FILE* f, Simbolo* arg, char* dest_arg){
     //ARG
     if(arg == NULL) return;
     
@@ -197,7 +258,8 @@ void movArg(Simbolo* arg, char* dest_arg){
 
 int calcularEspacio(Instruccion *codigoIntermedio, int cant, int inicial){
     int espacioReservado = 0;
-    bool finMetodo = false; 
+    int finMetodo = 0; 
+
     for (int i=inicial; i<cant ; i++){ 
         Instruccion instActual = codigoIntermedio[i]; 
 
@@ -205,7 +267,7 @@ int calcularEspacio(Instruccion *codigoIntermedio, int cant, int inicial){
             espacioReservado++;
         }
         else if(instActual.op == FIN_METODO){
-            finMetodo = true;
+            finMetodo = 1;
             break;
         }
     }
@@ -215,5 +277,37 @@ int calcularEspacio(Instruccion *codigoIntermedio, int cant, int inicial){
         return -1;
     }
 
+    return espacioReservado; 
+}
+
+int calcularEspacioOptimizado(Instruccion *codigoIntermedio, int cant, int inicial){
+    int espacioReservado = 0;
+    int finMetodo = 0; 
+
+    int maxOffset = 0; 
+
+    for (int i=inicial; i<cant ; i++){ 
+        Instruccion instActual = codigoIntermedio[i]; 
+
+        if (instActual.op == VAR_LOCAL || (instActual.resultado != NULL && instActual.resultado->tipoSimbolo == SIMBOLO_TEMPORAL)){
+            int offsetActual = (instActual.op == VAR_LOCAL) ? instActual.arg1->offset : instActual.resultado->offset;
+            
+            if (maxOffset < offsetActual){
+                maxOffset = offsetActual;
+                espacioReservado = maxOffset / 8;
+                // fprintf(stderr, "se guardo %d espacios, debido al offset %d\n", espacioReservado, offsetActual);
+            }
+        }
+        else if(instActual.op == FIN_METODO){
+            finMetodo = 1;
+            break;
+        }
+    }
+
+    if (!finMetodo){
+        fprintf(stderr, "error al construir assembly: No se encontro el fin de metodo");
+        return -1;
+    }
+    // fprintf(stderr, "retorna espacio: %d\n", espacioReservado);
     return espacioReservado; 
 }
