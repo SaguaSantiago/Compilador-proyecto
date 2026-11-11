@@ -21,9 +21,10 @@ WINPATH = $(1)
 endif
 
 HEADERS := include/enums.h include/tipos.h include/compilador.h \
-           include/ASTdef.h include/TSdef.h include/utils.h include/Logging.h include/generacionAssembly.h 
+           include/ASTdef.h include/TSdef.h include/utils.h include/Logging.h include/generacionAssembly.h \
+           include/cli.h
 
-SOURCES := src/main.c src/Logging.c src/generacionAssembly.c src/astdef.c src/TSdef.c src/semantica.c \
+SOURCES := src/main.c src/cli.c src/Logging.c src/generacionAssembly.c src/astdef.c src/TSdef.c src/semantica.c \
            src/utils.c src/CIdef.c src/codigoIntermedio.c parser/bisson.tab.c parser/lex.yy.c
 OBJECTS := $(SOURCES:.c=.o)
 
@@ -55,6 +56,9 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $^ -lm
 
 src/main.o: src/main.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+src/cli.o: src/cli.c include/cli.h include/enums.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 src/Logging.o: src/Logging.c include/Logging.h
