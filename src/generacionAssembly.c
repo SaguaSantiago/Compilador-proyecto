@@ -8,8 +8,8 @@ extern ListaGlobales* listaGlobales;
 int calcularEspacio(Instruccion *codigoIntermedio, int cant, int inicial);
 void movArg(Simbolo* arg, char* dest_arg);
 
-void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
-    FILE* f = stdout;
+void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codigoCantidad){
+    FILE* f = out;
 
     if(f == NULL){
         perror("Error al crear el archivo assembly");
