@@ -6,6 +6,7 @@
 extern FILE *yyout; //lex.yy.c
 extern ListaGlobales* listaGlobales;
 int calcularEspacio(Instruccion *codigoIntermedio, int cant, int inicial);
+void movArg(Simbolo* arg, char* dest_arg);
 
 void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
     FILE* f = stdout;
@@ -60,32 +61,9 @@ void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
             case SUB:
             case MUL:
                 //ARG1
-                if(arg1->tipoSimbolo == SIMBOLO_INTEGER_LITERAL){
-                    fprintf(f, "mov $%d, %%r10\n", arg1->valor);
-                }
-                else if(arg1->tipoSimbolo == SIMBOLO_FLOAT_LITERAL){
-                    // TODO consultar como se hace
-                }
-                else if (arg1->tipoSimbolo == SIMBOLO_TEMPORAL || arg1->tipoSimbolo == SIMBOLO_VAR_LOCAL){
-                    fprintf(f, "mov -%d(%%rbp), %%r10\n", arg1->offset);
-                }
-                else if(arg1->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
-                    fprintf(f,"mov [%s], %%r10\n", arg1->nombre);
-                }
-
+                movArg(arg1, "%r10");
                 //ARG2
-                if(arg2->tipoSimbolo == SIMBOLO_INTEGER_LITERAL){
-                    fprintf(f,"mov $%d, %%r11\n", arg2->valor);
-                }
-                else if(arg2->tipoSimbolo == SIMBOLO_FLOAT_LITERAL){
-                    // TODO consultar como se hace
-                }
-                else if (arg2->tipoSimbolo == SIMBOLO_TEMPORAL || arg2->tipoSimbolo == SIMBOLO_VAR_LOCAL){
-                    fprintf(f,"mov -%d(%%rbp), %%r11\n", arg2->offset);
-                }
-                else if(arg2->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
-                    fprintf(f,"mov [%s], %%r11\n", arg2->nombre);
-                }
+                movArg(arg2, "%r11");
 
                 if(instruccionActual.op == ADD) fprintf(f,"add %%r10, %%r11\n");
                 else if(instruccionActual.op == SUB) fprintf(f,"sub %%r10, %%r11\n");
@@ -95,35 +73,12 @@ void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
             case MOD:
             case DIV:
                 //ARG1
-                if(arg1->tipoSimbolo == SIMBOLO_INTEGER_LITERAL){
-                    fprintf(f,"mov $%d, %%r10\n", arg1->valor);
-                }
-                else if(arg1->tipoSimbolo == SIMBOLO_FLOAT_LITERAL){
-                    // TODO consultar como se hace
-                }
-                else if (arg1->tipoSimbolo == SIMBOLO_TEMPORAL || arg1->tipoSimbolo == SIMBOLO_VAR_LOCAL){
-                    fprintf(f,"mov -%d(%%rbp), %%r10\n", arg1->offset);
-                }
-                else if(arg1->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
-                    fprintf(f,"mov [%s], %%r10\n", arg1->nombre);
-                }
+                movArg(arg1, "%rdx");
 
                 //ARG2
-                if(arg2->tipoSimbolo == SIMBOLO_INTEGER_LITERAL){
-                    fprintf(f,"mov $%d, %%r11\n", arg2->valor);
-                }
-                else if(arg2->tipoSimbolo == SIMBOLO_FLOAT_LITERAL){
-                    // TODO consultar como se hace
-                }
-                else if (arg2->tipoSimbolo == SIMBOLO_TEMPORAL || arg2->tipoSimbolo == SIMBOLO_VAR_LOCAL){
-                    fprintf(f,"mov -%d(%%rbp), %%r11\n", arg2->offset);
-                }
-                else if(arg2->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
-                    fprintf(f,"mov [%s], %%r11\n", arg2->nombre);
-                }
+                movArg(arg2, "%r10");
 
-                fprintf(f,"mov %%r10, %%rdx\n");
-                fprintf(f,"idiv %%r11\n");
+                fprintf(f,"idiv %%r10\n");
                 
                 if(instruccionActual.op == DIV) fprintf(f,"mov %%rax, -%d(%%rbp)\n", instruccionActual.resultado->offset);
                 else fprintf(f,"mov %%rdx, -%d(%%rbp)\n", instruccionActual.resultado->offset);
@@ -193,6 +148,25 @@ void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
     fclose(f);
 }
 
+void movArg(Simbolo* arg, char* dest_arg){
+    FILE* f = stdout;
+    //ARG
+    if(arg == NULL) return;
+    
+    if(arg->tipoSimbolo == SIMBOLO_INTEGER_LITERAL){
+        fprintf(f, "mov $%d, %s\n", arg->valor, dest_arg);
+    }
+    else if(arg->tipoSimbolo == SIMBOLO_FLOAT_LITERAL){
+        // TODO consultar como se hace
+    }
+    else if (arg->tipoSimbolo == SIMBOLO_TEMPORAL || arg->tipoSimbolo == SIMBOLO_VAR_LOCAL){
+        fprintf(f, "mov -%d(%%rbp), %s\n", arg->offset, dest_arg);
+    }
+    else if(arg->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
+        fprintf(f,"mov [%s], %s\n", arg->nombre, dest_arg);
+    }
+}
+
 int calcularEspacio(Instruccion *codigoIntermedio, int cant, int inicial){
     int espacioReservado = 0;
     bool finMetodo = false; 
@@ -209,7 +183,7 @@ int calcularEspacio(Instruccion *codigoIntermedio, int cant, int inicial){
     }
 
     if (!finMetodo){
-        fprintf(stderr, "error al construir assebly: No se encontro el fin de metodo");
+        fprintf(stderr, "error al construir assembly: No se encontro el fin de metodo");
         return -1;
     }
 
