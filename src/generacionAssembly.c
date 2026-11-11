@@ -118,12 +118,23 @@ void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
                 fprintf(f, "call %s\n", arg1->nombre);
                 fprintf(f, "mov %%eax, -%d(%%rbp)\n", instruccionActual.resultado->offset);
             break;
-            // case LT:
-            // break;
-            // case GT:
-            // break;
-            // case EQ:
-            // break;
+            case LT:
+            case GT:
+            case EQ:
+                movArg(arg1, "%r10");
+                
+                movArg(arg2, "%r11");
+
+                fprintf(f, "cmp %%r10, %%r11\n");
+                fprintf(f, "mov $0, %%r11");
+                fprintf(f, "mov $1, %%r10");
+
+                if(instruccionActual.op == LT) fprintf(f,"cmovl %%r10, %%r11");
+                else if(instruccionActual.op == GT) fprintf(f,"cmovg %%r10, %%r11");
+                else fprintf(f,"cmove %%r10, %%r11");
+
+                fprintf(f, "mov %%r11, -%d(%%rbp)", instruccionActual.resultado->offset);
+            break;
             // case NOT:
             // break;
             // case AND:
