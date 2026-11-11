@@ -136,10 +136,27 @@ void construirCodigoAssembly(Instruccion* codigoIntermedio, int codigoCantidad){
 
                 fprintf(f, "mov %%r11, -%d(%%rbp)\n", instruccionActual.resultado->offset);
             break;
-            // case NOT:
-            // break;
-            // case AND:
-            // break;
+            case NOT:
+                movArg(arg1, "%r11");
+                fprintf(f , "mov $1, %%r10\n"); 
+
+                fprintf(f, "sub %%r10, %%r11");
+                fprintf(f, "mov %%r11, -%d(%%rbp)\n", instruccionActual.resultado->offset);
+            break;
+            case AND:
+                movArg(arg1, "%r10");
+                movArg(arg2, "%r11");
+
+                fprintf(f, "add %%r10, %%r11");
+                fprintf(f, "mov $2, %%r10");
+                fprintf(f, "cmp %%r11, %%r10");
+                fprintf(f, "mov $1, %%r10");
+                fprintf(f, "mov $0, %%r11");
+
+                fprintf(f, "cmove %%r10, %%r11"); 
+
+                fprintf(f, "mov %%r11, -%d(%%rbp)\n", instruccionActual.resultado->offset);
+            break;
             // case OR:
             // break;
             case LABEL:
