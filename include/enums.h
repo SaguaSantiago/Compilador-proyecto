@@ -8,7 +8,7 @@ typedef enum Tipo_dato { TIPO_INTEGER, TIPO_FLOAT, TIPO_BOOLEAN, TIPO_VOID } Tip
 
 typedef enum Etapa_compilacion { SCAN, PARSE, CODINTER, ASSEMBLY } EtapaCompilacion;
 
-typedef enum Optimizacion_enum { ALL } Optimizacion;
+typedef enum Optimizacion_enum { ALL, PROPAGACION_CONSTANTES, CODIGO_MUERTO, REUTILIZACION_TEMPORALES } Optimizacion;
 
 typedef enum Tipo_simbolo {
   SIMBOLO_TEMPORAL,

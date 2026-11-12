@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     liberarOpciones(&op);
     return 1;
   }
-
+  
   if (op.debug) {
     logging_set_enabled(1);
   }

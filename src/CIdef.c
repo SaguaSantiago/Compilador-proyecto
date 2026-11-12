@@ -12,7 +12,7 @@ int codigoCantidad = 0;
 int codigoCapacidad = 10;
 
 int offsetsCant;
-ListaOffsets *offsets;
+ListaOffsets *offsets = NULL;
 
 ListaGlobales *listaGlobales;
 
@@ -26,7 +26,6 @@ void agregarGlobal(Simbolo* var){
     nuevaVar->variableGlobal = var; 
     nuevaVar->sig = listaGlobales->sig;
     listaGlobales->sig = nuevaVar; 
-    fprintf(stderr, "Agrego un global %s y de tipo %d\n", var->nombre, var->tipoDato);
 }
 
 Simbolo* nuevoTemporal() {
@@ -41,18 +40,20 @@ Simbolo* nuevoTemporal() {
 }
 
 int obtenerOffset(){
-    // TODO Crear flag
-    //no optimizado
-    offsetsCant += 8;
-    return offsetsCant;
-    //optimizado
+    // // TODO Crear flag
+    // //no optimizado
+    // offsetsCant += 8;
+    // return offsetsCant;
+    // //optimizado
     if(offsets == NULL){ 
         offsets = (ListaOffsets*)malloc(sizeof(ListaOffsets));
         offsetsCant += 8;
         offsets->offset = offsetsCant;
+        offsets->sig = NULL;
     };
     int result = offsets->offset;
     offsets = offsets->sig;
+
     return result;
 }
 

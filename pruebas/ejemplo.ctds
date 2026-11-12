@@ -5,12 +5,14 @@ int prueba(int x, int y) {
   z = 3 + global1;
   return global1;
 }
+
 int global;
 
 int main() {
   int y; // 1
   y = 4;
   y = y + 1;
+
   while(prueba(y, 4) < 2){
     return y;
   }
