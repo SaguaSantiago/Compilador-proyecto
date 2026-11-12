@@ -102,44 +102,20 @@ void emitir(Instruccion instruccion) {
     soltarTemporal(instruccion.arg2);
 }
 
+char* arg_string(Simbolo* arg);
+
 void mostrarCodigo(FILE* out) {
     FILE* f = out == NULL ? stdout : out;
     for (size_t i = 0; i < codigoCantidad; i++) {
         Instruccion inst = codigoIntermedio[i];
 
-        // fprintf(stderr, "op %d\n", inst.op);
-        // fprintf(stderr, "codigo ok \n");
-
         Simbolo *arg1 = inst.arg1; 
         Simbolo *arg2 = inst.arg2; 
 
-        char *strValor1 = (char*)malloc(64 * sizeof(char)); 
-        char *strValor2 = (char*)malloc(64 * sizeof(char));
-        
-        if (arg1 != NULL){
-            if (arg1->tipoSimbolo == SIMBOLO_VAR_LOCAL || arg1->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
-                strValor1 = strdup(arg1->nombre);
-            }
-            else if (arg1->tipoDato == TIPO_INTEGER || arg1->tipoDato == TIPO_BOOLEAN){
-                sprintf(strValor1,"%d",arg1->valor);
-            } 
-            else if(arg1->tipoDato == TIPO_FLOAT){
-                sprintf(strValor1,"%.2f",arg1->valor_float);
-            } 
-        }
+        char *strValor1 = arg_string(arg1);
 
-        if (arg2 != NULL){
-            if (arg2->tipoSimbolo == SIMBOLO_VAR_LOCAL || arg2->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
-                strValor2 = strdup(arg2->nombre);
-            }
-            else if (arg2->tipoDato == TIPO_INTEGER || arg2->tipoDato == TIPO_BOOLEAN){
-                sprintf(strValor2,"%d",arg2->valor);
-            } 
-            else if(arg2->tipoDato == TIPO_FLOAT){
-                sprintf(strValor2,"%.2f",arg2->valor_float);
-            }
-        }
-        
+        char *strValor2 = arg_string(arg2);
+
         switch (inst.op) {
             case ADD:
                 fprintf(f,"%s = %s + %s\n",
@@ -164,7 +140,7 @@ void mostrarCodigo(FILE* out) {
                 break;
             case LT:
                 fprintf(f,"%s = %s < %s\n",
-                    inst.resultado->nombre,  arg1->nombre, strValor2);
+                    inst.resultado->nombre,  strValor1, strValor2);
                 break;
             case GT: 
                 fprintf(f,"%s = %s > %s\n",
@@ -174,36 +150,73 @@ void mostrarCodigo(FILE* out) {
                 fprintf(f,"%s = %s == %s\n",
                     inst.resultado->nombre,  strValor1, strValor2);
                 break;
+            case OR:
+                fprintf(f, "%s OR %s", strValor1, strValor2);
+                break;
+            case AND:
+                fprintf(f, "%s AND %s", strValor1, strValor2);
+                break;
+            case NOT:
+                fprintf(f, "NOT %s", strValor1, strValor2);
+                break;
             case LABEL:
-                    
                 fprintf(f,"%s:\n", inst.label);
                 break;
             case GOTO:
                 fprintf(f,"goto %s\n", inst.label);
                 break;
             case IF_FALSE:
-                fprintf(f,"ifFalse %s goto %s\n", inst.arg1->nombre, inst.label);
+                fprintf(f,"if_false %s goto %s\n", strValor1, inst.label);
                 break;
             case RETURN:
                 fprintf(f,"return %s\n", strValor1);
                 break;
             case FIN_METODO:
-                fprintf(f,"ret\n");
+                fprintf(f,"fin_metodo\n");
                 break;
             case PUSH:
                 fprintf(f,"push %d\n", arg1->valor);
                 break;
             case CALL:
-                fprintf(f,"%s = call %s\n", inst.resultado->nombre, inst.arg1->nombre);
+                fprintf(f,"%s = call %s\n", inst.resultado->nombre, arg1->nombre);
                 break;
             case VAR_LOCAL:
-                fprintf(f,"local %s\n", arg1->nombre);
+                fprintf(f,"local %s\n", strValor1);
                 break;
             case VAR_GLOBAL:
-                fprintf(f,"global %s\n", arg1->nombre);
+                fprintf(f,"global %s\n", strValor1);
                 break;
+            case INICIO_METODO:
+                fprintf(f, "inicio_metodo %s\n", inst.label);
+            break;
             default:
-                break;
+                fprintf(f, "operacion no reconocida %d\n", inst.op);
+            break;
         }
     }
+}
+
+char* arg_string(Simbolo* arg){
+    if(arg == NULL) return NULL;
+    char* result = malloc(sizeof(char)*20);
+    if (arg != NULL){
+        if (arg->tipoSimbolo == SIMBOLO_VAR_LOCAL || arg->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
+            result = strdup(arg->nombre);
+        } 
+        else if (arg->tipoSimbolo == SIMBOLO_INTEGER_LITERAL){
+            sprintf(result,"%d",arg->valor);
+        }
+        else if(arg->tipoSimbolo == SIMBOLO_FLOAT_LITERAL){
+            sprintf(result,"%.2f",arg->valor_float);
+        }
+        else if(arg->tipoSimbolo == SIMBOLO_BOOLEAN_LITERAL){
+            sprintf(result,"%s", arg->valor == 1 ? "true" : "false");
+        }
+        else if (arg->tipoSimbolo == SIMBOLO_TEMPORAL){
+            fprintf(stderr, "%s\n", arg->nombre);
+            sprintf(result,"%s",arg->nombre);
+        }
+    }
+
+    return result;
 }
