@@ -13,6 +13,8 @@ int main() {
   y = 4;
   y = y + 1;
 
+  return y; 
+  
   while(prueba(y, 4) < 2){
     return y;
   }

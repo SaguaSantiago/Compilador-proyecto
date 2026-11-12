@@ -1,5 +1,5 @@
 
-#line 3 "lex.yy.c"
+#line 2 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -530,8 +530,8 @@ char *yytext;
     int error_lexico = 0;
     /* define una macro que se ejecuta antes de cada regla luego de encontrar un lexema*/
     #define YY_USER_ACTION log_debug("Lexer: linea %d, lexema '%.*s'", yylineno, yyleng, yytext);
+#line 533 "lex.yy.c"
 #line 534 "lex.yy.c"
-#line 535 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -750,7 +750,7 @@ YY_DECL
 	{
 #line 24 "lex.l"
 
-#line 754 "lex.yy.c"
+#line 753 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1030,7 +1030,7 @@ YY_RULE_SETUP
 #line 103 "lex.l"
 ECHO;
 	YY_BREAK
-#line 1034 "lex.yy.c"
+#line 1033 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

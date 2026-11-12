@@ -47,6 +47,9 @@ mov %r11, -24(%rbp)
 mov -24(%rbp), %r11
 mov %r11, -16(%rbp)
 
+mov -16(%rbp), %r10
+mov %r10, %rax
+
 L1:
 
 mov -16(%rbp), %r10
