@@ -87,3 +87,45 @@ void limpiarDeclaracionesBloque(ASTNodo **nodo){
     limpiarDeclaracionesBloque((*nodo)->izq);
     limpiarDeclaracionesBloque((*nodo)->der);
 }
+
+
+int condicionFalsa(ASTNodo *nodo){
+    if (nodo == NULL) return 0; 
+
+    //si las hojas de la condicion son literales entonces el valor tiene que estar cargado en el simbolo del nodo padre
+    if (hojasLiterales(nodo)) return 1 - (nodo->simbolo->valor);
+    //si no lo son entonces no se puede resolver la condicion en este punto
+    else return 0;    
+}
+
+int hojasLiterales(ASTNodo *nodo){
+    if (nodo == NULL) return 0;
+
+    //si el nodo es una hoja devolvemos true si es literal
+    if (esHoja(nodo)){
+        return esLiteral(nodo);
+    }
+    //si el nodo no es una hoja buscamos las hojas 
+    else{
+        int *hojaIzq = (esHoja(nodo->izq)) ? esLiteral(nodo->izq) : hojasLiterales(nodo->izq);
+        int *hojaDer = (esHoja(nodo->der)) ? esLiteral(nodo->der) : hojasLiterales(nodo->der);
+
+        return hojaIzq && hojaDer;
+    }
+}
+
+int esHoja(ASTNodo *nodo){
+    return nodo->izq == NULL && nodo->der == NULL;
+}
+
+int esLiteral(ASTNodo *nodo){
+    switch (nodo->tipo)
+    {
+    case NODO_FLOAT:
+    case NODO_INT:
+    case NODO_BOOLEAN:
+        return 1;
+    default:
+        return 0;
+    }
+}

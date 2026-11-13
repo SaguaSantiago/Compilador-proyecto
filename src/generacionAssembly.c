@@ -19,31 +19,30 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
         return;
     }
     
-    fputs("section .bss\n\n", f);
+    fputs(".section .bss\n\n", f);
 
     listaGlobales = listaGlobales->sig;
     //cosntruimos la seccion de variables globales
     while(listaGlobales != NULL){
-        switch(listaGlobales->variableGlobal->tipoDato){
-            case TIPO_INTEGER:
-                fprintf(f, "  %s: resd 1 \n", listaGlobales->variableGlobal->nombre);
-                break;
-            case TIPO_FLOAT: 
-                fprintf(f, "  %s: resd 1 \n", listaGlobales->variableGlobal->nombre);
-                break;
-            case TIPO_BOOLEAN:
-                fprintf(f, "  %s: resb 1 \n", listaGlobales->variableGlobal->nombre);
-                break;
-            default: 
-                fprintf(stderr, "error: tipo de dato no procesado\n");
-
-        }
+        // switch(listaGlobales->variableGlobal->tipoDato){
+        //     case TIPO_INTEGER:
+        //         fprintf(f, "  %s: resd 1 \n", listaGlobales->variableGlobal->nombre);
+        //         break;
+        //     case TIPO_FLOAT: 
+        //         fprintf(f, "  %s: resd 1 \n", listaGlobales->variableGlobal->nombre);
+        //         break;
+        //     case TIPO_BOOLEAN:
+        //         fprintf(f, "  %s: resb 1 \n", listaGlobales->variableGlobal->nombre);
+        //         break;
+        //     default: 
+        //         fprintf(stderr, "error: tipo de dato no procesado\n");
+        fprintf(f, "%s: .zero 8\n", listaGlobales->variableGlobal->nombre);
         listaGlobales = listaGlobales->sig; 
     }
 
-    fputs("\nsection .data\n\n", f); 
+    fputs("\n.section .data\n\n", f); 
 
-    fputs("section .text\n\n", f);
+    fputs(".text\n\n", f);
 
     for (int indiceActual = 0; indiceActual<codigoCantidad; indiceActual++){
         Instruccion instruccionActual = codigoIntermedio[indiceActual]; 
@@ -56,7 +55,7 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
                 int espaciosLocales = calcularEspacio(codigoIntermedio, codigoCantidad, indiceActual);
                 // int espaciosLocales = calcularEspacioOptimizado(codigoIntermedio, codigoCantidad, indiceActual);
                 if(espaciosLocales == -1) return;
-                fprintf(f, "%s:\n", instruccionActual.label);
+                fprintf(f, ".globl %s:\n%s\n", instruccionActual.label, instruccionActual.label);
                 fprintf(f, "enter $(8 * %d), $0\n", espaciosLocales);
                 break;    
             case FIN_METODO: 
@@ -78,17 +77,17 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
             break;
             case MOD:
             case DIV:
-                //ARG1
-                movArg(f, arg1, "%rdx");
-
-                //ARG2
+                movArg(f, arg1, "%rax");
                 movArg(f, arg2, "%r10");
 
-                fprintf(f,"idiv %%r10\n");
-                
-                if(instruccionActual.op == DIV) fprintf(f,"mov %%rax, -%d(%%rbp)\n", instruccionActual.resultado->offset);
-                else fprintf(f,"mov %%rdx, -%d(%%rbp)\n", instruccionActual.resultado->offset);
-            break;
+                fprintf(f, "cqo\n");
+                fprintf(f, "idiv %%r10\n");
+
+                if (instruccionActual.op == DIV)
+                    fprintf(f, "mov %%rax, -%d(%%rbp)\n", instruccionActual.resultado->offset);
+                else
+                    fprintf(f, "mov %%rdx, -%d(%%rbp)\n", instruccionActual.resultado->offset);
+                break;
             case ASSIGN:
                 // primero determinamos el destino de la asignacion
                 char* id;
@@ -97,7 +96,7 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
                     sprintf(id, "-%d(%%rbp)", instruccionActual.resultado->offset);
                 } else {
                     id = malloc(sizeof(char)*30);
-                    sprintf(id, "[%s]", instruccionActual.resultado->nombre);
+                    sprintf(id, "%s(%%rip)", instruccionActual.resultado->nombre);
                 }
 
                 // dependiendo la expresion a asignar determinamos el tratamiento
@@ -112,7 +111,7 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
                     fprintf(f,"mov %%r11, %s\n", id);
                 }
                 else if(arg1->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
-                    fprintf(f,"mov [%s], %%r11\n", arg1->nombre);
+                    fprintf(f,"mov %s(%%rip), %%r11\n", arg1->nombre);
                     fprintf(f,"mov %%r11, %s\n", id);
                 }
 
@@ -181,7 +180,7 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
                 movArg(f, arg1, "%r11");
                 fprintf(f , "mov $1, %%r10\n"); 
 
-                fprintf(f, "sub %%r10, %%r11");
+                fprintf(f, "sub %%r10, %%r11\n");
                 fprintf(f, "mov %%r11, -%d(%%rbp)\n", instruccionActual.resultado->offset);
             break;
             case AND:
@@ -208,7 +207,7 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
                 fprintf(f, "cmp %%r11, %%r10\n");
                 fprintf(f, "mov $0, %%r10\n");
                 fprintf(f, "cmp $1, %%r11\n");
-                fprintf(f, "cmoven %%r11, %%r10\n");
+                fprintf(f, "cmovne %%r11, %%r10\n");
                 fprintf(f, "cmp %%r10, -%d(%%rbp)\n", instruccionActual.resultado->offset);
             
             break;
@@ -220,7 +219,6 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
             break;
             
             case IF_FALSE:
-                fprintf(f, ";IF_FALSE\n");
                 movArg(f, arg1, "%r11");
                 fprintf(f, "mov $0, %%r10\n");
                 fprintf(f, "cmp %%r11, %%r10\n");
@@ -229,6 +227,9 @@ void construirCodigoAssembly(FILE* out, Instruccion* codigoIntermedio, int codig
             case RETURN:
                 movArg(f, arg1, "%r10");
                 fprintf(f, "mov %%r10, %%rax\n");
+            break;
+            case VAR_GLOBAL:
+            case VAR_LOCAL:
             break;
             default:
                 fprintf(f,"instruccion no procesada: %d\n", instruccionActual.op);
@@ -252,7 +253,7 @@ void movArg(FILE* f, Simbolo* arg, char* dest_arg){
         fprintf(f, "mov -%d(%%rbp), %s\n", arg->offset, dest_arg);
     }
     else if(arg->tipoSimbolo == SIMBOLO_VAR_GLOBAL){
-        fprintf(f,"mov [%s], %s\n", arg->nombre, dest_arg);
+        fprintf(f,"mov %s(%%rip), %s\n", arg->nombre, dest_arg);
     }
 }
 
